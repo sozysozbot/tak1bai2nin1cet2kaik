@@ -22,32 +22,32 @@
             return array;
         }
 
-        var keseDeck = [
-            /**/0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2,
-        ];
-        shuffle(keseDeck);
-        keseDeck.unshift(0);
+        var black_cards = [
+            11,  // 船
+            0, 0, 0, // 無
+            1, 1, 1, 1, // 兵
+            2, 2, // 弓
+            3, 3, // 車
+            4, 4, // 虎
+            5, 5, // 馬
+            6, 6, // 筆
+            7, 7, // 巫
+            8, 8, // 将
+            9,  // 王
+            10 // 皇
+        ].map(a => a * 2);
+        var red_cards = black_cards.map(a => a + 5);
+        var cards = [...black_cards, ...red_cards]
+        shuffle(cards);
 
-        var rimaDeck = [
-            /**/0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2,
-        ];
-        shuffle(rimaDeck);
-        rimaDeck.unshift(0);
-
-        var app = Elm.Main.init({
-            node: document.getElementById('myapp'),
-            flags: {
-                keseGoesFirst: Math.random() < 0.5,
-                keseDice: Math.random() < 0.5,
-                rimaDice: Math.random() < 0.5,
-                shipDice: Math.random() < 0.5,
-                keseDeck, rimaDeck
-            }
-        });
+        if (cards.length !== 48) { throw new Error("The number of cards is not 48") } else {
+            var app = Elm.Main.init({
+                node: document.getElementById('myapp'),
+                flags: {
+                    cards
+                }
+            });
+        }
     </script>
 </body>
 

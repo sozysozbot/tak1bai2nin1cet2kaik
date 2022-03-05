@@ -1,10 +1,12 @@
 module KeseRimaSvgElements exposing (..)
-import KeseRimaTypes exposing (..)
+
+import Html.Attributes
+import KeseRimaSvgColor exposing (..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
-import KeseRimaSvgColor exposing (..)
-import Html.Attributes
+import Tak1Bai2Types exposing (..)
+
 
 glyph : Profession -> String -> List (Svg msg)
 glyph profession color =
@@ -13,22 +15,20 @@ glyph profession color =
             [ fill "transparent", stroke color, strokeWidth "6", strokeLinecap "round" ]
     in
     case profession of
-        HorizontalVertical ->
+        Mun1 ->
             [ Svg.path (d "M 21 52 h 62" :: style) []
             , Svg.path (d "M 52 21 v 62" :: style) []
             ]
 
-        Diagonal ->
+        Nuak1 ->
             [ Svg.path (d "M 24 24 l  56 56" :: style) []
             , Svg.path (d "M 80 24 l -56 56" :: style) []
             ]
 
-        Circle ->
+        _ ->
             [ circle ([ cx "52", cy "52", r "27" ] ++ style) []
             ]
 
-        All ->
-            glyph HorizontalVertical color ++ glyph Diagonal color ++ glyph Circle color
 
 goalCandidateYellowSvg : msg -> Coordinate -> Svg msg
 goalCandidateYellowSvg msgToBeSent coord =
@@ -49,24 +49,6 @@ goalCandidateRedSvg msgToBeSent coord =
         ]
         [ rect [ x "36", y "36", width "32", height "32", fill redCandidateColor ] [] ]
 
-pieceWaitingForAdditionalCommandSvg : PieceOnBoard -> Svg msg
-pieceWaitingForAdditionalCommandSvg p =
-    g
-        [ transform ("translate(" ++ String.fromFloat (toFloat p.coord.x * 100.0 - 5.0) ++ " " ++ String.fromFloat (toFloat p.coord.y * 100.0 + 5.0) ++ ")")
-        , Html.Attributes.style "cursor" "not-allowed"
-        ]
-        (rect
-            [ x "12"
-            , y "12"
-            , width "80"
-            , height "80"
-            , fill (backgroundColor p.pieceColor)
-            , stroke floatingPieceBorderColor
-            , strokeWidth "2"
-            ]
-            []
-            :: glyph p.prof (foregroundColor p.pieceColor)
-        )
 
 spacing : Int -> Float
 spacing n =
@@ -112,7 +94,7 @@ playerSvg playerColor o =
                     56.75
 
         color =
-            toColor playerColor
+            Red
 
         scale =
             if o.bigAndBlurred then
@@ -153,23 +135,10 @@ playerSvg playerColor o =
         g [ id id_, transform transf ] person
 
 
-trashBinSvg_ : Bool -> Svg OriginalMsg
-trashBinSvg_ clickable =
-    if clickable then
-        g
-            [ Svg.Events.onClick SendToTrashBinPart2
-            , Html.Attributes.style "cursor" "pointer"
-            , fill (trashBinColor clickable)
-            ]
-            (trashBinSvg ++ [ circle [ cx "45", cy "55", r "16", fill yellowCandidateColor ] [] ])
-
-    else
-        g [ fill (trashBinColor clickable) ] trashBinSvg
-
-pieceSvg__ : (msg -> String) -> { a | color : String, width : String } -> msg -> PieceWithFloatPosition -> Svg msg
+pieceSvg__ : (msg -> String) -> { a | color : String, width : String } -> msg -> CardOnBoard -> Svg msg
 pieceSvg__ toIcon strok msgToBeSent p =
     g
-        [ transform ("translate(" ++ String.fromFloat (p.coord.x * 100.0) ++ " " ++ String.fromFloat (p.coord.y * 100.0) ++ ")")
+        [ transform ("translate(" ++ String.fromInt (p.coord.x * 100) ++ " " ++ String.fromInt (p.coord.y * 100) ++ ")")
         , Html.Attributes.style "cursor"
             (toIcon msgToBeSent)
         , Svg.Events.onClick msgToBeSent
@@ -179,48 +148,12 @@ pieceSvg__ toIcon strok msgToBeSent p =
             , y "12"
             , width "80"
             , height "80"
-            , fill (backgroundColor p.pieceColor)
+            , fill (backgroundColor p.cardColor)
             , stroke
                 strok.color
             , strokeWidth
                 strok.width
             ]
             []
-            :: glyph p.prof (foregroundColor p.pieceColor)
+            :: glyph p.prof (foregroundColor p.cardColor)
         )
-
-twoDecks : { a | keseDeck : List b, rimaDeck : List c } -> List (Svg msg)
-twoDecks model =
-    [ g [ id "keseDeck" ]
-        (List.indexedMap
-            (\i _ ->
-                rect
-                    [ x "535.7"
-                    , y (String.fromInt (504 - 80 - 10 * i))
-                    , width "80"
-                    , height "80"
-                    , fill (backgroundColor Kese)
-                    , strokeWidth "1"
-                    , stroke (strokeColor Kese)
-                    ]
-                    []
-            )
-            model.keseDeck
-        )
-    , g [ id "rimaDeck" ]
-        (List.indexedMap
-            (\i _ ->
-                rect
-                    [ x "535.7"
-                    , y (String.fromInt (10 * i))
-                    , width "80"
-                    , height "80"
-                    , fill (backgroundColor Rima)
-                    , strokeWidth "1"
-                    , stroke (strokeColor Rima)
-                    ]
-                    []
-            )
-            model.rimaDeck
-        )
-    ]

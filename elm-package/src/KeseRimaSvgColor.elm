@@ -1,54 +1,41 @@
 module KeseRimaSvgColor exposing (..)
 
-import KeseRimaTypes exposing (..)
+import Tak1Bai2Types exposing (..)
 
 
 boardBackgroundColor : Coordinate -> String
 boardBackgroundColor coord =
-    if isWater coord then
-        "#5e93b8"
-
-    else
-        "#ccc"
+    "#ccc"
 
 
-backgroundColor : PieceColor -> String
+backgroundColor : CardColor -> String
 backgroundColor pieceColor =
     case pieceColor of
-        Rima ->
+        Red ->
             "#c8beb7"
 
-        Kese ->
+        Black ->
             "#483e37"
 
-        Ship ->
-            "#60859d"
 
-
-foregroundColor : PieceColor -> String
+foregroundColor : CardColor -> String
 foregroundColor pieceColor =
     case pieceColor of
-        Kese ->
+        Red ->
             "#c8beb7"
 
-        Rima ->
+        Black ->
             "#483e37"
 
-        Ship ->
-            "#222c2f"
 
-
-borderColor : PieceColor -> String
+borderColor : CardColor -> String
 borderColor c =
     case c of
-        Rima ->
+        Red ->
             "#005242"
 
-        Kese ->
+        Black ->
             "#00b592"
-
-        Ship ->
-            "#005242"
 
 
 crownColor : String
@@ -56,18 +43,14 @@ crownColor =
     "#ffff00"
 
 
-strokeColor : PieceColor -> String
+strokeColor : CardColor -> String
 strokeColor c =
     case c of
-        Rima ->
+        Red ->
             "#000"
 
-        Kese ->
+        Black ->
             "#eee"
-
-        Ship ->
-            {- not used -}
-            "#777"
 
 
 boardBorderColor : String
