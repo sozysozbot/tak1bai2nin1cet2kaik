@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>紙机戦ソリティア「衣糸紙机戦」で遊ぶ</title>
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <div id="myapp"></div>
+    <script>
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+            while (0 !== currentIndex) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
+
+        var keseDeck = [
+            /**/0, 0, 0, 0, 0,
+            1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2,
+        ];
+        shuffle(keseDeck);
+        keseDeck.unshift(0);
+
+        var rimaDeck = [
+            /**/0, 0, 0, 0, 0,
+            1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2,
+        ];
+        shuffle(rimaDeck);
+        rimaDeck.unshift(0);
+
+        var app = Elm.Main.init({
+            node: document.getElementById('myapp'),
+            flags: {
+                keseGoesFirst: Math.random() < 0.5,
+                keseDice: Math.random() < 0.5,
+                rimaDice: Math.random() < 0.5,
+                shipDice: Math.random() < 0.5,
+                keseDeck, rimaDeck
+            }
+        });
+    </script>
+</body>
+
+</html>
