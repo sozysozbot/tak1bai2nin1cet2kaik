@@ -7,6 +7,7 @@ import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
 import KeseRimaSvgElements exposing (pieceSvg__)
+import List.Extra
 import Svg exposing (Attribute, Svg, defs, feGaussianBlur, g, rect, svg, text)
 import Svg.Attributes exposing (fill, height, id, result, stdDeviation, stroke, strokeWidth, transform, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
@@ -241,7 +242,7 @@ view_ gameEndTweet history svgContent buttons =
                 ]
             ]
         , Html.div []
-            (svg [ viewBox "0 -200 900 900", width "540" ] svgContent
+            (svg [ viewBox "-100 -200 1050 1150", width "540" ] svgContent
                 :: Html.br [] []
                 :: List.intersperse (Html.text " ") buttons
             )
@@ -291,26 +292,72 @@ view_ gameEndTweet history svgContent buttons =
         ]
 
 
+shortEdgeHalf : number
+shortEdgeHalf =
+    21
+
+
+longEdgeHalf : number
+longEdgeHalf =
+    80
+
+
+spacing : number
+spacing =
+    40
+
+
+f : Coordinate -> Svg msg
+f coord =
+    let
+        parity =
+            modBy 2 (coord.x + coord.y)
+
+        widthHalf =
+            if parity == 0 then
+                shortEdgeHalf
+
+            else
+                longEdgeHalf
+
+        heightHalf =
+            if parity == 0 then
+                longEdgeHalf
+
+            else
+                shortEdgeHalf
+
+        width_text =
+            String.fromInt (widthHalf * 2)
+
+        height_text =
+            String.fromInt (heightHalf * 2)
+
+        x_coord_mid =
+            coord.x * (shortEdgeHalf + longEdgeHalf + spacing)
+
+        y_coord_mid =
+            coord.y * (shortEdgeHalf + longEdgeHalf + spacing)
+    in
+    g
+        [ transform
+            ("translate("
+                ++ String.fromInt (x_coord_mid - widthHalf)
+                ++ " "
+                ++ String.fromInt (y_coord_mid - heightHalf)
+                ++ ")"
+            )
+        ]
+        [ rect [ x "0", y "0", width width_text, height height_text, fill "#000000", stroke "none", strokeWidth "none" ] [] ]
+
+
 view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus }) =
     case currentStatus of
         NothingSelected cardState ->
             view_ False
                 historyString
-                (List.map
-                    (\piece ->
-                        cardSvgOnGrid False
-                            {- You can move the piece if it is a ship or if it belongs to you. -}
-                            (if True then
-                                GiveFocusTo (PieceOnTheBoard piece.coord)
-
-                             else
-                                None
-                            )
-                            piece
-                    )
-                    cardState.cards
-                )
+                (rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] [] :: List.map (\c -> f c.coord) cardState.cards)
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
         GameTerminated cardState ->

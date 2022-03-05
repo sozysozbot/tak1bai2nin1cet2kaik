@@ -186,9 +186,9 @@ initialBoard cards =
     let
         foo : Int -> CardEncodedAsInt -> CardOnBoard
         foo i card =
-            { coord = { x = remainderBy i 7, y = i // 7 }
+            { coord = { x = remainderBy 7 i, y = i // 7 }
             , cardColor =
-                if remainderBy card 2 == 0 then
+                if remainderBy 2 card == 0 then
                     Black
 
                 else

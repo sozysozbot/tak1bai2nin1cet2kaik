@@ -5334,8 +5334,8 @@ var $author$project$Tak1Bai2Types$initialBoard = function (cards) {
 	var foo = F2(
 		function (i, card) {
 			return {
-				cardColor: (!(2 % card)) ? $author$project$Tak1Bai2Types$Black : $author$project$Tak1Bai2Types$Red,
-				coord: {x: 7 % i, y: (i / 7) | 0},
+				cardColor: (!(card % 2)) ? $author$project$Tak1Bai2Types$Black : $author$project$Tak1Bai2Types$Red,
+				coord: {x: i % 7, y: (i / 7) | 0},
 				prof: function () {
 					var _v0 = (card / 2) | 0;
 					switch (_v0) {
@@ -5460,13 +5460,7 @@ var $author$project$Main$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Tak1Bai2Types$GiveFocusTo = function (a) {
-	return {$: 'GiveFocusTo', a: a};
-};
 var $author$project$Tak1Bai2Types$None = {$: 'None'};
-var $author$project$Tak1Bai2Types$PieceOnTheBoard = function (a) {
-	return {$: 'PieceOnTheBoard', a: a};
-};
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -5721,6 +5715,42 @@ var $author$project$Main$cardSvgOnGrid = F3(
 			});
 	});
 var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
+var $author$project$Main$longEdgeHalf = 80;
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $author$project$Main$shortEdgeHalf = 21;
+var $author$project$Main$spacing = 40;
+var $author$project$Main$f = function (coord) {
+	var y_coord_mid = coord.y * (($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing);
+	var x_coord_mid = coord.x * (($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing);
+	var parity = A2($elm$core$Basics$modBy, 2, coord.x + coord.y);
+	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
+	var width_text = $elm$core$String$fromInt(widthHalf * 2);
+	var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
+	var height_text = $elm$core$String$fromInt(heightHalf * 2);
+	return A2(
+		$elm$svg$Svg$g,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$transform(
+				'translate(' + ($elm$core$String$fromInt(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromInt(y_coord_mid - heightHalf) + ')'))))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$svg$Svg$rect,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$x('0'),
+						$elm$svg$Svg$Attributes$y('0'),
+						$elm$svg$Svg$Attributes$width(width_text),
+						$elm$svg$Svg$Attributes$height(height_text),
+						$elm$svg$Svg$Attributes$fill('#000000'),
+						$elm$svg$Svg$Attributes$stroke('none'),
+						$elm$svg$Svg$Attributes$strokeWidth('none')
+					]),
+				_List_Nil)
+			]));
+};
 var $elm$svg$Svg$feGaussianBlur = $elm$svg$Svg$trustedNode('feGaussianBlur');
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5977,7 +6007,7 @@ var $author$project$Main$view_ = F4(
 							$elm$svg$Svg$svg,
 							_List_fromArray(
 								[
-									$elm$svg$Svg$Attributes$viewBox('0 -200 900 900'),
+									$elm$svg$Svg$Attributes$viewBox('-100 -200 1050 1150'),
 									$elm$svg$Svg$Attributes$width('540')
 								]),
 							svgContent),
@@ -6066,16 +6096,24 @@ var $author$project$Main$view = function (_v0) {
 				false,
 				historyString,
 				A2(
-					$elm$core$List$map,
-					function (piece) {
-						return A3(
-							$author$project$Main$cardSvgOnGrid,
-							false,
-							true ? $author$project$Tak1Bai2Types$GiveFocusTo(
-								$author$project$Tak1Bai2Types$PieceOnTheBoard(piece.coord)) : $author$project$Tak1Bai2Types$None,
-							piece);
-					},
-					cardState.cards),
+					$elm$core$List$cons,
+					A2(
+						$elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$fill('#e0c39d'),
+								$elm$svg$Svg$Attributes$x('-100'),
+								$elm$svg$Svg$Attributes$y('-100'),
+								$elm$svg$Svg$Attributes$width('1050'),
+								$elm$svg$Svg$Attributes$height('1050')
+							]),
+						_List_Nil),
+					A2(
+						$elm$core$List$map,
+						function (c) {
+							return $author$project$Main$f(c.coord);
+						},
+						cardState.cards)),
 				_List_Nil);
 		case 'GameTerminated':
 			var cardState = currentStatus.a;
