@@ -7,12 +7,16 @@ import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
 import KeseRimaSvgElements exposing (pieceSvg__)
-import List.Extra
 import Svg exposing (Attribute, Svg, defs, feGaussianBlur, g, rect, svg, text)
 import Svg.Attributes exposing (fill, height, id, result, stdDeviation, stroke, strokeWidth, transform, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
+import Svg exposing (animate)
+import Svg.Attributes exposing (attributeName)
+import Svg.Attributes exposing (dur)
+import Svg.Attributes exposing (values)
+import Svg.Attributes exposing (repeatCount)
 
 
 type alias Flags =
@@ -307,6 +311,10 @@ spacing =
     40
 
 
+lattice_size =
+    shortEdgeHalf + longEdgeHalf + spacing
+
+
 f : Coordinate -> Svg msg
 f coord =
     let
@@ -334,10 +342,10 @@ f coord =
             String.fromInt (heightHalf * 2)
 
         x_coord_mid =
-            coord.x * (shortEdgeHalf + longEdgeHalf + spacing)
+            coord.x * lattice_size
 
         y_coord_mid =
-            coord.y * (shortEdgeHalf + longEdgeHalf + spacing)
+            coord.y * lattice_size
     in
     g
         [ transform
@@ -351,13 +359,39 @@ f coord =
         [ rect [ x "0", y "0", width width_text, height height_text, fill "#000000", stroke "none", strokeWidth "none" ] [] ]
 
 
+candidateYellowSvg : msg -> Coordinate -> Svg msg
+candidateYellowSvg msgToBeSent coord =
+    g
+        [ transform ("translate(" ++ String.fromInt (coord.x * lattice_size) ++ " " ++ String.fromInt (coord.y * lattice_size) ++ ")")
+        , Svg.Events.onClick msgToBeSent
+        , Html.Attributes.style "cursor" "pointer"
+        ]
+        [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill "#ffff00" ] [
+            animate [attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite"] []
+        ] ]
+
+
+nthNeighbor : Int -> Coordinate -> List Coordinate
+nthNeighbor n coord =
+    [ { coord | x = coord.x - n }
+    , { coord | y = coord.y - n }
+    , { coord | x = coord.x + n }
+    , { coord | y = coord.y + n }
+    ]
+        |> List.filter (\c -> c.x >= 0 && c.x < 7 && c.y >= 0 && c.y < 7)
+
+
 view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus }) =
     case currentStatus of
-        NothingSelected cardState ->
+        NothingSelected board ->
             view_ False
                 historyString
-                (rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] [] :: List.map (\c -> f c.coord) cardState.cards)
+                (rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
+                    :: List.map (\c -> f c.coord) board.cards
+                    ++ List.map (candidateYellowSvg None) (nthNeighbor 1 board.empty)
+                    ++ List.map (candidateYellowSvg None) (nthNeighbor 2 board.empty)
+                )
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
         GameTerminated cardState ->

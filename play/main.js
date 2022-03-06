@@ -5565,6 +5565,62 @@ var $author$project$Main$cancelAllButton = A2(
 		[
 			$elm$svg$Svg$text('全てをキャンセル')
 		]));
+var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
+var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
+var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
+var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
+var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
+var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
+var $author$project$Main$longEdgeHalf = 80;
+var $author$project$Main$shortEdgeHalf = 21;
+var $author$project$Main$spacing = 40;
+var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
+var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
+var $elm$svg$Svg$Attributes$repeatCount = _VirtualDom_attribute('repeatCount');
+var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
+var $elm$svg$Svg$Attributes$values = function (value) {
+	return A2(
+		_VirtualDom_attribute,
+		'values',
+		_VirtualDom_noJavaScriptUri(value));
+};
+var $author$project$Main$candidateYellowSvg = F2(
+	function (msgToBeSent, coord) {
+		return A2(
+			$elm$svg$Svg$g,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$transform(
+					'translate(' + ($elm$core$String$fromInt(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromInt(coord.y * $author$project$Main$lattice_size) + ')')))),
+					$elm$svg$Svg$Events$onClick(msgToBeSent),
+					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$circle,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$cx('0'),
+							$elm$svg$Svg$Attributes$cy('0'),
+							$elm$svg$Svg$Attributes$r('25'),
+							$elm$svg$Svg$Attributes$fill('#ffff00')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$svg$Svg$animate,
+							_List_fromArray(
+								[
+									$elm$svg$Svg$Attributes$attributeName('opacity'),
+									$elm$svg$Svg$Attributes$dur('1.62s'),
+									$elm$svg$Svg$Attributes$values('0;1;0'),
+									$elm$svg$Svg$Attributes$repeatCount('indefinite')
+								]),
+							_List_Nil)
+						]))
+				]));
+	});
 var $author$project$Main$msgToIcon = function (msgToBeSent) {
 	if (msgToBeSent.$ === 'None') {
 		return 'not-allowed';
@@ -5586,12 +5642,8 @@ var $author$project$KeseRimaSvgColor$foregroundColor = function (pieceColor) {
 		return '#483e37';
 	}
 };
-var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
-var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
-var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$svg$Svg$Attributes$strokeLinecap = _VirtualDom_attribute('stroke-linecap');
 var $author$project$KeseRimaSvgElements$glyph = F2(
 	function (profession, color) {
@@ -5656,7 +5708,6 @@ var $author$project$KeseRimaSvgElements$glyph = F2(
 					]);
 		}
 	});
-var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var $author$project$KeseRimaSvgElements$pieceSvg__ = F4(
 	function (toIcon, strok, msgToBeSent, p) {
 		return A2(
@@ -5715,13 +5766,10 @@ var $author$project$Main$cardSvgOnGrid = F3(
 			});
 	});
 var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
-var $author$project$Main$longEdgeHalf = 80;
 var $elm$core$Basics$modBy = _Basics_modBy;
-var $author$project$Main$shortEdgeHalf = 21;
-var $author$project$Main$spacing = 40;
 var $author$project$Main$f = function (coord) {
-	var y_coord_mid = coord.y * (($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing);
-	var x_coord_mid = coord.x * (($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing);
+	var y_coord_mid = coord.y * $author$project$Main$lattice_size;
+	var x_coord_mid = coord.x * $author$project$Main$lattice_size;
 	var parity = A2($elm$core$Basics$modBy, 2, coord.x + coord.y);
 	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
 	var width_text = $elm$core$String$fromInt(widthHalf * 2);
@@ -5764,6 +5812,30 @@ var $elm$core$List$filter = F2(
 			list);
 	});
 var $elm$svg$Svg$filter = $elm$svg$Svg$trustedNode('filter');
+var $elm$core$Basics$ge = _Utils_ge;
+var $author$project$Main$nthNeighbor = F2(
+	function (n, coord) {
+		return A2(
+			$elm$core$List$filter,
+			function (c) {
+				return (c.x >= 0) && ((c.x < 7) && ((c.y >= 0) && (c.y < 7)));
+			},
+			_List_fromArray(
+				[
+					_Utils_update(
+					coord,
+					{x: coord.x - n}),
+					_Utils_update(
+					coord,
+					{y: coord.y - n}),
+					_Utils_update(
+					coord,
+					{x: coord.x + n}),
+					_Utils_update(
+					coord,
+					{y: coord.y + n})
+				]));
+	});
 var $elm$svg$Svg$Attributes$result = _VirtualDom_attribute('result');
 var $author$project$Main$simpleCancelButton = A2(
 	$elm$html$Html$button,
@@ -6090,7 +6162,7 @@ var $author$project$Main$view = function (_v0) {
 	var currentStatus = _v0.a.currentStatus;
 	switch (currentStatus.$) {
 		case 'NothingSelected':
-			var cardState = currentStatus.a;
+			var board = currentStatus.a;
 			return A4(
 				$author$project$Main$view_,
 				false,
@@ -6108,12 +6180,22 @@ var $author$project$Main$view = function (_v0) {
 								$elm$svg$Svg$Attributes$height('1050')
 							]),
 						_List_Nil),
-					A2(
-						$elm$core$List$map,
-						function (c) {
-							return $author$project$Main$f(c.coord);
-						},
-						cardState.cards)),
+					_Utils_ap(
+						A2(
+							$elm$core$List$map,
+							function (c) {
+								return $author$project$Main$f(c.coord);
+							},
+							board.cards),
+						_Utils_ap(
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$candidateYellowSvg($author$project$Tak1Bai2Types$None),
+								A2($author$project$Main$nthNeighbor, 1, board.empty)),
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$candidateYellowSvg($author$project$Tak1Bai2Types$None),
+								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
 				_List_Nil);
 		case 'GameTerminated':
 			var cardState = currentStatus.a;
