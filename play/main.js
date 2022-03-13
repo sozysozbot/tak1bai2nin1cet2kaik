@@ -5414,6 +5414,10 @@ var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
 	function (a, b) {
 		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
 	});
+var $author$project$Tak1Bai2Types$getMidPoint = F2(
+	function (from, to) {
+		return {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
+	});
 var $elm$core$List$partition = F2(
 	function (pred, list) {
 		var step = F2(
@@ -5446,7 +5450,6 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
-						var midpoint = {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
 						var _v2 = A2(
 							$elm$core$List$partition,
 							function (x) {
@@ -5458,7 +5461,9 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 						var _v3 = A2(
 							$elm$core$List$partition,
 							function (x) {
-								return _Utils_eq(x.coord, midpoint);
+								return _Utils_eq(
+									x.coord,
+									A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
 							},
 							remainingCards);
 						var cardsToBeFlipped = _v3.a;
@@ -6030,6 +6035,45 @@ var $elm$core$List$filter = F2(
 			list);
 	});
 var $elm$svg$Svg$filter = $elm$svg$Svg$trustedNode('filter');
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Main$getCardAt = F2(
+	function (board, coord) {
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (c) {
+					return _Utils_eq(c.coord, coord);
+				},
+				board.cards));
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Main$isShownAt = F2(
+	function (board, coord) {
+		return A2(
+			$elm$core$Maybe$map,
+			function ($) {
+				return $.shown;
+			},
+			A2($author$project$Main$getCardAt, board, coord));
+	});
+var $elm$core$Basics$neq = _Utils_notEqual;
 var $elm$core$Basics$ge = _Utils_ge;
 var $author$project$Main$nthNeighbor = F2(
 	function (n, coord) {
@@ -6054,6 +6098,29 @@ var $author$project$Main$nthNeighbor = F2(
 					{y: coord.y + n})
 				]));
 	});
+var $author$project$Main$possibleHopPosition = function (board) {
+	return A2(
+		$elm$core$List$filter,
+		function (neighbor) {
+			return !_Utils_eq(
+				A2(
+					$author$project$Main$isShownAt,
+					board,
+					A2($author$project$Tak1Bai2Types$getMidPoint, neighbor, board.empty)),
+				$elm$core$Maybe$Just(true));
+		},
+		A2($author$project$Main$nthNeighbor, 2, board.empty));
+};
+var $author$project$Main$possibleSlidePosition = function (board) {
+	return A2(
+		$elm$core$List$filter,
+		function (coord) {
+			return !_Utils_eq(
+				A2($author$project$Main$isShownAt, board, coord),
+				$elm$core$Maybe$Just(true));
+		},
+		A2($author$project$Main$nthNeighbor, 1, board.empty));
+};
 var $elm$svg$Svg$Attributes$result = _VirtualDom_attribute('result');
 var $author$project$Main$simpleCancelButton = A2(
 	$elm$html$Html$button,
@@ -6400,7 +6467,7 @@ var $author$project$Main$view = function (_v0) {
 											{from: c, to: board.empty}),
 										c);
 								},
-								A2($author$project$Main$nthNeighbor, 1, board.empty)),
+								$author$project$Main$possibleSlidePosition(board)),
 							A2(
 								$elm$core$List$map,
 								function (c) {
@@ -6410,7 +6477,7 @@ var $author$project$Main$view = function (_v0) {
 											{from: c, to: board.empty}),
 										c);
 								},
-								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
+								$author$project$Main$possibleHopPosition(board))))),
 				_List_Nil);
 		case 'GameTerminated':
 			var cardState = currentStatus.a;
@@ -6476,7 +6543,7 @@ var $author$project$Main$view = function (_v0) {
 											{from: c, to: board.empty}),
 										c);
 								},
-								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
+								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		case 'FirstHalfCompletedBySlide':
@@ -6504,7 +6571,7 @@ var $author$project$Main$view = function (_v0) {
 											{from: c, to: board.empty}),
 										c);
 								},
-								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
+								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		default:

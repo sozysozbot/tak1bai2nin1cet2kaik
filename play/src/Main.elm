@@ -1,7 +1,6 @@
 module Main exposing (init, main, view)
 
--- import KeseRimaSvgColor exposing (..)
--- import KeseRimaSvgElements exposing (..)
+-- import List.Extra exposing (filterNot)
 
 import Browser
 import Html exposing (Html)
@@ -331,6 +330,29 @@ backgroundWoodenBoard =
     rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
 
 
+possibleSlidePosition : Board -> List Coordinate
+possibleSlidePosition board =
+    nthNeighbor 1 board.empty
+        -- A card cannot slide if it is already shown
+        |> List.filter (\coord -> isShownAt board coord /= Just True)
+
+
+possibleHopPosition : Board -> List Coordinate
+possibleHopPosition board =
+    nthNeighbor 2 board.empty
+        |> List.filter (\neighbor -> isShownAt board (getMidPoint neighbor board.empty) /= Just True)
+
+
+getCardAt : Board -> Coordinate -> Maybe CardOnBoard
+getCardAt board coord =
+    List.filter (\c -> c.coord == coord) board.cards |> List.head
+
+
+isShownAt : Board -> Coordinate -> Maybe Bool
+isShownAt board coord =
+    getCardAt board coord |> Maybe.map .shown
+
+
 view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus }) =
     case currentStatus of
@@ -339,8 +361,8 @@ view (Model { historyString, currentStatus }) =
                 historyString
                 (backgroundWoodenBoard
                     :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
-                    ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                    ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (possibleSlidePosition board)
+                    ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
@@ -363,7 +385,7 @@ view (Model { historyString, currentStatus }) =
                 (backgroundWoodenBoard
                     :: drawArrow from to
                     :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
                 [ simpleCancelButton ]
 
@@ -373,7 +395,7 @@ view (Model { historyString, currentStatus }) =
                 (backgroundWoodenBoard
                     :: drawArrow from to
                     :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
                 [ simpleCancelButton ]
 

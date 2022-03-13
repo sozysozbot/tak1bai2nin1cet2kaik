@@ -232,6 +232,11 @@ initialBoard cards =
     }
 
 
+getMidPoint : Coordinate -> Coordinate -> Coordinate
+getMidPoint from to =
+    { x = (from.x + to.x) // 2, y = (from.y + to.y) // 2 }
+
+
 updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
 updateStatus msg modl saved =
     case ( modl, msg ) of
@@ -241,14 +246,11 @@ updateStatus msg modl saved =
 
         ( NothingSelected oldBoard, Hop { from, to } ) ->
             let
-                midpoint =
-                    { x = (from.x + to.x) // 2, y = (from.y + to.y) // 2 }
-
                 ( cardsToBeMoved, remainingCards ) =
                     List.partition (\x -> x.coord == from) oldBoard.cards
 
                 ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == midpoint) remainingCards
+                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
 
                 newBoard =
                     case ( cardsToBeMoved, cardsToBeFlipped ) of
