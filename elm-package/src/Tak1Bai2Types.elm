@@ -241,13 +241,19 @@ updateStatus msg modl saved =
 
         ( NothingSelected oldBoard, Hop { from, to } ) ->
             let
+                midpoint =
+                    { x = (from.x + to.x) // 2, y = (from.y + to.y) // 2 }
+
                 ( cardsToBeMoved, remainingCards ) =
                     List.partition (\x -> x.coord == from) oldBoard.cards
 
+                ( cardsToBeFlipped, remainingCards2 ) =
+                    List.partition (\x -> x.coord == midpoint) remainingCards
+
                 newBoard =
-                    case cardsToBeMoved of
-                        [ cardToBeMoved ] ->
-                            { empty = from, cards = { cardToBeMoved | coord = to } :: remainingCards }
+                    case ( cardsToBeMoved, cardsToBeFlipped ) of
+                        ( [ moved ], [ flipped ] ) ->
+                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
 
                         _ ->
                             -- this path is not taken

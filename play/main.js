@@ -5446,6 +5446,7 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
+						var midpoint = {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
 						var _v2 = A2(
 							$elm$core$List$partition,
 							function (x) {
@@ -5454,16 +5455,33 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 							oldBoard.cards);
 						var cardsToBeMoved = _v2.a;
 						var remainingCards = _v2.b;
+						var _v3 = A2(
+							$elm$core$List$partition,
+							function (x) {
+								return _Utils_eq(x.coord, midpoint);
+							},
+							remainingCards);
+						var cardsToBeFlipped = _v3.a;
+						var remainingCards2 = _v3.b;
 						var newBoard = function () {
-							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
-								var cardToBeMoved = cardsToBeMoved.a;
+							var _v4 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+							if (((_v4.a.b && (!_v4.a.b.b)) && _v4.b.b) && (!_v4.b.b.b)) {
+								var _v5 = _v4.a;
+								var moved = _v5.a;
+								var _v6 = _v4.b;
+								var flipped = _v6.a;
 								return {
 									cards: A2(
 										$elm$core$List$cons,
 										_Utils_update(
-											cardToBeMoved,
+											moved,
 											{coord: to}),
-										remainingCards),
+										A2(
+											$elm$core$List$cons,
+											_Utils_update(
+												flipped,
+												{shown: true}),
+											remainingCards2)),
 									empty: from
 								};
 							} else {
@@ -5482,14 +5500,14 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
-						var _v4 = A2(
+						var _v7 = A2(
 							$elm$core$List$partition,
 							function (x) {
 								return _Utils_eq(x.coord, from);
 							},
 							oldBoard.cards);
-						var cardsToBeMoved = _v4.a;
-						var remainingCards = _v4.b;
+						var cardsToBeMoved = _v7.a;
+						var remainingCards = _v7.b;
 						var newBoard = function () {
 							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
 								var cardToBeMoved = cardsToBeMoved.a;
