@@ -71,46 +71,6 @@ newHistory msg modl =
             ""
 
 
-cardSvgOnGrid : Bool -> OriginalMsg -> CardOnBoard -> Svg OriginalMsg
-cardSvgOnGrid focused msg { coord, prof, cardColor } =
-    pieceSvg focused msg { coord = { x = coord.x, y = coord.y }, prof = prof, cardColor = cardColor, shown = False }
-
-
-pieceSvg : Bool -> OriginalMsg -> CardOnBoard -> Svg OriginalMsg
-pieceSvg focused msgToBeSent p =
-    let
-        strok =
-            if focused then
-                { color = "#000000"
-                , width = "10"
-                }
-
-            else
-                { color = "none"
-                , width = "none"
-                }
-    in
-    pieceSvg_
-        strok
-        msgToBeSent
-        p
-
-
-msgToIcon : OriginalMsg -> String
-msgToIcon msgToBeSent =
-    case msgToBeSent of
-        None ->
-            "not-allowed"
-
-        _ ->
-            "pointer"
-
-
-pieceSvg_ : { a | color : String, width : String } -> OriginalMsg -> CardOnBoard -> Svg OriginalMsg
-pieceSvg_ =
-    pieceSvg__ msgToIcon
-
-
 targetBlankLink : List (Attribute msg) -> List (Html msg) -> Html msg
 targetBlankLink attributes =
     Html.a (Html.Attributes.target "_blank" :: attributes)
@@ -345,16 +305,11 @@ view (Model { historyString, currentStatus }) =
                 )
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
-        GameTerminated cardState ->
-            view_ True
+        GameTerminated board ->
+            view_ False
                 historyString
-                ([ defs []
-                    [ Svg.filter [ Svg.Attributes.style "color-interpolation-filters:sRGB", id "blur" ]
-                        [ feGaussianBlur [ stdDeviation "1.5 1.5", result "blur" ] []
-                        ]
-                    ]
-                 ]
-                    ++ List.map (cardSvgOnGrid False None) cardState.board
+                (backgroundWoodenBoard
+                    :: List.map displayCard board.board
                 )
                 [{- The game has ended. No cancelling allowed. -}]
 
@@ -381,10 +336,7 @@ view (Model { historyString, currentStatus }) =
         NowWaitingForAdditionalSacrifice { mover, remaining } ->
             view_ False
                 historyString
-                (List.map
-                    (cardSvgOnGrid False None {- You cannot click any piece on the board while waiting for additional sacrifices. -})
-                    remaining.cards
-                )
+                []
                 (case List.filter (\p -> p.coord == mover.coord) remaining.cards of
                     [] ->
                         [ cancelAllButton ]
