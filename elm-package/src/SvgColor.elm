@@ -1,4 +1,4 @@
-module KeseRimaSvgColor exposing (..)
+module SvgColor exposing (..)
 
 import Tak1Bai2Types exposing (..)
 

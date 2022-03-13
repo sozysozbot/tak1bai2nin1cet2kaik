@@ -6,7 +6,7 @@ module Main exposing (init, main, view)
 import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
-import KeseRimaSvgElements exposing (pieceSvg__)
+import SvgElements exposing (pieceSvg__)
 import Svg exposing (Attribute, Svg, animate, defs, feGaussianBlur, g, rect, svg, text)
 import Svg.Attributes exposing (attributeName, dur, fill, height, id, repeatCount, result, stdDeviation, stroke, strokeWidth, transform, values, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
