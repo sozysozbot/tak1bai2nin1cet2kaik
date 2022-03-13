@@ -71,27 +71,6 @@ newHistory msg modl =
             ""
 
 
-boardSvg : List (Svg OriginalMsg)
-boardSvg =
-    [ g [ id "board" ]
-        (List.map
-            (\coord ->
-                rect
-                    [ x (String.fromInt (coord.x * 100 + 2))
-                    , y (String.fromInt (coord.y * 100 + 2))
-                    , width "100"
-                    , height "100"
-                    , fill "#000000"
-                    , stroke "#000000"
-                    , strokeWidth "4"
-                    ]
-                    []
-            )
-            allCoord
-        )
-    ]
-
-
 cardSvgOnGrid : Bool -> OriginalMsg -> CardOnBoard -> Svg OriginalMsg
 cardSvgOnGrid focused msg { coord, prof, cardColor } =
     pieceSvg focused msg { coord = { x = coord.x, y = coord.y }, prof = prof, cardColor = cardColor, shown = False }
@@ -369,12 +348,12 @@ view (Model { historyString, currentStatus }) =
         GameTerminated cardState ->
             view_ True
                 historyString
-                (defs []
+                ([ defs []
                     [ Svg.filter [ Svg.Attributes.style "color-interpolation-filters:sRGB", id "blur" ]
                         [ feGaussianBlur [ stdDeviation "1.5 1.5", result "blur" ] []
                         ]
                     ]
-                    :: boardSvg
+                 ]
                     ++ List.map (cardSvgOnGrid False None) cardState.board
                 )
                 [{- The game has ended. No cancelling allowed. -}]

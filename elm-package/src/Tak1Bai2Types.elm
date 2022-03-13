@@ -111,58 +111,6 @@ coordToHistoryStr coord =
     String.fromInt (coord.x + 1) ++ String.fromInt (coord.y + 1)
 
 
-filterWhetherMemberOf : List a -> List a -> List a
-filterWhetherMemberOf judges =
-    List.filter (\c -> List.member c judges)
-
-
-robIth : Int -> List a -> ( List a, List a )
-robIth ind list =
-    let
-        newList =
-            List.take ind list ++ List.drop (ind + 1) list
-
-        xs =
-            case List.drop ind list of
-                x :: _ ->
-                    [ x ]
-
-                {- This path is never taken -}
-                [] ->
-                    []
-    in
-    ( xs, newList )
-
-
-allCoord : List Coordinate
-allCoord =
-    List.concatMap
-        (\y_ind ->
-            List.map
-                (\x_ind ->
-                    { y = y_ind, x = x_ind }
-                )
-                [ 0, 1, 2, 3, 4 ]
-        )
-        [ 0, 1, 2, 3, 4 ]
-
-
-addDelta : Coordinate -> ( Int, Int ) -> List Coordinate
-addDelta coord ( deltaX, deltaY ) =
-    let
-        x =
-            coord.x + deltaX
-
-        y =
-            coord.y + deltaY
-    in
-    if 0 <= x && x <= 4 && 0 <= y && y <= 4 then
-        [ { x = x, y = y } ]
-
-    else
-        []
-
-
 type alias Board =
     { cards : List CardOnBoard, empty : Coordinate }
 

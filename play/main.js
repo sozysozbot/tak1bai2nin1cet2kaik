@@ -5593,68 +5593,6 @@ var $author$project$Main$backgroundWoodenBoard = A2(
 			$elm$svg$Svg$Attributes$height('1050')
 		]),
 	_List_Nil);
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
-	});
-var $author$project$Tak1Bai2Types$allCoord = A2(
-	$elm$core$List$concatMap,
-	function (y_ind) {
-		return A2(
-			$elm$core$List$map,
-			function (x_ind) {
-				return {x: x_ind, y: y_ind};
-			},
-			_List_fromArray(
-				[0, 1, 2, 3, 4]));
-	},
-	_List_fromArray(
-		[0, 1, 2, 3, 4]));
-var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
-var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
-var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
-var $author$project$Main$boardSvg = _List_fromArray(
-	[
-		A2(
-		$elm$svg$Svg$g,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$id('board')
-			]),
-		A2(
-			$elm$core$List$map,
-			function (coord) {
-				return A2(
-					$elm$svg$Svg$rect,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x(
-							$elm$core$String$fromInt((coord.x * 100) + 2)),
-							$elm$svg$Svg$Attributes$y(
-							$elm$core$String$fromInt((coord.y * 100) + 2)),
-							$elm$svg$Svg$Attributes$width('100'),
-							$elm$svg$Svg$Attributes$height('100'),
-							$elm$svg$Svg$Attributes$fill('#000000'),
-							$elm$svg$Svg$Attributes$stroke('#000000'),
-							$elm$svg$Svg$Attributes$strokeWidth('4')
-						]),
-					_List_Nil);
-			},
-			$author$project$Tak1Bai2Types$allCoord))
-	]);
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -5693,6 +5631,7 @@ var $author$project$Main$cancelAllButton = A2(
 var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
+var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
 var $author$project$Main$longEdgeHalf = 80;
 var $author$project$Main$shortEdgeHalf = 21;
 var $author$project$Main$spacing = 40;
@@ -5808,7 +5747,9 @@ var $author$project$SvgColor$foregroundColor = function (pieceColor) {
 };
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeLinecap = _VirtualDom_attribute('stroke-linecap');
+var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $author$project$SvgElements$glyph = F2(
 	function (profession, color) {
 		var style = _List_fromArray(
@@ -6035,6 +5976,7 @@ var $elm$core$List$filter = F2(
 			list);
 	});
 var $elm$svg$Svg$filter = $elm$svg$Svg$trustedNode('filter');
+var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6485,38 +6427,38 @@ var $author$project$Main$view = function (_v0) {
 				$author$project$Main$view_,
 				true,
 				historyString,
-				A2(
-					$elm$core$List$cons,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							A2(
+							$elm$svg$Svg$defs,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$svg$Svg$filter,
+									_List_fromArray(
+										[
+											$elm$svg$Svg$Attributes$style('color-interpolation-filters:sRGB'),
+											$elm$svg$Svg$Attributes$id('blur')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$svg$Svg$feGaussianBlur,
+											_List_fromArray(
+												[
+													$elm$svg$Svg$Attributes$stdDeviation('1.5 1.5'),
+													$elm$svg$Svg$Attributes$result('blur')
+												]),
+											_List_Nil)
+										]))
+								]))
+						]),
 					A2(
-						$elm$svg$Svg$defs,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$svg$Svg$filter,
-								_List_fromArray(
-									[
-										$elm$svg$Svg$Attributes$style('color-interpolation-filters:sRGB'),
-										$elm$svg$Svg$Attributes$id('blur')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$svg$Svg$feGaussianBlur,
-										_List_fromArray(
-											[
-												$elm$svg$Svg$Attributes$stdDeviation('1.5 1.5'),
-												$elm$svg$Svg$Attributes$result('blur')
-											]),
-										_List_Nil)
-									]))
-							])),
-					_Utils_ap(
-						$author$project$Main$boardSvg,
-						A2(
-							$elm$core$List$map,
-							A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
-							cardState.board))),
+						$elm$core$List$map,
+						A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
+						cardState.board)),
 				_List_Nil);
 		case 'FirstHalfCompletedByHop':
 			var from = currentStatus.a.from;
