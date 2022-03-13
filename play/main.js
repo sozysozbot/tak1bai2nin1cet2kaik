@@ -5414,6 +5414,24 @@ var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
 	function (a, b) {
 		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
 	});
+var $elm$core$List$partition = F2(
+	function (pred, list) {
+		var step = F2(
+			function (x, _v0) {
+				var trues = _v0.a;
+				var falses = _v0.b;
+				return pred(x) ? _Utils_Tuple2(
+					A2($elm$core$List$cons, x, trues),
+					falses) : _Utils_Tuple2(
+					trues,
+					A2($elm$core$List$cons, x, falses));
+			});
+		return A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2(_List_Nil, _List_Nil),
+			list);
+	});
 var $author$project$Tak1Bai2Types$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
@@ -5425,25 +5443,73 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 					return saved;
 				case 'Hop':
 					if (_v0.a.$ === 'NothingSelected') {
-						var cardState = _v0.a.a;
+						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
+						var _v2 = A2(
+							$elm$core$List$partition,
+							function (x) {
+								return _Utils_eq(x.coord, from);
+							},
+							oldBoard.cards);
+						var cardsToBeMoved = _v2.a;
+						var remainingCards = _v2.b;
+						var newBoard = function () {
+							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
+								var cardToBeMoved = cardsToBeMoved.a;
+								return {
+									cards: A2(
+										$elm$core$List$cons,
+										_Utils_update(
+											cardToBeMoved,
+											{coord: to}),
+										remainingCards),
+									empty: from
+								};
+							} else {
+								return oldBoard;
+							}
+						}();
 						return A2(
 							$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
 							{from: from, to: to},
-							cardState);
+							newBoard);
 					} else {
 						break _v0$3;
 					}
 				case 'Slide':
 					if (_v0.a.$ === 'NothingSelected') {
-						var cardState = _v0.a.a;
+						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
+						var _v4 = A2(
+							$elm$core$List$partition,
+							function (x) {
+								return _Utils_eq(x.coord, from);
+							},
+							oldBoard.cards);
+						var cardsToBeMoved = _v4.a;
+						var remainingCards = _v4.b;
+						var newBoard = function () {
+							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
+								var cardToBeMoved = cardsToBeMoved.a;
+								return {
+									cards: A2(
+										$elm$core$List$cons,
+										_Utils_update(
+											cardToBeMoved,
+											{coord: to}),
+										remainingCards),
+									empty: from
+								};
+							} else {
+								return oldBoard;
+							}
+						}();
 						return A2(
 							$author$project$Tak1Bai2Types$FirstHalfCompletedBySlide,
 							{from: from, to: to},
-							cardState);
+							newBoard);
 					} else {
 						break _v0$3;
 					}

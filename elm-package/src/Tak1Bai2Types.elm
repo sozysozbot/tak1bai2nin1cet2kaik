@@ -29,7 +29,6 @@ type Profession
     | Tam2
 
 
-
 type alias CardOnBoard =
     { prof : Profession, cardColor : CardColor, coord : Coordinate, shown : Bool }
 
@@ -45,7 +44,6 @@ type alias FloatingMover_ =
 type MoveCommand
     = HorizVert
     | Diag
-
 
 
 type CurrentStatus
@@ -241,11 +239,37 @@ updateStatus msg modl saved =
             -- no matter what the state is, abort it and revert to what was saved last
             saved
 
-        ( NothingSelected cardState, Hop { from, to } ) ->
-            FirstHalfCompletedByHop { from = from, to = to } cardState
+        ( NothingSelected oldBoard, Hop { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
 
-        ( NothingSelected cardState, Slide { from, to } ) ->
-            FirstHalfCompletedBySlide { from = from, to = to } cardState
+                newBoard =
+                    case cardsToBeMoved of
+                        [ cardToBeMoved ] ->
+                            { empty = from, cards = { cardToBeMoved | coord = to } :: remainingCards }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            FirstHalfCompletedByHop { from = from, to = to } newBoard
+
+        ( NothingSelected oldBoard, Slide { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
+
+                newBoard =
+                    case cardsToBeMoved of
+                        [ cardToBeMoved ] ->
+                            { empty = from, cards = { cardToBeMoved | coord = to } :: remainingCards }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            FirstHalfCompletedBySlide { from = from, to = to } newBoard
 
         _ ->
             modl
