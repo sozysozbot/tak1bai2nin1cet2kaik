@@ -362,6 +362,17 @@ candidateYellowSvg msgToBeSent coord =
             ]
         ]
 
+candidateGreenSvg : msg -> Coordinate -> Svg msg
+candidateGreenSvg msgToBeSent coord =
+    g
+        [ transform ("translate(" ++ String.fromInt (coord.x * lattice_size) ++ " " ++ String.fromInt (coord.y * lattice_size) ++ ")")
+        , Svg.Events.onClick msgToBeSent
+        , Html.Attributes.style "cursor" "pointer"
+        ]
+        [ Svg.rect [ Svg.Attributes.transform "rotate(45)", Svg.Attributes.x "-23", Svg.Attributes.y "-23", Svg.Attributes.width "46", Svg.Attributes.height "46", fill "#aeff01" ]
+            [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
+            ]
+        ]
 
 nthNeighbor : Int -> Coordinate -> List Coordinate
 nthNeighbor n coord =
@@ -410,19 +421,18 @@ view (Model { historyString, currentStatus }) =
                 (backgroundWoodenBoard
                     :: drawArrow from to
                     :: List.map (\c -> f c.coord) board.cards
-                 --  ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
-                 --  ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
                 )
                 [ simpleCancelButton ]
 
-        FirstHalfCompletedBySlide { from, to } cardState ->
-            let
-                dynamicPart =
-                    List.map (cardSvgOnGrid False None) cardState.cards
-            in
+        FirstHalfCompletedBySlide { from, to } board ->
             view_ False
                 historyString
-                dynamicPart
+                (backgroundWoodenBoard
+                    :: drawArrow from to
+                    :: List.map (\c -> f c.coord) board.cards
+                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                )
                 [ simpleCancelButton ]
 
         NowWaitingForAdditionalSacrifice { mover, remaining } ->

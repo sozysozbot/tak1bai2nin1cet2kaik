@@ -5603,15 +5603,11 @@ var $author$project$Main$cancelAllButton = A2(
 		]));
 var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
-var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
-var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
-var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
 var $author$project$Main$longEdgeHalf = 80;
 var $author$project$Main$shortEdgeHalf = 21;
 var $author$project$Main$spacing = 40;
 var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
-var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$svg$Svg$Attributes$repeatCount = _VirtualDom_attribute('repeatCount');
 var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var $elm$svg$Svg$Attributes$values = function (value) {
@@ -5620,6 +5616,49 @@ var $elm$svg$Svg$Attributes$values = function (value) {
 		'values',
 		_VirtualDom_noJavaScriptUri(value));
 };
+var $author$project$Main$candidateGreenSvg = F2(
+	function (msgToBeSent, coord) {
+		return A2(
+			$elm$svg$Svg$g,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$transform(
+					'translate(' + ($elm$core$String$fromInt(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromInt(coord.y * $author$project$Main$lattice_size) + ')')))),
+					$elm$svg$Svg$Events$onClick(msgToBeSent),
+					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$transform('rotate(45)'),
+							$elm$svg$Svg$Attributes$x('-23'),
+							$elm$svg$Svg$Attributes$y('-23'),
+							$elm$svg$Svg$Attributes$width('46'),
+							$elm$svg$Svg$Attributes$height('46'),
+							$elm$svg$Svg$Attributes$fill('#aeff01')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$svg$Svg$animate,
+							_List_fromArray(
+								[
+									$elm$svg$Svg$Attributes$attributeName('opacity'),
+									$elm$svg$Svg$Attributes$dur('1.62s'),
+									$elm$svg$Svg$Attributes$values('0;1;0'),
+									$elm$svg$Svg$Attributes$repeatCount('indefinite')
+								]),
+							_List_Nil)
+						]))
+				]));
+	});
+var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
+var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
+var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
+var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $author$project$Main$candidateYellowSvg = F2(
 	function (msgToBeSent, coord) {
 		return A2(
@@ -6346,27 +6385,56 @@ var $author$project$Main$view = function (_v0) {
 					A2(
 						$elm$core$List$cons,
 						A2($author$project$Main$drawArrow, from, to),
-						A2(
-							$elm$core$List$map,
-							function (c) {
-								return $author$project$Main$f(c.coord);
-							},
-							board.cards))),
+						_Utils_ap(
+							A2(
+								$elm$core$List$map,
+								function (c) {
+									return $author$project$Main$f(c.coord);
+								},
+								board.cards),
+							A2(
+								$elm$core$List$map,
+								function (c) {
+									return A2(
+										$author$project$Main$candidateGreenSvg,
+										$author$project$Tak1Bai2Types$Hop(
+											{from: c, to: board.empty}),
+										c);
+								},
+								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		case 'FirstHalfCompletedBySlide':
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
-			var cardState = currentStatus.b;
-			var dynamicPart = A2(
-				$elm$core$List$map,
-				A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
-				cardState.cards);
+			var board = currentStatus.b;
 			return A4(
 				$author$project$Main$view_,
 				false,
 				historyString,
-				dynamicPart,
+				A2(
+					$elm$core$List$cons,
+					$author$project$Main$backgroundWoodenBoard,
+					A2(
+						$elm$core$List$cons,
+						A2($author$project$Main$drawArrow, from, to),
+						_Utils_ap(
+							A2(
+								$elm$core$List$map,
+								function (c) {
+									return $author$project$Main$f(c.coord);
+								},
+								board.cards),
+							A2(
+								$elm$core$List$map,
+								function (c) {
+									return A2(
+										$author$project$Main$candidateGreenSvg,
+										$author$project$Tak1Bai2Types$Hop(
+											{from: c, to: board.empty}),
+										c);
+								},
+								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		default:
