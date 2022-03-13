@@ -29,10 +29,6 @@ type Profession
     | Tam2
 
 
-type WhoseTurn
-    = KeseTurn
-    | RimaTurn
-
 
 type alias CardOnBoard =
     { prof : Profession, cardColor : CardColor, coord : Coordinate, shown : Bool }
@@ -51,27 +47,23 @@ type MoveCommand
     | Diag
 
 
-type Focus
-    = PieceOnTheBoard Coordinate
-    | PieceInKeseHand Int
-    | PieceInRimaHand Int
-
 
 type CurrentStatus
     = NothingSelected Board
     | GameTerminated
         { board : List CardOnBoard
         }
-    | MoverIsSelected Focus Board
+    | FirstHalfCompletedByHop { from : Coordinate, to : Coordinate } Board
+    | FirstHalfCompletedBySlide { from : Coordinate, to : Coordinate } Board
     | NowWaitingForAdditionalSacrifice FloatingMover_
 
 
 type OriginalMsg
     = None
+    | Slide { from : Coordinate, to : Coordinate }
+    | Hop { from : Coordinate, to : Coordinate }
     | Cancel
     | TurnEnd {- whether it is a capture or not is determined by whether there is an overlap -}
-    | GiveFocusTo Focus
-    | SendToTrashBinPart1 { whoseHand : WhoseTurn, index : Int }
     | SendToTrashBinPart2
     | MovementToward Coordinate
 
@@ -242,15 +234,18 @@ initialBoard cards =
     }
 
 
-updateStatus_ : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
-updateStatus_ msg modl saved =
+updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
+updateStatus msg modl saved =
     case ( modl, msg ) of
         ( _, Cancel ) ->
             -- no matter what the state is, abort it and revert to what was saved last
             saved
 
-        ( NothingSelected cardState, GiveFocusTo focus ) ->
-            MoverIsSelected focus cardState
+        ( NothingSelected cardState, Hop { from, to } ) ->
+            FirstHalfCompletedByHop { from = from, to = to } cardState
+
+        ( NothingSelected cardState, Slide { from, to } ) ->
+            FirstHalfCompletedBySlide { from = from, to = to } cardState
 
         _ ->
             modl

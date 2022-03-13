@@ -30,7 +30,6 @@ glyph profession color =
             ]
 
 
-
 goalCandidateRedSvg : msg -> Coordinate -> Svg msg
 goalCandidateRedSvg msgToBeSent coord =
     g
@@ -63,67 +62,6 @@ trashBinSvg =
     [ Svg.path [ d "M 0.8 22.4 l 11.8 67.4 c 1 4.4 5 7.4 9.4 7.4 c 0 0 0 0 0 0 h 45.4 c 4.4 0 8.2 -3.2 9.4 -7.4 v 0 l 11.8 -67.4 z m 43.8 11.6 c 1.6 0 2.6 1.2 2.6 2.6 v 43.6 c 0 1.4 -1 2.6 -2.6 2.6 c -1.4 0 -2.6 -1.2 -2.6 -2.6 v -43.6 c 0 -1.4 1.2 -2.6 2.6 -2.6 z m -21 0 c 1.4 0 2.6 1.2 2.6 2.4 l 3.8 43.6 c 0.2 1.4 -0.8 2.6 -2.4 2.8 c -1.4 0 -2.6 -1 -2.8 -2.4 l -3.8 -43.4 c -0.2 -1.6 1 -2.8 2.4 -3 c 0.2 0 0.2 0 0.2 0 z m 42 0 c 0 0 0 0 0.2 0 c 1.4 0.2 2.6 1.4 2.4 3 l -3.8 43.4 c -0.2 1.4 -1.4 2.4 -2.8 2.4 c -1.6 -0.2 -2.6 -1.4 -2.4 -2.8 l 3.8 -43.6 c 0 -1.2 1.2 -2.4 2.6 -2.4 z" ] []
     , Svg.path [ d "m 40 0 c -1.4 0 -2.6 1.2 -2.6 2.6 V 6 L 2.6 9 A 3 3 90 0 0 0 12 v 0 v 5.8 H 89.2 v -5.8 v 0 a 3 3 90 0 0 -2.6 -3 l -34.6 -3 V 2.6 c 0 -1.4 -1 -2.6 -2.4 -2.6 z" ] []
     ]
-
-
-playerSvg : WhoseTurn -> { a | victoryCrown : Bool, bigAndBlurred : Bool } -> Svg msg
-playerSvg playerColor o =
-    let
-        id_ =
-            case playerColor of
-                KeseTurn ->
-                    "kesePlayer"
-
-                RimaTurn ->
-                    "rimaPlayer"
-
-        translateY =
-            case playerColor of
-                KeseTurn ->
-                    442.0
-
-                RimaTurn ->
-                    56.75
-
-        color =
-            Red
-
-        scale =
-            if o.bigAndBlurred then
-                5.5
-
-            else
-                4.0
-
-        transf =
-            "translate(727," ++ String.fromFloat translateY ++ ") scale(" ++ String.fromFloat scale ++ ")"
-
-        person =
-            [ circle [ cx "0", cy "0", r "12", fill (backgroundColor color) ] []
-            , circle [ cx "0", cy "-5.5", r "4", fill (foregroundColor color) ] []
-            , Svg.path [ fill (foregroundColor color), d "m 0,0.5 c -3,0 -5.8,1 -8,3 v 3 h 16 v -3 c -2.2,-2 -5,-3 -8,-3 z" ] []
-            ]
-
-        crownStyle =
-            [ x "-12", y "-12", width "24", height "24", fill crownColor ]
-
-        crown =
-            [ rect crownStyle []
-            , rect (transform "rotate(30) " :: crownStyle) []
-            , rect (transform "rotate(-30)" :: crownStyle) []
-            ]
-
-        blur =
-            circle [ cx "0", cy "0", r "12", fill (backgroundColor color), Svg.Attributes.style ("fill:" ++ blurShadowColor ++ ";fill-opacity:1;filter:url(#blur)") ] []
-    in
-    if o.bigAndBlurred then
-        if o.victoryCrown then
-            g [ id id_, transform transf ] (crown ++ blur :: person)
-
-        else
-            g [ id id_, transform transf ] (blur :: person)
-
-    else
-        g [ id id_, transform transf ] person
 
 
 pieceSvg__ : (msg -> String) -> { a | color : String, width : String } -> msg -> CardOnBoard -> Svg msg

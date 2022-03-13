@@ -7,16 +7,11 @@ import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
 import KeseRimaSvgElements exposing (pieceSvg__)
-import Svg exposing (Attribute, Svg, defs, feGaussianBlur, g, rect, svg, text)
-import Svg.Attributes exposing (fill, height, id, result, stdDeviation, stroke, strokeWidth, transform, viewBox, width, x, y)
+import Svg exposing (Attribute, Svg, animate, defs, feGaussianBlur, g, rect, svg, text)
+import Svg.Attributes exposing (attributeName, dur, fill, height, id, repeatCount, result, stdDeviation, stroke, strokeWidth, transform, values, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
-import Svg exposing (animate)
-import Svg.Attributes exposing (attributeName)
-import Svg.Attributes exposing (dur)
-import Svg.Attributes exposing (values)
-import Svg.Attributes exposing (repeatCount)
 
 
 type alias Flags =
@@ -75,11 +70,6 @@ newHistory msg modl =
         _ ->
             {- Do nothing -}
             ""
-
-
-updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
-updateStatus =
-    updateStatus_
 
 
 boardSvg : List (Svg OriginalMsg)
@@ -311,6 +301,7 @@ spacing =
     40
 
 
+lattice_size : number
 lattice_size =
     shortEdgeHalf + longEdgeHalf + spacing
 
@@ -366,9 +357,10 @@ candidateYellowSvg msgToBeSent coord =
         , Svg.Events.onClick msgToBeSent
         , Html.Attributes.style "cursor" "pointer"
         ]
-        [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill "#ffff00" ] [
-            animate [attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite"] []
-        ] ]
+        [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill "#ffff00" ]
+            [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
+            ]
+        ]
 
 
 nthNeighbor : Int -> Coordinate -> List Coordinate
@@ -389,8 +381,8 @@ view (Model { historyString, currentStatus }) =
                 historyString
                 (rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
                     :: List.map (\c -> f c.coord) board.cards
-                    ++ List.map (candidateYellowSvg None) (nthNeighbor 1 board.empty)
-                    ++ List.map (candidateYellowSvg None) (nthNeighbor 2 board.empty)
+                    ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
+                    ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
                 )
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
@@ -407,13 +399,20 @@ view (Model { historyString, currentStatus }) =
                 )
                 [{- The game has ended. No cancelling allowed. -}]
 
-        MoverIsSelected focus cardState ->
+        FirstHalfCompletedByHop { from, to } cardState ->
             let
                 dynamicPart =
-                    case focus of
-                        _ ->
-                            {- Parachuting -}
-                            List.map (cardSvgOnGrid False None) cardState.cards
+                    List.map (cardSvgOnGrid False None) cardState.cards
+            in
+            view_ False
+                historyString
+                dynamicPart
+                [ simpleCancelButton ]
+
+        FirstHalfCompletedBySlide { from, to } cardState ->
+            let
+                dynamicPart =
+                    List.map (cardSvgOnGrid False None) cardState.cards
             in
             view_ False
                 historyString
@@ -421,10 +420,6 @@ view (Model { historyString, currentStatus }) =
                 [ simpleCancelButton ]
 
         NowWaitingForAdditionalSacrifice { mover, remaining } ->
-            let
-                isSacrificingCircleRequired =
-                    True
-            in
             view_ False
                 historyString
                 (List.map
@@ -432,7 +427,7 @@ view (Model { historyString, currentStatus }) =
                     remaining.cards
                 )
                 (case List.filter (\p -> p.coord == mover.coord) remaining.cards of
-                    [ p ] ->
+                    [] ->
                         [ cancelAllButton ]
 
                     _ ->

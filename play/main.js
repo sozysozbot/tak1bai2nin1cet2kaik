@@ -5406,40 +5406,59 @@ var $author$project$Main$newHistory = F2(
 		var _v0 = _Utils_Tuple2(modl, msg);
 		return '';
 	});
-var $author$project$Tak1Bai2Types$MoverIsSelected = F2(
+var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
 	function (a, b) {
-		return {$: 'MoverIsSelected', a: a, b: b};
+		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
 	});
-var $author$project$Tak1Bai2Types$updateStatus_ = F3(
+var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
+	function (a, b) {
+		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
+	});
+var $author$project$Tak1Bai2Types$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
-		_v0$2:
+		_v0$3:
 		while (true) {
 			switch (_v0.b.$) {
 				case 'Cancel':
 					var _v1 = _v0.b;
 					return saved;
-				case 'GiveFocusTo':
+				case 'Hop':
 					if (_v0.a.$ === 'NothingSelected') {
 						var cardState = _v0.a.a;
-						var focus = _v0.b.a;
-						return A2($author$project$Tak1Bai2Types$MoverIsSelected, focus, cardState);
+						var from = _v0.b.a.from;
+						var to = _v0.b.a.to;
+						return A2(
+							$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
+							{from: from, to: to},
+							cardState);
 					} else {
-						break _v0$2;
+						break _v0$3;
+					}
+				case 'Slide':
+					if (_v0.a.$ === 'NothingSelected') {
+						var cardState = _v0.a.a;
+						var from = _v0.b.a.from;
+						var to = _v0.b.a.to;
+						return A2(
+							$author$project$Tak1Bai2Types$FirstHalfCompletedBySlide,
+							{from: from, to: to},
+							cardState);
+					} else {
+						break _v0$3;
 					}
 				default:
-					break _v0$2;
+					break _v0$3;
 			}
 		}
 		return modl;
 	});
-var $author$project$Main$updateStatus = $author$project$Tak1Bai2Types$updateStatus_;
 var $author$project$Main$update = F2(
 	function (msg, _v0) {
 		var historyString = _v0.a.historyString;
 		var currentStatus = _v0.a.currentStatus;
 		var saved = _v0.a.saved;
-		var newStat = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
+		var newStat = A3($author$project$Tak1Bai2Types$updateStatus, msg, currentStatus, saved);
 		var newHist = _Utils_ap(
 			historyString,
 			A2($author$project$Main$newHistory, msg, currentStatus));
@@ -5460,7 +5479,13 @@ var $author$project$Main$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Tak1Bai2Types$Hop = function (a) {
+	return {$: 'Hop', a: a};
+};
 var $author$project$Tak1Bai2Types$None = {$: 'None'};
+var $author$project$Tak1Bai2Types$Slide = function (a) {
+	return {$: 'Slide', a: a};
+};
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -6190,11 +6215,23 @@ var $author$project$Main$view = function (_v0) {
 						_Utils_ap(
 							A2(
 								$elm$core$List$map,
-								$author$project$Main$candidateYellowSvg($author$project$Tak1Bai2Types$None),
+								function (c) {
+									return A2(
+										$author$project$Main$candidateYellowSvg,
+										$author$project$Tak1Bai2Types$Slide(
+											{from: c, to: board.empty}),
+										c);
+								},
 								A2($author$project$Main$nthNeighbor, 1, board.empty)),
 							A2(
 								$elm$core$List$map,
-								$author$project$Main$candidateYellowSvg($author$project$Tak1Bai2Types$None),
+								function (c) {
+									return A2(
+										$author$project$Main$candidateYellowSvg,
+										$author$project$Tak1Bai2Types$Hop(
+											{from: c, to: board.empty}),
+										c);
+								},
 								A2($author$project$Main$nthNeighbor, 2, board.empty))))),
 				_List_Nil);
 		case 'GameTerminated':
@@ -6236,8 +6273,24 @@ var $author$project$Main$view = function (_v0) {
 							A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
 							cardState.board))),
 				_List_Nil);
-		case 'MoverIsSelected':
-			var focus = currentStatus.a;
+		case 'FirstHalfCompletedByHop':
+			var from = currentStatus.a.from;
+			var to = currentStatus.a.to;
+			var cardState = currentStatus.b;
+			var dynamicPart = A2(
+				$elm$core$List$map,
+				A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
+				cardState.cards);
+			return A4(
+				$author$project$Main$view_,
+				false,
+				historyString,
+				dynamicPart,
+				_List_fromArray(
+					[$author$project$Main$simpleCancelButton]));
+		case 'FirstHalfCompletedBySlide':
+			var from = currentStatus.a.from;
+			var to = currentStatus.a.to;
 			var cardState = currentStatus.b;
 			var dynamicPart = A2(
 				$elm$core$List$map,
@@ -6253,7 +6306,6 @@ var $author$project$Main$view = function (_v0) {
 		default:
 			var mover = currentStatus.a.mover;
 			var remaining = currentStatus.a.remaining;
-			var isSacrificingCircleRequired = true;
 			return A4(
 				$author$project$Main$view_,
 				false,
@@ -6263,14 +6315,13 @@ var $author$project$Main$view = function (_v0) {
 					A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
 					remaining.cards),
 				function () {
-					var _v3 = A2(
+					var _v2 = A2(
 						$elm$core$List$filter,
 						function (p) {
 							return _Utils_eq(p.coord, mover.coord);
 						},
 						remaining.cards);
-					if (_v3.b && (!_v3.b.b)) {
-						var p = _v3.a;
+					if (!_v2.b) {
 						return _List_fromArray(
 							[$author$project$Main$cancelAllButton]);
 					} else {

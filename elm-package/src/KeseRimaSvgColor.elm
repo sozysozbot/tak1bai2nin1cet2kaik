@@ -3,11 +3,6 @@ module KeseRimaSvgColor exposing (..)
 import Tak1Bai2Types exposing (..)
 
 
-boardBackgroundColor : Coordinate -> String
-boardBackgroundColor coord =
-    "#ccc"
-
-
 backgroundColor : CardColor -> String
 backgroundColor pieceColor =
     case pieceColor of
@@ -28,16 +23,6 @@ foregroundColor pieceColor =
             "#483e37"
 
 
-borderColor : CardColor -> String
-borderColor c =
-    case c of
-        Red ->
-            "#005242"
-
-        Black ->
-            "#00b592"
-
-
 crownColor : String
 crownColor =
     "#ffff00"
@@ -51,20 +36,6 @@ strokeColor c =
 
         Black ->
             "#eee"
-
-
-boardBorderColor : String
-boardBorderColor =
-    "#000"
-
-
-trashBinColor : Bool -> String
-trashBinColor c =
-    if c then
-        "#555"
-
-    else
-        "#eee"
 
 
 blurShadowColor : String
