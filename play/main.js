@@ -5486,6 +5486,24 @@ var $author$project$Tak1Bai2Types$None = {$: 'None'};
 var $author$project$Tak1Bai2Types$Slide = function (a) {
 	return {$: 'Slide', a: a};
 };
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var $author$project$Main$backgroundWoodenBoard = A2(
+	$elm$svg$Svg$rect,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Attributes$fill('#e0c39d'),
+			$elm$svg$Svg$Attributes$x('-100'),
+			$elm$svg$Svg$Attributes$y('-100'),
+			$elm$svg$Svg$Attributes$width('1050'),
+			$elm$svg$Svg$Attributes$height('1050')
+		]),
+	_List_Nil);
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -5515,17 +5533,10 @@ var $author$project$Tak1Bai2Types$allCoord = A2(
 	},
 	_List_fromArray(
 		[0, 1, 2, 3, 4]));
-var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
-var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
-var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var $author$project$Main$boardSvg = _List_fromArray(
 	[
 		A2(
@@ -5653,14 +5664,14 @@ var $author$project$Main$msgToIcon = function (msgToBeSent) {
 		return 'pointer';
 	}
 };
-var $author$project$KeseRimaSvgColor$backgroundColor = function (pieceColor) {
+var $author$project$SvgColor$backgroundColor = function (pieceColor) {
 	if (pieceColor.$ === 'Red') {
 		return '#c8beb7';
 	} else {
 		return '#483e37';
 	}
 };
-var $author$project$KeseRimaSvgColor$foregroundColor = function (pieceColor) {
+var $author$project$SvgColor$foregroundColor = function (pieceColor) {
 	if (pieceColor.$ === 'Red') {
 		return '#c8beb7';
 	} else {
@@ -5670,7 +5681,7 @@ var $author$project$KeseRimaSvgColor$foregroundColor = function (pieceColor) {
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
 var $elm$svg$Svg$Attributes$strokeLinecap = _VirtualDom_attribute('stroke-linecap');
-var $author$project$KeseRimaSvgElements$glyph = F2(
+var $author$project$SvgElements$glyph = F2(
 	function (profession, color) {
 		var style = _List_fromArray(
 			[
@@ -5733,7 +5744,7 @@ var $author$project$KeseRimaSvgElements$glyph = F2(
 					]);
 		}
 	});
-var $author$project$KeseRimaSvgElements$pieceSvg__ = F4(
+var $author$project$SvgElements$pieceSvg__ = F4(
 	function (toIcon, strok, msgToBeSent, p) {
 		return A2(
 			$elm$svg$Svg$g,
@@ -5758,17 +5769,17 @@ var $author$project$KeseRimaSvgElements$pieceSvg__ = F4(
 							$elm$svg$Svg$Attributes$width('80'),
 							$elm$svg$Svg$Attributes$height('80'),
 							$elm$svg$Svg$Attributes$fill(
-							$author$project$KeseRimaSvgColor$backgroundColor(p.cardColor)),
+							$author$project$SvgColor$backgroundColor(p.cardColor)),
 							$elm$svg$Svg$Attributes$stroke(strok.color),
 							$elm$svg$Svg$Attributes$strokeWidth(strok.width)
 						]),
 					_List_Nil),
 				A2(
-					$author$project$KeseRimaSvgElements$glyph,
+					$author$project$SvgElements$glyph,
 					p.prof,
-					$author$project$KeseRimaSvgColor$foregroundColor(p.cardColor))));
+					$author$project$SvgColor$foregroundColor(p.cardColor))));
 	});
-var $author$project$Main$pieceSvg_ = $author$project$KeseRimaSvgElements$pieceSvg__($author$project$Main$msgToIcon);
+var $author$project$Main$pieceSvg_ = $author$project$SvgElements$pieceSvg__($author$project$Main$msgToIcon);
 var $author$project$Main$pieceSvg = F3(
 	function (focused, msgToBeSent, p) {
 		var strok = focused ? {color: '#000000', width: '10'} : {color: 'none', width: 'none'};
@@ -5791,6 +5802,64 @@ var $author$project$Main$cardSvgOnGrid = F3(
 			});
 	});
 var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$Basics$min = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) < 0) ? x : y;
+	});
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $author$project$Main$drawArrow = F2(
+	function (from, to) {
+		var top_left = {
+			x: A2($elm$core$Basics$min, from.x, to.x),
+			y: A2($elm$core$Basics$min, from.y, to.y)
+		};
+		var d_data = function () {
+			if (_Utils_eq(from.x, to.x) && (_Utils_cmp(from.y, to.y) > 0)) {
+				var delta = from.y - to.y;
+				return 'm31.6 ' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Main$lattice_size)) + ('h5.8v' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Main$lattice_size))) + 'l-21.3 31 4.5 3.2 11-16z')));
+			} else {
+				if (_Utils_eq(from.x, to.x) && (_Utils_cmp(from.y, to.y) < 0)) {
+					var delta = to.y - from.y;
+					return 'm31.6 18.7h5.8v' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Main$lattice_size)) + 'l-21.3-31 4.5-3.2 11 16z');
+				} else {
+					if (_Utils_eq(from.y, to.y) && (_Utils_cmp(from.x, to.x) > 0)) {
+						var delta = from.x - to.x;
+						return 'm' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Main$lattice_size)) + (' 31.6v5.8h' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Main$lattice_size))) + 'l31-21.3 3.2 4.5-16 11z')));
+					} else {
+						if (_Utils_eq(from.y, to.y) && (_Utils_cmp(from.x, to.x) < 0)) {
+							var delta = to.x - from.x;
+							return 'm18.7 31.6v5.8h' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Main$lattice_size)) + 'l-31-21.3-3.2 4.5 16 11z');
+						} else {
+							return '';
+						}
+					}
+				}
+			}
+		}();
+		return A2(
+			$elm$svg$Svg$g,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$transform(
+					'translate(' + ($elm$core$String$fromInt(top_left.x * $author$project$Main$lattice_size) + (',' + ($elm$core$String$fromInt(top_left.y * $author$project$Main$lattice_size) + ')'))))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$path,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$d(d_data),
+							$elm$svg$Svg$Attributes$fill('#aeff01'),
+							$elm$svg$Svg$Attributes$stroke('#000'),
+							$elm$svg$Svg$Attributes$strokeWidth('2')
+						]),
+					_List_Nil)
+				]));
+	});
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Main$f = function (coord) {
 	var y_coord_mid = coord.y * $author$project$Main$lattice_size;
@@ -6194,17 +6263,7 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					A2(
-						$elm$svg$Svg$rect,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$fill('#e0c39d'),
-								$elm$svg$Svg$Attributes$x('-100'),
-								$elm$svg$Svg$Attributes$y('-100'),
-								$elm$svg$Svg$Attributes$width('1050'),
-								$elm$svg$Svg$Attributes$height('1050')
-							]),
-						_List_Nil),
+					$author$project$Main$backgroundWoodenBoard,
 					_Utils_ap(
 						A2(
 							$elm$core$List$map,
@@ -6276,16 +6335,23 @@ var $author$project$Main$view = function (_v0) {
 		case 'FirstHalfCompletedByHop':
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
-			var cardState = currentStatus.b;
-			var dynamicPart = A2(
-				$elm$core$List$map,
-				A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
-				cardState.cards);
+			var board = currentStatus.b;
 			return A4(
 				$author$project$Main$view_,
 				false,
 				historyString,
-				dynamicPart,
+				A2(
+					$elm$core$List$cons,
+					$author$project$Main$backgroundWoodenBoard,
+					A2(
+						$elm$core$List$cons,
+						A2($author$project$Main$drawArrow, from, to),
+						A2(
+							$elm$core$List$map,
+							function (c) {
+								return $author$project$Main$f(c.coord);
+							},
+							board.cards))),
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		case 'FirstHalfCompletedBySlide':

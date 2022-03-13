@@ -6,10 +6,10 @@ module Main exposing (init, main, view)
 import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
-import SvgElements exposing (pieceSvg__)
-import Svg exposing (Attribute, Svg, animate, defs, feGaussianBlur, g, rect, svg, text)
-import Svg.Attributes exposing (attributeName, dur, fill, height, id, repeatCount, result, stdDeviation, stroke, strokeWidth, transform, values, viewBox, width, x, y)
+import Svg exposing (Attribute, Svg, animate, defs, feGaussianBlur, g, path, rect, svg, text)
+import Svg.Attributes exposing (attributeName, d, dur, fill, height, id, repeatCount, result, stdDeviation, stroke, strokeWidth, transform, values, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
+import SvgElements exposing (pieceSvg__)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
 
@@ -373,13 +373,18 @@ nthNeighbor n coord =
         |> List.filter (\c -> c.x >= 0 && c.x < 7 && c.y >= 0 && c.y < 7)
 
 
+backgroundWoodenBoard : Svg msg
+backgroundWoodenBoard =
+    rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
+
+
 view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus }) =
     case currentStatus of
         NothingSelected board ->
             view_ False
                 historyString
-                (rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
+                (backgroundWoodenBoard
                     :: List.map (\c -> f c.coord) board.cards
                     ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
                     ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
@@ -399,14 +404,15 @@ view (Model { historyString, currentStatus }) =
                 )
                 [{- The game has ended. No cancelling allowed. -}]
 
-        FirstHalfCompletedByHop { from, to } cardState ->
-            let
-                dynamicPart =
-                    List.map (cardSvgOnGrid False None) cardState.cards
-            in
+        FirstHalfCompletedByHop { from, to } board ->
             view_ False
                 historyString
-                dynamicPart
+                (backgroundWoodenBoard
+                    :: drawArrow from to
+                    :: List.map (\c -> f c.coord) board.cards
+                 --  ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
+                 --  ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
+                )
                 [ simpleCancelButton ]
 
         FirstHalfCompletedBySlide { from, to } cardState ->
@@ -465,3 +471,59 @@ init flags =
         }
     , Cmd.none
     )
+
+
+drawArrow : Coordinate -> Coordinate -> Svg msg
+drawArrow from to =
+    let
+        d_data =
+            if from.x == to.x && from.y > to.y then
+                -- up arrow
+                let
+                    delta =
+                        toFloat (from.y - to.y)
+                in
+                "m31.6 "
+                    ++ String.fromFloat (51.3 + delta * lattice_size)
+                    ++ "h5.8v"
+                    ++ String.fromFloat -(34.5 + delta * lattice_size)
+                    ++ "l-21.3 31 4.5 3.2 11-16z"
+
+            else if from.x == to.x && from.y < to.y then
+                -- down arrow
+                let
+                    delta =
+                        toFloat (to.y - from.y)
+                in
+                "m31.6 18.7h5.8v" ++ String.fromFloat (34.5 + delta * lattice_size) ++ "l-21.3-31 4.5-3.2 11 16z"
+
+            else if from.y == to.y && from.x > to.x then
+                -- left arrow
+                let
+                    delta =
+                        toFloat (from.x - to.x)
+                in
+                "m"
+                    ++ String.fromFloat (51.3 + delta * lattice_size)
+                    ++ " 31.6v5.8h"
+                    ++ String.fromFloat -(34.5 + delta * lattice_size)
+                    ++ "l31-21.3 3.2 4.5-16 11z"
+
+            else if from.y == to.y && from.x < to.x then
+                -- right arrow
+                let
+                    delta =
+                        toFloat (to.x - from.x)
+                in
+                "m18.7 31.6v5.8h" ++ String.fromFloat (34.5 + delta * lattice_size) ++ "l-31-21.3-3.2 4.5 16 11z"
+
+            else
+                ""
+
+        top_left =
+            { y = min from.y to.y, x = min from.x to.x }
+    in
+    g
+        [ transform ("translate(" ++ String.fromInt (top_left.x * lattice_size) ++ "," ++ String.fromInt (top_left.y * lattice_size) ++ ")")
+        ]
+        [ path [ d d_data, fill "#aeff01", stroke "#000", strokeWidth "2" ] [] ]
