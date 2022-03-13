@@ -5498,7 +5498,7 @@ var $author$project$Tak1Bai2Types$updateStatus = F3(
 										$elm$core$List$cons,
 										_Utils_update(
 											cardToBeMoved,
-											{coord: to}),
+											{coord: to, shown: true}),
 										remainingCards),
 									empty: from
 								};
@@ -5907,6 +5907,40 @@ var $author$project$Main$cardSvgOnGrid = F3(
 			});
 	});
 var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $author$project$Main$displayCard = function (c) {
+	var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
+	var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
+	var parity = A2($elm$core$Basics$modBy, 2, c.coord.x + c.coord.y);
+	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
+	var width_text = $elm$core$String$fromInt(widthHalf * 2);
+	var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
+	var height_text = $elm$core$String$fromInt(heightHalf * 2);
+	return A2(
+		$elm$svg$Svg$g,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$transform(
+				'translate(' + ($elm$core$String$fromInt(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromInt(y_coord_mid - heightHalf) + ')'))))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$svg$Svg$rect,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$x('0'),
+						$elm$svg$Svg$Attributes$y('0'),
+						$elm$svg$Svg$Attributes$width(width_text),
+						$elm$svg$Svg$Attributes$height(height_text),
+						$elm$svg$Svg$Attributes$fill(
+						c.shown ? '#ffffff' : '#000000'),
+						$elm$svg$Svg$Attributes$stroke('none'),
+						$elm$svg$Svg$Attributes$strokeWidth('none')
+					]),
+				_List_Nil)
+			]));
+};
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$Basics$min = F2(
 	function (x, y) {
@@ -5965,39 +5999,6 @@ var $author$project$Main$drawArrow = F2(
 					_List_Nil)
 				]));
 	});
-var $elm$core$Basics$modBy = _Basics_modBy;
-var $author$project$Main$f = function (coord) {
-	var y_coord_mid = coord.y * $author$project$Main$lattice_size;
-	var x_coord_mid = coord.x * $author$project$Main$lattice_size;
-	var parity = A2($elm$core$Basics$modBy, 2, coord.x + coord.y);
-	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
-	var width_text = $elm$core$String$fromInt(widthHalf * 2);
-	var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
-	var height_text = $elm$core$String$fromInt(heightHalf * 2);
-	return A2(
-		$elm$svg$Svg$g,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$transform(
-				'translate(' + ($elm$core$String$fromInt(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromInt(y_coord_mid - heightHalf) + ')'))))
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$svg$Svg$rect,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$x('0'),
-						$elm$svg$Svg$Attributes$y('0'),
-						$elm$svg$Svg$Attributes$width(width_text),
-						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill('#000000'),
-						$elm$svg$Svg$Attributes$stroke('none'),
-						$elm$svg$Svg$Attributes$strokeWidth('none')
-					]),
-				_List_Nil)
-			]));
-};
 var $elm$svg$Svg$feGaussianBlur = $elm$svg$Svg$trustedNode('feGaussianBlur');
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6370,12 +6371,7 @@ var $author$project$Main$view = function (_v0) {
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard,
 					_Utils_ap(
-						A2(
-							$elm$core$List$map,
-							function (c) {
-								return $author$project$Main$f(c.coord);
-							},
-							board.cards),
+						A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
 						_Utils_ap(
 							A2(
 								$elm$core$List$map,
@@ -6452,12 +6448,7 @@ var $author$project$Main$view = function (_v0) {
 						$elm$core$List$cons,
 						A2($author$project$Main$drawArrow, from, to),
 						_Utils_ap(
-							A2(
-								$elm$core$List$map,
-								function (c) {
-									return $author$project$Main$f(c.coord);
-								},
-								board.cards),
+							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
 							A2(
 								$elm$core$List$map,
 								function (c) {
@@ -6485,12 +6476,7 @@ var $author$project$Main$view = function (_v0) {
 						$elm$core$List$cons,
 						A2($author$project$Main$drawArrow, from, to),
 						_Utils_ap(
-							A2(
-								$elm$core$List$map,
-								function (c) {
-									return $author$project$Main$f(c.coord);
-								},
-								board.cards),
+							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
 							A2(
 								$elm$core$List$map,
 								function (c) {

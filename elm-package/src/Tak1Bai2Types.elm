@@ -263,7 +263,7 @@ updateStatus msg modl saved =
                 newBoard =
                     case cardsToBeMoved of
                         [ cardToBeMoved ] ->
-                            { empty = from, cards = { cardToBeMoved | coord = to } :: remainingCards }
+                            { empty = from, cards = { cardToBeMoved | coord = to, shown = True } :: remainingCards }
 
                         _ ->
                             -- this path is not taken

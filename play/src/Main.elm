@@ -133,82 +133,6 @@ pieceSvg_ =
     pieceSvg__ msgToIcon
 
 
-
-{-
-   displayCapturedCardsAndTwoDecks : { a | keseDeck : List b, rimaDeck : List c, capturedByKese : List Profession, capturedByRima : List Profession } -> List (Svg OriginalMsg)
-   displayCapturedCardsAndTwoDecks model =
-       twoDecks model
-           ++ [ g [ id "capturedByKese" ]
-                   (List.indexedMap
-                       (\i prof ->
-                           pieceSvg_
-                               { color = strokeColor Rima
-
-                               {- what is captured by Kese turns out to be Rima -}
-                               , width = "1"
-                               }
-                               None
-                               { coord =
-                                   { x =
-                                       -0.115
-                                           {- to handle the automatic offset and the 3px difference in the border -} + toFloat i
-                                           * (KeseRimaSvgElements.spacing <| List.length <| model.capturedByKese)
-                                   , y = 6.0
-                                   }
-                               , prof = prof
-                               , pieceColor = Rima
-                               }
-                       )
-                       model.capturedByKese
-                   )
-              , g [ id "capturedByRima" ]
-                   (List.indexedMap
-                       (\i prof ->
-                           pieceSvg_
-                               { color = strokeColor Kese, width = "1" }
-                               None
-                               { coord =
-                                   { x =
-                                       -0.115
-                                           {- to handle the automatic offset and the 3px difference in the border -} + 5.0
-                                           * 0.846
-                                           - toFloat i
-                                           * (KeseRimaSvgElements.spacing <| List.length <| model.capturedByRima)
-                                   , y = -2.0
-                                   }
-                               , prof = prof
-                               , pieceColor = Kese
-                               }
-                       )
-                       model.capturedByRima
-                   )
-              ]
-
-
-   stationaryPart : Board -> List (Svg OriginalMsg)
-   stationaryPart cardState =
-       defs []
-           [ Svg.filter [ Svg.Attributes.style "color-interpolation-filters:sRGB", id "blur" ]
-               [ feGaussianBlur [ stdDeviation "1.5 1.5", result "blur" ] []
-               ]
-           ]
-           :: boardSvg
-           ++ displayCapturedCardsAndTwoDecks cardState
-           ++ [ playerSvg KeseTurn { victoryCrown = False, bigAndBlurred = KeseTurn == cardState.whoseTurn }
-              , playerSvg RimaTurn { victoryCrown = False, bigAndBlurred = RimaTurn == cardState.whoseTurn }
-              ]
-
-
-   twoTrashBinsSvg : Maybe WhoseTurn -> List (Svg OriginalMsg)
-   twoTrashBinsSvg trashBinFocus =
-       [ g [ id "keseTrashBin", transform "translate(530 560)" ] [ trashBinSvg_ (trashBinFocus == Just KeseTurn) ]
-       , g [ id "rimaTrashBin", transform "translate(530 -150)" ] [ trashBinSvg_ (trashBinFocus == Just RimaTurn) ]
-       ]
-
-
--}
-
-
 targetBlankLink : List (Attribute msg) -> List (Html msg) -> Html msg
 targetBlankLink attributes =
     Html.a (Html.Attributes.target "_blank" :: attributes)
@@ -306,11 +230,11 @@ lattice_size =
     shortEdgeHalf + longEdgeHalf + spacing
 
 
-f : Coordinate -> Svg msg
-f coord =
+displayCard : CardOnBoard -> Svg msg
+displayCard c =
     let
         parity =
-            modBy 2 (coord.x + coord.y)
+            modBy 2 (c.coord.x + c.coord.y)
 
         widthHalf =
             if parity == 0 then
@@ -333,10 +257,10 @@ f coord =
             String.fromInt (heightHalf * 2)
 
         x_coord_mid =
-            coord.x * lattice_size
+            c.coord.x * lattice_size
 
         y_coord_mid =
-            coord.y * lattice_size
+            c.coord.y * lattice_size
     in
     g
         [ transform
@@ -347,7 +271,23 @@ f coord =
                 ++ ")"
             )
         ]
-        [ rect [ x "0", y "0", width width_text, height height_text, fill "#000000", stroke "none", strokeWidth "none" ] [] ]
+        [ rect
+            [ x "0"
+            , y "0"
+            , width width_text
+            , height height_text
+            , fill
+                (if c.shown then
+                    "#ffffff"
+
+                 else
+                    "#000000"
+                )
+            , stroke "none"
+            , strokeWidth "none"
+            ]
+            []
+        ]
 
 
 candidateYellowSvg : msg -> Coordinate -> Svg msg
@@ -362,6 +302,7 @@ candidateYellowSvg msgToBeSent coord =
             ]
         ]
 
+
 candidateGreenSvg : msg -> Coordinate -> Svg msg
 candidateGreenSvg msgToBeSent coord =
     g
@@ -373,6 +314,7 @@ candidateGreenSvg msgToBeSent coord =
             [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
             ]
         ]
+
 
 nthNeighbor : Int -> Coordinate -> List Coordinate
 nthNeighbor n coord =
@@ -396,7 +338,7 @@ view (Model { historyString, currentStatus }) =
             view_ False
                 historyString
                 (backgroundWoodenBoard
-                    :: List.map (\c -> f c.coord) board.cards
+                    :: List.map displayCard board.cards
                     ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (nthNeighbor 1 board.empty)
                     ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
                 )
@@ -420,7 +362,7 @@ view (Model { historyString, currentStatus }) =
                 historyString
                 (backgroundWoodenBoard
                     :: drawArrow from to
-                    :: List.map (\c -> f c.coord) board.cards
+                    :: List.map displayCard board.cards
                     ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
                 )
                 [ simpleCancelButton ]
@@ -430,7 +372,7 @@ view (Model { historyString, currentStatus }) =
                 historyString
                 (backgroundWoodenBoard
                     :: drawArrow from to
-                    :: List.map (\c -> f c.coord) board.cards
+                    :: List.map displayCard board.cards
                     ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (nthNeighbor 2 board.empty)
                 )
                 [ simpleCancelButton ]
