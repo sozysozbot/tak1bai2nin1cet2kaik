@@ -5330,7 +5330,7 @@ var $elm$core$List$take = F2(
 	function (n, list) {
 		return A3($elm$core$List$takeFast, 0, n, list);
 	});
-var $author$project$Tak1Bai2Types$initialBoard = function (cards) {
+var $author$project$Main$initialBoard = function (cards) {
 	var foo = F2(
 		function (i, card) {
 			return {
@@ -5388,7 +5388,7 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (flags) {
 	var initialStatus = $author$project$Tak1Bai2Types$NothingSelected(
-		$author$project$Tak1Bai2Types$initialBoard(flags.cards));
+		$author$project$Main$initialBoard(flags.cards));
 	return _Utils_Tuple2(
 		$author$project$Main$Model(
 			{currentStatus: initialStatus, historyString: '', saved: initialStatus}),
@@ -5436,7 +5436,7 @@ var $elm$core$List$partition = F2(
 			_Utils_Tuple2(_List_Nil, _List_Nil),
 			list);
 	});
-var $author$project$Tak1Bai2Types$updateStatus = F3(
+var $author$project$Main$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
 		_v0$3:
@@ -5547,7 +5547,7 @@ var $author$project$Main$update = F2(
 		var historyString = _v0.a.historyString;
 		var currentStatus = _v0.a.currentStatus;
 		var saved = _v0.a.saved;
-		var newStat = A3($author$project$Tak1Bai2Types$updateStatus, msg, currentStatus, saved);
+		var newStat = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
 		var newHist = _Utils_ap(
 			historyString,
 			A2($author$project$Main$newHistory, msg, currentStatus));
@@ -5571,7 +5571,6 @@ var $author$project$Main$update = F2(
 var $author$project$Tak1Bai2Types$Hop = function (a) {
 	return {$: 'Hop', a: a};
 };
-var $author$project$Tak1Bai2Types$None = {$: 'None'};
 var $author$project$Tak1Bai2Types$Slide = function (a) {
 	return {$: 'Slide', a: a};
 };
@@ -5724,154 +5723,9 @@ var $author$project$Main$candidateYellowSvg = F2(
 						]))
 				]));
 	});
-var $author$project$Main$msgToIcon = function (msgToBeSent) {
-	if (msgToBeSent.$ === 'None') {
-		return 'not-allowed';
-	} else {
-		return 'pointer';
-	}
-};
-var $author$project$SvgColor$backgroundColor = function (pieceColor) {
-	if (pieceColor.$ === 'Red') {
-		return '#c8beb7';
-	} else {
-		return '#483e37';
-	}
-};
-var $author$project$SvgColor$foregroundColor = function (pieceColor) {
-	if (pieceColor.$ === 'Red') {
-		return '#c8beb7';
-	} else {
-		return '#483e37';
-	}
-};
-var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
-var $elm$svg$Svg$Attributes$strokeLinecap = _VirtualDom_attribute('stroke-linecap');
-var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
-var $author$project$SvgElements$glyph = F2(
-	function (profession, color) {
-		var style = _List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$fill('transparent'),
-				$elm$svg$Svg$Attributes$stroke(color),
-				$elm$svg$Svg$Attributes$strokeWidth('6'),
-				$elm$svg$Svg$Attributes$strokeLinecap('round')
-			]);
-		switch (profession.$) {
-			case 'Mun1':
-				return _List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$path,
-						A2(
-							$elm$core$List$cons,
-							$elm$svg$Svg$Attributes$d('M 21 52 h 62'),
-							style),
-						_List_Nil),
-						A2(
-						$elm$svg$Svg$path,
-						A2(
-							$elm$core$List$cons,
-							$elm$svg$Svg$Attributes$d('M 52 21 v 62'),
-							style),
-						_List_Nil)
-					]);
-			case 'Nuak1':
-				return _List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$path,
-						A2(
-							$elm$core$List$cons,
-							$elm$svg$Svg$Attributes$d('M 24 24 l  56 56'),
-							style),
-						_List_Nil),
-						A2(
-						$elm$svg$Svg$path,
-						A2(
-							$elm$core$List$cons,
-							$elm$svg$Svg$Attributes$d('M 80 24 l -56 56'),
-							style),
-						_List_Nil)
-					]);
-			default:
-				return _List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$circle,
-						_Utils_ap(
-							_List_fromArray(
-								[
-									$elm$svg$Svg$Attributes$cx('52'),
-									$elm$svg$Svg$Attributes$cy('52'),
-									$elm$svg$Svg$Attributes$r('27')
-								]),
-							style),
-						_List_Nil)
-					]);
-		}
-	});
-var $author$project$SvgElements$pieceSvg__ = F4(
-	function (toIcon, strok, msgToBeSent, p) {
-		return A2(
-			$elm$svg$Svg$g,
-			_List_fromArray(
-				[
-					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromInt(p.coord.x * 100) + (' ' + ($elm$core$String$fromInt(p.coord.y * 100) + ')')))),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'cursor',
-					toIcon(msgToBeSent)),
-					$elm$svg$Svg$Events$onClick(msgToBeSent)
-				]),
-			A2(
-				$elm$core$List$cons,
-				A2(
-					$elm$svg$Svg$rect,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x('12'),
-							$elm$svg$Svg$Attributes$y('12'),
-							$elm$svg$Svg$Attributes$width('80'),
-							$elm$svg$Svg$Attributes$height('80'),
-							$elm$svg$Svg$Attributes$fill(
-							$author$project$SvgColor$backgroundColor(p.cardColor)),
-							$elm$svg$Svg$Attributes$stroke(strok.color),
-							$elm$svg$Svg$Attributes$strokeWidth(strok.width)
-						]),
-					_List_Nil),
-				A2(
-					$author$project$SvgElements$glyph,
-					p.prof,
-					$author$project$SvgColor$foregroundColor(p.cardColor))));
-	});
-var $author$project$Main$pieceSvg_ = $author$project$SvgElements$pieceSvg__($author$project$Main$msgToIcon);
-var $author$project$Main$pieceSvg = F3(
-	function (focused, msgToBeSent, p) {
-		var strok = focused ? {color: '#000000', width: '10'} : {color: 'none', width: 'none'};
-		return A3($author$project$Main$pieceSvg_, strok, msgToBeSent, p);
-	});
-var $author$project$Main$cardSvgOnGrid = F3(
-	function (focused, msg, _v0) {
-		var coord = _v0.coord;
-		var prof = _v0.prof;
-		var cardColor = _v0.cardColor;
-		return A3(
-			$author$project$Main$pieceSvg,
-			focused,
-			msg,
-			{
-				cardColor: cardColor,
-				coord: {x: coord.x, y: coord.y},
-				prof: prof,
-				shown: false
-			});
-	});
-var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
 var $elm$core$Basics$modBy = _Basics_modBy;
+var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $author$project$Main$displayCard = function (c) {
 	var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
 	var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
@@ -5905,6 +5759,7 @@ var $author$project$Main$displayCard = function (c) {
 				_List_Nil)
 			]));
 };
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$Basics$min = F2(
 	function (x, y) {
@@ -5913,6 +5768,7 @@ var $elm$core$Basics$min = F2(
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
 var $author$project$Main$drawArrow = F2(
 	function (from, to) {
 		var top_left = {
@@ -5963,7 +5819,6 @@ var $author$project$Main$drawArrow = F2(
 					_List_Nil)
 				]));
 	});
-var $elm$svg$Svg$feGaussianBlur = $elm$svg$Svg$trustedNode('feGaussianBlur');
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5975,8 +5830,6 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $elm$svg$Svg$filter = $elm$svg$Svg$trustedNode('filter');
-var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6063,7 +5916,6 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 		},
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
 };
-var $elm$svg$Svg$Attributes$result = _VirtualDom_attribute('result');
 var $author$project$Main$simpleCancelButton = A2(
 	$elm$html$Html$button,
 	_List_fromArray(
@@ -6076,8 +5928,6 @@ var $author$project$Main$simpleCancelButton = A2(
 		[
 			$elm$svg$Svg$text('キャンセル')
 		]));
-var $elm$svg$Svg$Attributes$stdDeviation = _VirtualDom_attribute('stdDeviation');
-var $elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var $author$project$Tak1Bai2Types$TurnEnd = {$: 'TurnEnd'};
 var $author$project$Main$turnEndButton = A2(
 	$elm$html$Html$button,
@@ -6422,43 +6272,15 @@ var $author$project$Main$view = function (_v0) {
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_Nil);
 		case 'GameTerminated':
-			var cardState = currentStatus.a;
+			var board = currentStatus.a;
 			return A4(
 				$author$project$Main$view_,
-				true,
+				false,
 				historyString,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							A2(
-							$elm$svg$Svg$defs,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$elm$svg$Svg$filter,
-									_List_fromArray(
-										[
-											$elm$svg$Svg$Attributes$style('color-interpolation-filters:sRGB'),
-											$elm$svg$Svg$Attributes$id('blur')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$elm$svg$Svg$feGaussianBlur,
-											_List_fromArray(
-												[
-													$elm$svg$Svg$Attributes$stdDeviation('1.5 1.5'),
-													$elm$svg$Svg$Attributes$result('blur')
-												]),
-											_List_Nil)
-										]))
-								]))
-						]),
-					A2(
-						$elm$core$List$map,
-						A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
-						cardState.board)),
+				A2(
+					$elm$core$List$cons,
+					$author$project$Main$backgroundWoodenBoard,
+					A2($elm$core$List$map, $author$project$Main$displayCard, board.board)),
 				_List_Nil);
 		case 'FirstHalfCompletedByHop':
 			var from = currentStatus.a.from;
@@ -6523,10 +6345,7 @@ var $author$project$Main$view = function (_v0) {
 				$author$project$Main$view_,
 				false,
 				historyString,
-				A2(
-					$elm$core$List$map,
-					A2($author$project$Main$cardSvgOnGrid, false, $author$project$Tak1Bai2Types$None),
-					remaining.cards),
+				_List_Nil,
 				function () {
 					var _v2 = A2(
 						$elm$core$List$filter,

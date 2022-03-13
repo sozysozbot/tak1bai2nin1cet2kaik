@@ -5,10 +5,9 @@ module Main exposing (init, main, view)
 import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
-import Svg exposing (Attribute, Svg, animate, defs, feGaussianBlur, g, path, rect, svg, text)
-import Svg.Attributes exposing (attributeName, d, dur, fill, height, id, repeatCount, result, stdDeviation, stroke, strokeWidth, transform, values, viewBox, width, x, y)
+import Svg exposing (Attribute, Svg, animate, g, path, rect, svg, text)
+import Svg.Attributes exposing (attributeName, d, dur, fill, height, repeatCount, stroke, strokeWidth, transform, values, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
-import SvgElements exposing (pieceSvg__)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
 
@@ -432,3 +431,110 @@ drawArrow from to =
         [ transform ("translate(" ++ String.fromInt (top_left.x * lattice_size) ++ "," ++ String.fromInt (top_left.y * lattice_size) ++ ")")
         ]
         [ path [ d d_data, fill "#aeff01", stroke "#000", strokeWidth "2" ] [] ]
+
+
+updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
+updateStatus msg modl saved =
+    case ( modl, msg ) of
+        ( _, Cancel ) ->
+            -- no matter what the state is, abort it and revert to what was saved last
+            saved
+
+        ( NothingSelected oldBoard, Hop { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
+
+                ( cardsToBeFlipped, remainingCards2 ) =
+                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+
+                newBoard =
+                    case ( cardsToBeMoved, cardsToBeFlipped ) of
+                        ( [ moved ], [ flipped ] ) ->
+                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            FirstHalfCompletedByHop { from = from, to = to } newBoard
+
+        ( NothingSelected oldBoard, Slide { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
+
+                newBoard =
+                    case cardsToBeMoved of
+                        [ cardToBeMoved ] ->
+                            { empty = from, cards = { cardToBeMoved | coord = to, shown = True } :: remainingCards }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            FirstHalfCompletedBySlide { from = from, to = to } newBoard
+
+        _ ->
+            modl
+
+
+initialBoard : List CardEncodedAsInt -> Board
+initialBoard cards =
+    let
+        foo : Int -> CardEncodedAsInt -> CardOnBoard
+        foo i card =
+            { coord = { x = remainderBy 7 i, y = i // 7 }
+            , cardColor =
+                if remainderBy 2 card == 0 then
+                    Black
+
+                else
+                    Red
+            , prof =
+                case card // 2 of
+                    0 ->
+                        Mun1
+
+                    1 ->
+                        Kauk2
+
+                    2 ->
+                        Gua2
+
+                    3 ->
+                        Kaun1
+
+                    4 ->
+                        Dau2
+
+                    5 ->
+                        Maun1
+
+                    6 ->
+                        Kua2
+
+                    7 ->
+                        Tuk2
+
+                    8 ->
+                        Uai1
+
+                    9 ->
+                        Io
+
+                    10 ->
+                        Tam2
+
+                    _ ->
+                        Nuak1
+            , shown = False
+            }
+    in
+    { -- the former half has indices 0 to 23
+      -- the latter half has indices 25 to 48
+      cards =
+        List.indexedMap foo (List.take 24 cards)
+            ++ List.indexedMap (\i card -> foo (i + 25) card) (List.drop 24 cards)
+    , empty = { x = 3, y = 3 }
+    }
