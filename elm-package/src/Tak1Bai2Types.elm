@@ -56,7 +56,6 @@ type CurrentStatus
     | SecondHalfCompleted { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } Board
 
 
-
 type OriginalMsg
     = None
     | Slide { from : Coordinate, to : Coordinate }
@@ -67,8 +66,23 @@ type OriginalMsg
     | MovementToward Coordinate
 
 
-profToHistoryStr : Profession -> String
-profToHistoryStr prof =
+toExternalSvgFilePath : { a | prof : Profession, cardColor : CardColor } -> String
+toExternalSvgFilePath a =
+    "../img/svg/" ++ colorToStr a.cardColor ++ profToStr a.prof ++ ".svg"
+
+
+colorToStr : CardColor -> String
+colorToStr c =
+    case c of
+        Red ->
+            "赤"
+
+        Black ->
+            "黒"
+
+
+profToStr : Profession -> String
+profToStr prof =
     case prof of
         Nuak1 ->
             "船"

@@ -5835,6 +5835,44 @@ var $elm$core$Basics$modBy = _Basics_modBy;
 var $elm$core$Basics$not = _Basics_not;
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $author$project$Tak1Bai2Types$colorToStr = function (c) {
+	if (c.$ === 'Red') {
+		return '赤';
+	} else {
+		return '黒';
+	}
+};
+var $author$project$Tak1Bai2Types$profToStr = function (prof) {
+	switch (prof.$) {
+		case 'Nuak1':
+			return '船';
+		case 'Mun1':
+			return '無';
+		case 'Kauk2':
+			return '兵';
+		case 'Gua2':
+			return '弓';
+		case 'Kaun1':
+			return '車';
+		case 'Dau2':
+			return '虎';
+		case 'Maun1':
+			return '馬';
+		case 'Kua2':
+			return '筆';
+		case 'Tuk2':
+			return '巫';
+		case 'Uai1':
+			return '将';
+		case 'Io':
+			return '王';
+		default:
+			return '皇';
+	}
+};
+var $author$project$Tak1Bai2Types$toExternalSvgFilePath = function (a) {
+	return '../img/svg/' + ($author$project$Tak1Bai2Types$colorToStr(a.cardColor) + ($author$project$Tak1Bai2Types$profToStr(a.prof) + '.svg'));
+};
 var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
 	return A3(
 		_VirtualDom_attributeNS,
@@ -5893,7 +5931,8 @@ var $author$project$Main$displayCard = function (c) {
 					[
 						$elm$svg$Svg$Attributes$width(width_text),
 						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$xlinkHref('../img/svg/黒船.svg')
+						$elm$svg$Svg$Attributes$xlinkHref(
+						$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
 					]),
 				_List_Nil)
 			]) : _List_fromArray(
@@ -5925,7 +5964,8 @@ var $author$project$Main$displayCard = function (c) {
 							[
 								$elm$svg$Svg$Attributes$width(height_text),
 								$elm$svg$Svg$Attributes$height(width_text),
-								$elm$svg$Svg$Attributes$xlinkHref('../img/svg/黒車.svg')
+								$elm$svg$Svg$Attributes$xlinkHref(
+								$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
 							]),
 						_List_Nil)
 					]))

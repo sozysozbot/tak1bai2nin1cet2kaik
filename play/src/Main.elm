@@ -237,7 +237,7 @@ displayCard c =
             , Svg.image
                 [ width width_text
                 , height height_text
-                , Svg.Attributes.xlinkHref "../img/svg/黒船.svg"
+                , Svg.Attributes.xlinkHref (toExternalSvgFilePath c)
                 ]
                 []
             ]
@@ -258,7 +258,7 @@ displayCard c =
                 [ Svg.image
                     [ width height_text -- intentional: rotated
                     , height width_text -- intentional: rotated
-                    , Svg.Attributes.xlinkHref "../img/svg/黒車.svg"
+                    , Svg.Attributes.xlinkHref (toExternalSvgFilePath c)
                     ]
                     []
                 ]
