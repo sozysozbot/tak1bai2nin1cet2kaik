@@ -6639,7 +6639,10 @@ var $author$project$Main$view_ = F4(
 								buttons)))),
 					A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'margin-left', '15px')
+						]),
 					_List_fromArray(
 						[
 							A2(

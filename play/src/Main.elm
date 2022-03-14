@@ -128,7 +128,7 @@ view_ gameEndTweet history svgContent buttons =
                 :: Html.br [] []
                 :: List.intersperse (Html.text " ") buttons
             )
-        , Html.div []
+        , Html.div [ Html.Attributes.style "margin-left" "15px" ]
             [ Html.textarea
                 [ Html.Attributes.rows 20
                 , Html.Attributes.cols 40
