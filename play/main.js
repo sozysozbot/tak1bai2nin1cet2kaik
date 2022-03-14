@@ -5708,6 +5708,7 @@ var $author$project$Main$backgroundWoodenBoard = A2(
 var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
+var $elm$core$String$fromFloat = _String_fromNumber;
 var $author$project$Main$fromUIColor = function (c) {
 	if (c.$ === 'Green') {
 		return '#aeff01';
@@ -5716,8 +5717,8 @@ var $author$project$Main$fromUIColor = function (c) {
 	}
 };
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $author$project$Main$longEdgeHalf = 80;
-var $author$project$Main$shortEdgeHalf = 21;
+var $author$project$Main$longEdgeHalf = 79.239;
+var $author$project$Main$shortEdgeHalf = 21.242;
 var $author$project$Main$spacing = 40;
 var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -5754,7 +5755,7 @@ var $author$project$Main$candidateGreenSvg = F2(
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromInt(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromInt(coord.y * $author$project$Main$lattice_size) + ')')))),
+					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
 					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
 				]),
@@ -5798,7 +5799,7 @@ var $author$project$Main$candidateYellowSvg = F2(
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromInt(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromInt(coord.y * $author$project$Main$lattice_size) + ')')))),
+					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
 					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
 				]),
@@ -5829,25 +5830,33 @@ var $author$project$Main$candidateYellowSvg = F2(
 						]))
 				]));
 	});
+var $elm$svg$Svg$image = $elm$svg$Svg$trustedNode('image');
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
+	return A3(
+		_VirtualDom_attributeNS,
+		'http://www.w3.org/1999/xlink',
+		'xlink:href',
+		_VirtualDom_noJavaScriptUri(value));
+};
 var $author$project$Main$displayCard = function (c) {
 	var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
 	var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
 	var parity = A2($elm$core$Basics$modBy, 2, c.coord.x + c.coord.y);
 	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
-	var width_text = $elm$core$String$fromInt(widthHalf * 2);
+	var width_text = $elm$core$String$fromFloat(widthHalf * 2.0);
 	var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
-	var height_text = $elm$core$String$fromInt(heightHalf * 2);
+	var height_text = $elm$core$String$fromFloat(heightHalf * 2.0);
 	return A2(
 		$elm$svg$Svg$g,
 		_List_fromArray(
 			[
 				$elm$svg$Svg$Attributes$transform(
-				'translate(' + ($elm$core$String$fromInt(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromInt(y_coord_mid - heightHalf) + ')'))))
+				'translate(' + ($elm$core$String$fromFloat(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromFloat(y_coord_mid - heightHalf) + ')'))))
 			]),
-		_List_fromArray(
+		c.shown ? _List_fromArray(
 			[
 				A2(
 				$elm$svg$Svg$rect,
@@ -5857,8 +5866,31 @@ var $author$project$Main$displayCard = function (c) {
 						$elm$svg$Svg$Attributes$y('0'),
 						$elm$svg$Svg$Attributes$width(width_text),
 						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill(
-						c.shown ? '#ffffff' : '#000000'),
+						$elm$svg$Svg$Attributes$fill('#ffffff'),
+						$elm$svg$Svg$Attributes$stroke('none'),
+						$elm$svg$Svg$Attributes$strokeWidth('none')
+					]),
+				_List_Nil),
+				A2(
+				$elm$svg$Svg$image,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$width(width_text),
+						$elm$svg$Svg$Attributes$height(height_text),
+						$elm$svg$Svg$Attributes$xlinkHref('../img/svg/黒船.svg')
+					]),
+				_List_Nil)
+			]) : _List_fromArray(
+			[
+				A2(
+				$elm$svg$Svg$rect,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$x('0'),
+						$elm$svg$Svg$Attributes$y('0'),
+						$elm$svg$Svg$Attributes$width(width_text),
+						$elm$svg$Svg$Attributes$height(height_text),
+						$elm$svg$Svg$Attributes$fill('#000000'),
 						$elm$svg$Svg$Attributes$stroke('none'),
 						$elm$svg$Svg$Attributes$strokeWidth('none')
 					]),
@@ -5866,7 +5898,6 @@ var $author$project$Main$displayCard = function (c) {
 			]));
 };
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
@@ -5909,7 +5940,7 @@ var $author$project$Main$drawArrow = F3(
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromInt(top_left.x * $author$project$Main$lattice_size) + (',' + ($elm$core$String$fromInt(top_left.y * $author$project$Main$lattice_size) + ')'))))
+					'translate(' + ($elm$core$String$fromFloat(top_left.x * $author$project$Main$lattice_size) + (',' + ($elm$core$String$fromFloat(top_left.y * $author$project$Main$lattice_size) + ')'))))
 				]),
 			_List_fromArray(
 				[

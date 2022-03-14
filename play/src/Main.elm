@@ -147,14 +147,14 @@ view_ gameEndTweet history svgContent buttons =
         ]
 
 
-shortEdgeHalf : number
+shortEdgeHalf : Float
 shortEdgeHalf =
-    21
+    21.242
 
 
-longEdgeHalf : number
+longEdgeHalf : Float
 longEdgeHalf =
-    80
+    79.239
 
 
 spacing : number
@@ -162,7 +162,7 @@ spacing =
     40
 
 
-lattice_size : number
+lattice_size : Float
 lattice_size =
     shortEdgeHalf + longEdgeHalf + spacing
 
@@ -188,49 +188,66 @@ displayCard c =
                 shortEdgeHalf
 
         width_text =
-            String.fromInt (widthHalf * 2)
+            String.fromFloat (widthHalf * 2.0)
 
         height_text =
-            String.fromInt (heightHalf * 2)
+            String.fromFloat (heightHalf * 2.0)
 
         x_coord_mid =
-            c.coord.x * lattice_size
+            toFloat c.coord.x * lattice_size
 
         y_coord_mid =
-            c.coord.y * lattice_size
+            toFloat c.coord.y * lattice_size
     in
     g
         [ transform
             ("translate("
-                ++ String.fromInt (x_coord_mid - widthHalf)
+                ++ String.fromFloat (x_coord_mid - widthHalf)
                 ++ " "
-                ++ String.fromInt (y_coord_mid - heightHalf)
+                ++ String.fromFloat (y_coord_mid - heightHalf)
                 ++ ")"
             )
         ]
-        [ rect
-            [ x "0"
-            , y "0"
-            , width width_text
-            , height height_text
-            , fill
-                (if c.shown then
+        (if c.shown then
+            [ rect
+                [ x "0"
+                , y "0"
+                , width width_text
+                , height height_text
+                , fill
                     "#ffffff"
-
-                 else
-                    "#000000"
-                )
-            , stroke "none"
-            , strokeWidth "none"
+                , stroke "none"
+                , strokeWidth "none"
+                ]
+                []
+            , Svg.image
+                [ width width_text
+                , height height_text
+                , Svg.Attributes.xlinkHref "../img/svg/黒船.svg"
+                ]
+                []
             ]
-            []
-        ]
+
+         else
+            [ rect
+                [ x "0"
+                , y "0"
+                , width width_text
+                , height height_text
+                , fill
+                    "#000000"
+                , stroke "none"
+                , strokeWidth "none"
+                ]
+                []
+            ]
+        )
 
 
 candidateYellowSvg : msg -> Coordinate -> Svg msg
 candidateYellowSvg msgToBeSent coord =
     g
-        [ transform ("translate(" ++ String.fromInt (coord.x * lattice_size) ++ " " ++ String.fromInt (coord.y * lattice_size) ++ ")")
+        [ transform ("translate(" ++ String.fromFloat (toFloat coord.x * lattice_size) ++ " " ++ String.fromFloat (toFloat coord.y * lattice_size) ++ ")")
         , Svg.Events.onClick msgToBeSent
         , Html.Attributes.style "cursor" "pointer"
         ]
@@ -243,7 +260,7 @@ candidateYellowSvg msgToBeSent coord =
 candidateGreenSvg : msg -> Coordinate -> Svg msg
 candidateGreenSvg msgToBeSent coord =
     g
-        [ transform ("translate(" ++ String.fromInt (coord.x * lattice_size) ++ " " ++ String.fromInt (coord.y * lattice_size) ++ ")")
+        [ transform ("translate(" ++ String.fromFloat (toFloat coord.x * lattice_size) ++ " " ++ String.fromFloat (toFloat coord.y * lattice_size) ++ ")")
         , Svg.Events.onClick msgToBeSent
         , Html.Attributes.style "cursor" "pointer"
         ]
@@ -343,9 +360,12 @@ view (Model { historyString, currentStatus }) =
                 []
 
 
-cancelAllButton : Html OriginalMsg
-cancelAllButton =
-    Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "150%" ] [ text "全てをキャンセル" ]
+
+{-
+   cancelAllButton : Html OriginalMsg
+   cancelAllButton =
+       Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "150%" ] [ text "全てをキャンセル" ]
+-}
 
 
 simpleCancelButton : Html OriginalMsg
@@ -353,9 +373,13 @@ simpleCancelButton =
     Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "150%" ] [ text "キャンセル" ]
 
 
-turnEndButton : Html OriginalMsg
-turnEndButton =
-    Html.button [ onClick TurnEnd, Html.Attributes.style "background-color" "#aaffaa", Html.Attributes.style "font-size" "150%" ] [ text "ターンエンド" ]
+
+{-
+   turnEndButton : Html OriginalMsg
+   turnEndButton =
+       Html.button [ onClick TurnEnd, Html.Attributes.style "background-color" "#aaffaa", Html.Attributes.style "font-size" "150%" ] [ text "ターンエンド" ]
+
+-}
 
 
 init : Flags -> ( Model, Cmd OriginalMsg )
@@ -440,7 +464,7 @@ drawArrow uiColor from to =
             { y = min from.y to.y, x = min from.x to.x }
     in
     g
-        [ transform ("translate(" ++ String.fromInt (top_left.x * lattice_size) ++ "," ++ String.fromInt (top_left.y * lattice_size) ++ ")")
+        [ transform ("translate(" ++ String.fromFloat (toFloat top_left.x * lattice_size) ++ "," ++ String.fromFloat (toFloat top_left.y * lattice_size) ++ ")")
         ]
         [ path [ d d_data, fill (fromUIColor uiColor), stroke "#000", strokeWidth "2" ] [] ]
 
