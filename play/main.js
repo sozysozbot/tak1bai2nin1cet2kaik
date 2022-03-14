@@ -5414,6 +5414,10 @@ var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
 	function (a, b) {
 		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
 	});
+var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
+	function (a, b) {
+		return {$: 'SecondHalfCompleted', a: a, b: b};
+	});
 var $author$project$Tak1Bai2Types$getMidPoint = F2(
 	function (from, to) {
 		return {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
@@ -5439,67 +5443,12 @@ var $elm$core$List$partition = F2(
 var $author$project$Main$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
-		_v0$3:
+		_v0$5:
 		while (true) {
 			switch (_v0.b.$) {
 				case 'Cancel':
 					var _v1 = _v0.b;
 					return saved;
-				case 'Hop':
-					if (_v0.a.$ === 'NothingSelected') {
-						var oldBoard = _v0.a.a;
-						var from = _v0.b.a.from;
-						var to = _v0.b.a.to;
-						var _v2 = A2(
-							$elm$core$List$partition,
-							function (x) {
-								return _Utils_eq(x.coord, from);
-							},
-							oldBoard.cards);
-						var cardsToBeMoved = _v2.a;
-						var remainingCards = _v2.b;
-						var _v3 = A2(
-							$elm$core$List$partition,
-							function (x) {
-								return _Utils_eq(
-									x.coord,
-									A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
-							},
-							remainingCards);
-						var cardsToBeFlipped = _v3.a;
-						var remainingCards2 = _v3.b;
-						var newBoard = function () {
-							var _v4 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
-							if (((_v4.a.b && (!_v4.a.b.b)) && _v4.b.b) && (!_v4.b.b.b)) {
-								var _v5 = _v4.a;
-								var moved = _v5.a;
-								var _v6 = _v4.b;
-								var flipped = _v6.a;
-								return {
-									cards: A2(
-										$elm$core$List$cons,
-										_Utils_update(
-											moved,
-											{coord: to}),
-										A2(
-											$elm$core$List$cons,
-											_Utils_update(
-												flipped,
-												{shown: true}),
-											remainingCards2)),
-									empty: from
-								};
-							} else {
-								return oldBoard;
-							}
-						}();
-						return A2(
-							$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
-							{from: from, to: to},
-							newBoard);
-					} else {
-						break _v0$3;
-					}
 				case 'Slide':
 					if (_v0.a.$ === 'NothingSelected') {
 						var oldBoard = _v0.a.a;
@@ -5534,10 +5483,172 @@ var $author$project$Main$updateStatus = F3(
 							{from: from, to: to},
 							newBoard);
 					} else {
-						break _v0$3;
+						break _v0$5;
+					}
+				case 'Hop':
+					switch (_v0.a.$) {
+						case 'NothingSelected':
+							var oldBoard = _v0.a.a;
+							var from = _v0.b.a.from;
+							var to = _v0.b.a.to;
+							var _v2 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(x.coord, from);
+								},
+								oldBoard.cards);
+							var cardsToBeMoved = _v2.a;
+							var remainingCards = _v2.b;
+							var _v3 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(
+										x.coord,
+										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+								},
+								remainingCards);
+							var cardsToBeFlipped = _v3.a;
+							var remainingCards2 = _v3.b;
+							var newBoard = function () {
+								var _v4 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v4.a.b && (!_v4.a.b.b)) && _v4.b.b) && (!_v4.b.b.b)) {
+									var _v5 = _v4.a;
+									var moved = _v5.a;
+									var _v6 = _v4.b;
+									var flipped = _v6.a;
+									return {
+										cards: A2(
+											$elm$core$List$cons,
+											_Utils_update(
+												moved,
+												{coord: to}),
+											A2(
+												$elm$core$List$cons,
+												_Utils_update(
+													flipped,
+													{shown: true}),
+												remainingCards2)),
+										empty: from
+									};
+								} else {
+									return oldBoard;
+								}
+							}();
+							return A2(
+								$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
+								{from: from, to: to},
+								newBoard);
+						case 'FirstHalfCompletedByHop':
+							var _v9 = _v0.a;
+							var first_fromto = _v9.a;
+							var oldBoard = _v9.b;
+							var from = _v0.b.a.from;
+							var to = _v0.b.a.to;
+							var _v10 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(x.coord, from);
+								},
+								oldBoard.cards);
+							var cardsToBeMoved = _v10.a;
+							var remainingCards = _v10.b;
+							var _v11 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(
+										x.coord,
+										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+								},
+								remainingCards);
+							var cardsToBeFlipped = _v11.a;
+							var remainingCards2 = _v11.b;
+							var newBoard = function () {
+								var _v12 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v12.a.b && (!_v12.a.b.b)) && _v12.b.b) && (!_v12.b.b.b)) {
+									var _v13 = _v12.a;
+									var moved = _v13.a;
+									var _v14 = _v12.b;
+									var flipped = _v14.a;
+									return {
+										cards: A2(
+											$elm$core$List$cons,
+											_Utils_update(
+												moved,
+												{coord: to}),
+											A2(
+												$elm$core$List$cons,
+												_Utils_update(
+													flipped,
+													{shown: true}),
+												remainingCards2)),
+										empty: from
+									};
+								} else {
+									return oldBoard;
+								}
+							}();
+							return A2(
+								$author$project$Tak1Bai2Types$SecondHalfCompleted,
+								{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
+								newBoard);
+						case 'FirstHalfCompletedBySlide':
+							var _v15 = _v0.a;
+							var first_fromto = _v15.a;
+							var oldBoard = _v15.b;
+							var from = _v0.b.a.from;
+							var to = _v0.b.a.to;
+							var _v16 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(x.coord, from);
+								},
+								oldBoard.cards);
+							var cardsToBeMoved = _v16.a;
+							var remainingCards = _v16.b;
+							var _v17 = A2(
+								$elm$core$List$partition,
+								function (x) {
+									return _Utils_eq(
+										x.coord,
+										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+								},
+								remainingCards);
+							var cardsToBeFlipped = _v17.a;
+							var remainingCards2 = _v17.b;
+							var newBoard = function () {
+								var _v18 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v18.a.b && (!_v18.a.b.b)) && _v18.b.b) && (!_v18.b.b.b)) {
+									var _v19 = _v18.a;
+									var moved = _v19.a;
+									var _v20 = _v18.b;
+									var flipped = _v20.a;
+									return {
+										cards: A2(
+											$elm$core$List$cons,
+											_Utils_update(
+												moved,
+												{coord: to}),
+											A2(
+												$elm$core$List$cons,
+												_Utils_update(
+													flipped,
+													{shown: true}),
+												remainingCards2)),
+										empty: from
+									};
+								} else {
+									return oldBoard;
+								}
+							}();
+							return A2(
+								$author$project$Tak1Bai2Types$SecondHalfCompleted,
+								{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
+								newBoard);
+						default:
+							break _v0$5;
 					}
 				default:
-					break _v0$3;
+					break _v0$5;
 			}
 		}
 		return modl;
@@ -5568,12 +5679,14 @@ var $author$project$Main$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Main$Green = {$: 'Green'};
 var $author$project$Tak1Bai2Types$Hop = function (a) {
 	return {$: 'Hop', a: a};
 };
 var $author$project$Tak1Bai2Types$Slide = function (a) {
 	return {$: 'Slide', a: a};
 };
+var $author$project$Main$Yellow = {$: 'Yellow'};
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
@@ -5592,8 +5705,21 @@ var $author$project$Main$backgroundWoodenBoard = A2(
 			$elm$svg$Svg$Attributes$height('1050')
 		]),
 	_List_Nil);
-var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
+var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
+var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
+var $author$project$Main$fromUIColor = function (c) {
+	if (c.$ === 'Green') {
+		return '#aeff01';
+	} else {
+		return '#ffff00';
+	}
+};
+var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
+var $author$project$Main$longEdgeHalf = 80;
+var $author$project$Main$shortEdgeHalf = 21;
+var $author$project$Main$spacing = 40;
+var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5611,31 +5737,9 @@ var $elm$svg$Svg$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$svg$Svg$Attributes$repeatCount = _VirtualDom_attribute('repeatCount');
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$cancelAllButton = A2(
-	$elm$html$Html$button,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Cancel),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#ffaaaa'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-		]),
-	_List_fromArray(
-		[
-			$elm$svg$Svg$text('全てをキャンセル')
-		]));
-var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
-var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
-var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
-var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $author$project$Main$longEdgeHalf = 80;
-var $author$project$Main$shortEdgeHalf = 21;
-var $author$project$Main$spacing = 40;
-var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
-var $elm$svg$Svg$Attributes$repeatCount = _VirtualDom_attribute('repeatCount');
 var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var $elm$svg$Svg$Attributes$values = function (value) {
 	return A2(
@@ -5665,7 +5769,8 @@ var $author$project$Main$candidateGreenSvg = F2(
 							$elm$svg$Svg$Attributes$y('-23'),
 							$elm$svg$Svg$Attributes$width('46'),
 							$elm$svg$Svg$Attributes$height('46'),
-							$elm$svg$Svg$Attributes$fill('#aeff01')
+							$elm$svg$Svg$Attributes$fill(
+							$author$project$Main$fromUIColor($author$project$Main$Green))
 						]),
 					_List_fromArray(
 						[
@@ -5706,7 +5811,8 @@ var $author$project$Main$candidateYellowSvg = F2(
 							$elm$svg$Svg$Attributes$cx('0'),
 							$elm$svg$Svg$Attributes$cy('0'),
 							$elm$svg$Svg$Attributes$r('25'),
-							$elm$svg$Svg$Attributes$fill('#ffff00')
+							$elm$svg$Svg$Attributes$fill(
+							$author$project$Main$fromUIColor($author$project$Main$Yellow))
 						]),
 					_List_fromArray(
 						[
@@ -5769,8 +5875,8 @@ var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $author$project$Main$drawArrow = F2(
-	function (from, to) {
+var $author$project$Main$drawArrow = F3(
+	function (uiColor, from, to) {
 		var top_left = {
 			x: A2($elm$core$Basics$min, from.x, to.x),
 			y: A2($elm$core$Basics$min, from.y, to.y)
@@ -5812,7 +5918,8 @@ var $author$project$Main$drawArrow = F2(
 					_List_fromArray(
 						[
 							$elm$svg$Svg$Attributes$d(d_data),
-							$elm$svg$Svg$Attributes$fill('#aeff01'),
+							$elm$svg$Svg$Attributes$fill(
+							$author$project$Main$fromUIColor(uiColor)),
 							$elm$svg$Svg$Attributes$stroke('#000'),
 							$elm$svg$Svg$Attributes$strokeWidth('2')
 						]),
@@ -5916,6 +6023,10 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 		},
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
 };
+var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$simpleCancelButton = A2(
 	$elm$html$Html$button,
 	_List_fromArray(
@@ -5927,19 +6038,6 @@ var $author$project$Main$simpleCancelButton = A2(
 	_List_fromArray(
 		[
 			$elm$svg$Svg$text('キャンセル')
-		]));
-var $author$project$Tak1Bai2Types$TurnEnd = {$: 'TurnEnd'};
-var $author$project$Main$turnEndButton = A2(
-	$elm$html$Html$button,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$TurnEnd),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-		]),
-	_List_fromArray(
-		[
-			$elm$svg$Svg$text('ターンエンド')
 		]));
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$Attributes$cols = function (n) {
@@ -6295,7 +6393,7 @@ var $author$project$Main$view = function (_v0) {
 					$author$project$Main$backgroundWoodenBoard,
 					A2(
 						$elm$core$List$cons,
-						A2($author$project$Main$drawArrow, from, to),
+						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
 						_Utils_ap(
 							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
 							A2(
@@ -6323,7 +6421,7 @@ var $author$project$Main$view = function (_v0) {
 					$author$project$Main$backgroundWoodenBoard,
 					A2(
 						$elm$core$List$cons,
-						A2($author$project$Main$drawArrow, from, to),
+						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
 						_Utils_ap(
 							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
 							A2(
@@ -6339,28 +6437,26 @@ var $author$project$Main$view = function (_v0) {
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		default:
-			var mover = currentStatus.a.mover;
-			var remaining = currentStatus.a.remaining;
+			var first_from = currentStatus.a.first_from;
+			var first_to = currentStatus.a.first_to;
+			var second_from = currentStatus.a.second_from;
+			var second_to = currentStatus.a.second_to;
+			var board = currentStatus.b;
 			return A4(
 				$author$project$Main$view_,
 				false,
 				historyString,
-				_List_Nil,
-				function () {
-					var _v2 = A2(
-						$elm$core$List$filter,
-						function (p) {
-							return _Utils_eq(p.coord, mover.coord);
-						},
-						remaining.cards);
-					if (!_v2.b) {
-						return _List_fromArray(
-							[$author$project$Main$cancelAllButton]);
-					} else {
-						return _List_fromArray(
-							[$author$project$Main$turnEndButton, $author$project$Main$cancelAllButton]);
-					}
-				}());
+				A2(
+					$elm$core$List$cons,
+					$author$project$Main$backgroundWoodenBoard,
+					A2(
+						$elm$core$List$cons,
+						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, first_from, first_to),
+						A2(
+							$elm$core$List$cons,
+							A3($author$project$Main$drawArrow, $author$project$Main$Green, second_from, second_to),
+							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards)))),
+				_List_Nil);
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

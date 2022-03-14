@@ -234,7 +234,7 @@ candidateYellowSvg msgToBeSent coord =
         , Svg.Events.onClick msgToBeSent
         , Html.Attributes.style "cursor" "pointer"
         ]
-        [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill "#ffff00" ]
+        [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill (fromUIColor Yellow) ]
             [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
             ]
         ]
@@ -247,7 +247,7 @@ candidateGreenSvg msgToBeSent coord =
         , Svg.Events.onClick msgToBeSent
         , Html.Attributes.style "cursor" "pointer"
         ]
-        [ Svg.rect [ Svg.Attributes.transform "rotate(45)", Svg.Attributes.x "-23", Svg.Attributes.y "-23", Svg.Attributes.width "46", Svg.Attributes.height "46", fill "#aeff01" ]
+        [ Svg.rect [ Svg.Attributes.transform "rotate(45)", Svg.Attributes.x "-23", Svg.Attributes.y "-23", Svg.Attributes.width "46", Svg.Attributes.height "46", fill (fromUIColor Green) ]
             [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
             ]
         ]
@@ -316,7 +316,7 @@ view (Model { historyString, currentStatus }) =
             view_ False
                 historyString
                 (backgroundWoodenBoard
-                    :: drawArrow from to
+                    :: drawArrow Yellow from to
                     :: List.map displayCard board.cards
                     ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
@@ -326,24 +326,21 @@ view (Model { historyString, currentStatus }) =
             view_ False
                 historyString
                 (backgroundWoodenBoard
-                    :: drawArrow from to
+                    :: drawArrow Yellow from to
                     :: List.map displayCard board.cards
                     ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
                 [ simpleCancelButton ]
 
-        NowWaitingForAdditionalSacrifice { mover, remaining } ->
+        SecondHalfCompleted { first_from, first_to, second_from, second_to } board ->
             view_ False
                 historyString
-                []
-                (case List.filter (\p -> p.coord == mover.coord) remaining.cards of
-                    [] ->
-                        [ cancelAllButton ]
-
-                    _ ->
-                        {- The resulting square is empty, so it is always possible to declare TurnEnd -}
-                        [ turnEndButton, cancelAllButton ]
+                (backgroundWoodenBoard
+                    :: drawArrow Yellow first_from first_to
+                    :: drawArrow Green second_from second_to
+                    :: List.map displayCard board.cards
                 )
+                []
 
 
 cancelAllButton : Html OriginalMsg
@@ -377,8 +374,23 @@ init flags =
     )
 
 
-drawArrow : Coordinate -> Coordinate -> Svg msg
-drawArrow from to =
+type UIColor
+    = Green
+    | Yellow
+
+
+fromUIColor : UIColor -> String
+fromUIColor c =
+    case c of
+        Green ->
+            "#aeff01"
+
+        Yellow ->
+            "#ffff00"
+
+
+drawArrow : UIColor -> Coordinate -> Coordinate -> Svg msg
+drawArrow uiColor from to =
     let
         d_data =
             if from.x == to.x && from.y > to.y then
@@ -430,7 +442,7 @@ drawArrow from to =
     g
         [ transform ("translate(" ++ String.fromInt (top_left.x * lattice_size) ++ "," ++ String.fromInt (top_left.y * lattice_size) ++ ")")
         ]
-        [ path [ d d_data, fill "#aeff01", stroke "#000", strokeWidth "2" ] [] ]
+        [ path [ d d_data, fill (fromUIColor uiColor), stroke "#000", strokeWidth "2" ] [] ]
 
 
 updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
@@ -474,6 +486,44 @@ updateStatus msg modl saved =
                             oldBoard
             in
             FirstHalfCompletedBySlide { from = from, to = to } newBoard
+
+        ( FirstHalfCompletedByHop first_fromto oldBoard, Hop { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
+
+                ( cardsToBeFlipped, remainingCards2 ) =
+                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+
+                newBoard =
+                    case ( cardsToBeMoved, cardsToBeFlipped ) of
+                        ( [ moved ], [ flipped ] ) ->
+                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            SecondHalfCompleted { first_from = first_fromto.from, first_to = first_fromto.to, second_from = from, second_to = to } newBoard
+
+        ( FirstHalfCompletedBySlide first_fromto oldBoard, Hop { from, to } ) ->
+            let
+                ( cardsToBeMoved, remainingCards ) =
+                    List.partition (\x -> x.coord == from) oldBoard.cards
+
+                ( cardsToBeFlipped, remainingCards2 ) =
+                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+
+                newBoard =
+                    case ( cardsToBeMoved, cardsToBeFlipped ) of
+                        ( [ moved ], [ flipped ] ) ->
+                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
+
+                        _ ->
+                            -- this path is not taken
+                            oldBoard
+            in
+            SecondHalfCompleted { first_from = first_fromto.from, first_to = first_fromto.to, second_from = from, second_to = to } newBoard
 
         _ ->
             modl

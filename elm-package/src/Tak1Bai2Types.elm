@@ -53,7 +53,8 @@ type CurrentStatus
         }
     | FirstHalfCompletedByHop { from : Coordinate, to : Coordinate } Board
     | FirstHalfCompletedBySlide { from : Coordinate, to : Coordinate } Board
-    | NowWaitingForAdditionalSacrifice FloatingMover_
+    | SecondHalfCompleted { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } Board
+
 
 
 type OriginalMsg
