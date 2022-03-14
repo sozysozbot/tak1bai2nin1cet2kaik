@@ -208,7 +208,21 @@ displayCard c =
                 ++ ")"
             )
         ]
-        (if c.shown then
+        (if not c.shown then
+            [ rect
+                [ x "0"
+                , y "0"
+                , width width_text
+                , height height_text
+                , fill
+                    "#000000"
+                , stroke "none"
+                , strokeWidth "none"
+                ]
+                []
+            ]
+
+         else if parity == 0 then
             [ rect
                 [ x "0"
                 , y "0"
@@ -235,11 +249,19 @@ displayCard c =
                 , width width_text
                 , height height_text
                 , fill
-                    "#000000"
+                    "#ffffff"
                 , stroke "none"
                 , strokeWidth "none"
                 ]
                 []
+            , g [ transform ("translate(" ++ width_text ++ ") rotate(90)") ]
+                [ Svg.image
+                    [ width height_text -- intentional: rotated
+                    , height width_text -- intentional: rotated
+                    , Svg.Attributes.xlinkHref "../img/svg/黒車.svg"
+                    ]
+                    []
+                ]
             ]
         )
 

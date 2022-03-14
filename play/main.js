@@ -5832,6 +5832,7 @@ var $author$project$Main$candidateYellowSvg = F2(
 	});
 var $elm$svg$Svg$image = $elm$svg$Svg$trustedNode('image');
 var $elm$core$Basics$modBy = _Basics_modBy;
+var $elm$core$Basics$not = _Basics_not;
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
@@ -5856,7 +5857,22 @@ var $author$project$Main$displayCard = function (c) {
 				$elm$svg$Svg$Attributes$transform(
 				'translate(' + ($elm$core$String$fromFloat(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromFloat(y_coord_mid - heightHalf) + ')'))))
 			]),
-		c.shown ? _List_fromArray(
+		(!c.shown) ? _List_fromArray(
+			[
+				A2(
+				$elm$svg$Svg$rect,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$x('0'),
+						$elm$svg$Svg$Attributes$y('0'),
+						$elm$svg$Svg$Attributes$width(width_text),
+						$elm$svg$Svg$Attributes$height(height_text),
+						$elm$svg$Svg$Attributes$fill('#000000'),
+						$elm$svg$Svg$Attributes$stroke('none'),
+						$elm$svg$Svg$Attributes$strokeWidth('none')
+					]),
+				_List_Nil)
+			]) : ((!parity) ? _List_fromArray(
 			[
 				A2(
 				$elm$svg$Svg$rect,
@@ -5890,12 +5906,30 @@ var $author$project$Main$displayCard = function (c) {
 						$elm$svg$Svg$Attributes$y('0'),
 						$elm$svg$Svg$Attributes$width(width_text),
 						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill('#000000'),
+						$elm$svg$Svg$Attributes$fill('#ffffff'),
 						$elm$svg$Svg$Attributes$stroke('none'),
 						$elm$svg$Svg$Attributes$strokeWidth('none')
 					]),
-				_List_Nil)
-			]));
+				_List_Nil),
+				A2(
+				$elm$svg$Svg$g,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$transform('translate(' + (width_text + ') rotate(90)'))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$svg$Svg$image,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$width(height_text),
+								$elm$svg$Svg$Attributes$height(width_text),
+								$elm$svg$Svg$Attributes$xlinkHref('../img/svg/黒車.svg')
+							]),
+						_List_Nil)
+					]))
+			])));
 };
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$core$Basics$min = F2(
