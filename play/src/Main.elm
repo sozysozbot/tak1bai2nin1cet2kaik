@@ -75,6 +75,11 @@ targetBlankLink attributes =
     Html.a (Html.Attributes.target "_blank" :: attributes)
 
 
+cardHtmlImage : { a | prof : Profession, cardColor : CardColor } -> Html msg
+cardHtmlImage a =
+    Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 100, Html.Attributes.style "vertical-align" "middle" ] []
+
+
 view_ : Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
 view_ gameEndTweet history svgContent buttons =
     Html.div [ Html.Attributes.style "display" "flex" ]
@@ -94,6 +99,27 @@ view_ gameEndTweet history svgContent buttons =
                 [ targetBlankLink
                     [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ]
                     [ Html.text "バグなどありましたらここをクリックしてご報告ください" ]
+                ]
+            , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。" ]
+            , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                [ Html.text "ただし "
+                , cardHtmlImage { prof = Dau2, cardColor = Black }
+                , Html.text " = "
+                , cardHtmlImage { prof = Maun1, cardColor = Black }
+                , Html.text " および "
+                , cardHtmlImage { prof = Kua2, cardColor = Black }
+                , Html.text " = "
+                , cardHtmlImage { prof = Tuk2, cardColor = Black } 
+                , Html.text " = "
+                , cardHtmlImage { prof = Uai1, cardColor = Black }
+                ]
+            , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                [ Html.text "そして "
+                , cardHtmlImage { prof = Io, cardColor = Black }
+                , Html.text " = "
+                , cardHtmlImage { prof = Tam2, cardColor = Black }
+                , Html.text " に注意。"
                 ]
             ]
         , Html.div []

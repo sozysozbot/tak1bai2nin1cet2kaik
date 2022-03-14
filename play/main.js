@@ -6145,6 +6145,39 @@ var $author$project$Main$simpleCancelButton = A2(
 			$elm$svg$Svg$text('キャンセル')
 		]));
 var $elm$html$Html$br = _VirtualDom_node('br');
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Main$cardHtmlImage = function (a) {
+	return A2(
+		$elm$html$Html$img,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$src(
+				$author$project$Tak1Bai2Types$toExternalSvgFilePath(a)),
+				$elm$html$Html$Attributes$height(100),
+				A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle')
+			]),
+		_List_Nil);
+};
 var $elm$html$Html$Attributes$cols = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -6172,27 +6205,12 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	});
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$core$List$intersperse = F2(
 	function (sep, xs) {
 		if (!xs.b) {
@@ -6227,12 +6245,6 @@ var $elm$html$Html$Attributes$rows = function (n) {
 		_VirtualDom_attribute,
 		'rows',
 		$elm$core$String$fromInt(n));
-};
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $elm$url$Url$Builder$QueryParameter = F2(
 	function (a, b) {
@@ -6348,6 +6360,56 @@ var $author$project$Main$view_ = F4(
 										[
 											$elm$html$Html$text('バグなどありましたらここをクリックしてご報告ください')
 										]))
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('カードをめくって、同一札の黒と赤でペアを作っていく遊びです。')
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('ただし '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Dau2}),
+									$elm$html$Html$text(' = '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Maun1}),
+									$elm$html$Html$text(' および '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Kua2}),
+									$elm$html$Html$text(' = '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tuk2}),
+									$elm$html$Html$text(' = '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Uai1})
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('そして '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Io}),
+									$elm$html$Html$text(' = '),
+									$author$project$Main$cardHtmlImage(
+									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tam2}),
+									$elm$html$Html$text(' に注意。')
 								]))
 						])),
 					A2(
