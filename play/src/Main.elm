@@ -1,7 +1,5 @@
 module Main exposing (init, main, view)
 
--- import List.Extra exposing (filterNot)
-
 import Browser
 import Html exposing (Html)
 import Html.Attributes exposing (href)
@@ -10,7 +8,6 @@ import Svg.Attributes exposing (attributeName, d, dur, fill, height, repeatCount
 import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
-import List.Extra
 
 
 type alias Flags =
@@ -81,8 +78,8 @@ cardHtmlImage a =
     Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 100, Html.Attributes.style "vertical-align" "middle" ] []
 
 
-view_ : Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
-view_ gameEndTweet history svgContent buttons =
+view_ : Int -> Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
+view_ pairnum gameEndTweet history svgContent buttons =
     Html.div [ Html.Attributes.style "display" "flex" ]
         [ Html.div [ Html.Attributes.style "padding" "0px 20px 0 20px", Html.Attributes.style "min-width" "360px" ]
             [ Html.h2 [] [ Html.text "紙机戦ソリティア「衣糸紙机戦」" ]
@@ -124,7 +121,14 @@ view_ gameEndTweet history svgContent buttons =
                 ]
             ]
         , Html.div []
-            (svg [ viewBox "-100 -200 1050 1150", width "540" ] svgContent
+            (Html.div
+                [ Html.Attributes.style "min-height" "35px"
+                , Html.Attributes.style "margin-top" "25px"
+                , Html.Attributes.style "text-align" "center"
+                ]
+                [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
+                ]
+                :: svg [ viewBox "-100 -100 1050 1050", width "540" ] svgContent
                 :: Html.br [] []
                 :: List.intersperse (Html.text " ") buttons
             )
@@ -357,11 +361,17 @@ isShownAt board coord =
     getCardAt board coord |> Maybe.map .shown
 
 
+getPairNumFromBoard : Board -> Int
+getPairNumFromBoard b =
+    List.filter .shown b.cards |> List.length |> (\x -> x // 2)
+
+
 view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus }) =
     case currentStatus of
         NothingSelected board ->
-            view_ False
+            view_ (getPairNumFromBoard board)
+                False
                 historyString
                 (backgroundWoodenBoard
                     :: List.map displayCard board.cards
@@ -371,15 +381,17 @@ view (Model { historyString, currentStatus }) =
                 [{- default state. no need to cancel everything: the state has been saved -}]
 
         GameTerminated board ->
-            view_ False
+            view_ (getPairNumFromBoard board)
+                False
                 historyString
                 (backgroundWoodenBoard
-                    :: List.map displayCard board.board
+                    :: List.map displayCard board.cards
                 )
                 [{- The game has ended. No cancelling allowed. -}]
 
         FirstHalfCompletedByHop { from, to } board ->
-            view_ False
+            view_ (getPairNumFromBoard board)
+                False
                 historyString
                 (backgroundWoodenBoard
                     :: drawArrow Yellow from to
@@ -389,7 +401,8 @@ view (Model { historyString, currentStatus }) =
                 [ simpleCancelButton ]
 
         FirstHalfCompletedBySlide { from, to } board ->
-            view_ False
+            view_ (getPairNumFromBoard board)
+                False
                 historyString
                 (backgroundWoodenBoard
                     :: drawArrow Yellow from to
@@ -399,7 +412,14 @@ view (Model { historyString, currentStatus }) =
                 [ simpleCancelButton ]
 
         SecondHalfCompleted ({ first_from, first_to, second_from, second_to } as coords) board ->
-            view_ False
+            view_
+                (if isMatchFromCoords coords board == Just True then
+                    getPairNumFromBoard board
+
+                 else
+                    getPairNumFromBoard board - 1 -- two cards are mismatched, so we must subtract it
+                )
+                False
                 historyString
                 (backgroundWoodenBoard
                     :: drawArrow Yellow first_from first_to

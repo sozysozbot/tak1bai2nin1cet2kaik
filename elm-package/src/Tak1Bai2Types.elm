@@ -48,9 +48,7 @@ type MoveCommand
 
 type CurrentStatus
     = NothingSelected Board
-    | GameTerminated
-        { board : List CardOnBoard
-        }
+    | GameTerminated Board
     | FirstHalfCompletedByHop { from : Coordinate, to : Coordinate } Board
     | FirstHalfCompletedBySlide { from : Coordinate, to : Coordinate } Board
     | SecondHalfCompleted { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } Board

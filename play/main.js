@@ -6155,15 +6155,6 @@ var $author$project$Main$drawArrow = F3(
 					_List_Nil)
 				]));
 	});
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6174,6 +6165,27 @@ var $elm$core$List$filter = F2(
 				}),
 			_List_Nil,
 			list);
+	});
+var $author$project$Main$getPairNumFromBoard = function (b) {
+	return function (x) {
+		return (x / 2) | 0;
+	}(
+		$elm$core$List$length(
+			A2(
+				$elm$core$List$filter,
+				function ($) {
+					return $.shown;
+				},
+				b.cards)));
+};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
 	});
 var $elm$core$List$head = function (list) {
 	if (list.b) {
@@ -6451,6 +6463,7 @@ var $elm$html$Html$Attributes$rows = function (n) {
 		'rows',
 		$elm$core$String$fromInt(n));
 };
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$url$Url$Builder$QueryParameter = F2(
 	function (a, b) {
 		return {$: 'QueryParameter', a: a, b: b};
@@ -6477,8 +6490,8 @@ var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $author$project$Main$view_ = F4(
-	function (gameEndTweet, history, svgContent, buttons) {
+var $author$project$Main$view_ = F5(
+	function (pairnum, gameEndTweet, history, svgContent, buttons) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6623,20 +6636,41 @@ var $author$project$Main$view_ = F4(
 					A2(
 						$elm$core$List$cons,
 						A2(
-							$elm$svg$Svg$svg,
+							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$svg$Svg$Attributes$viewBox('-100 -200 1050 1150'),
-									$elm$svg$Svg$Attributes$width('540')
+									A2($elm$html$Html$Attributes$style, 'min-height', '35px'),
+									A2($elm$html$Html$Attributes$style, 'margin-top', '25px'),
+									A2($elm$html$Html$Attributes$style, 'text-align', 'center')
 								]),
-							svgContent),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
+										]))
+								])),
 						A2(
 							$elm$core$List$cons,
-							A2($elm$html$Html$br, _List_Nil, _List_Nil),
 							A2(
-								$elm$core$List$intersperse,
-								$elm$html$Html$text(' '),
-								buttons)))),
+								$elm$svg$Svg$svg,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$viewBox('-100 -100 1050 1050'),
+										$elm$svg$Svg$Attributes$width('540')
+									]),
+								svgContent),
+							A2(
+								$elm$core$List$cons,
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								A2(
+									$elm$core$List$intersperse,
+									$elm$html$Html$text(' '),
+									buttons))))),
 					A2(
 					$elm$html$Html$div,
 					_List_fromArray(
@@ -6713,8 +6747,9 @@ var $author$project$Main$view = function (_v0) {
 	switch (currentStatus.$) {
 		case 'NothingSelected':
 			var board = currentStatus.a;
-			return A4(
+			return A5(
 				$author$project$Main$view_,
+				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
 				A2(
@@ -6746,21 +6781,23 @@ var $author$project$Main$view = function (_v0) {
 				_List_Nil);
 		case 'GameTerminated':
 			var board = currentStatus.a;
-			return A4(
+			return A5(
 				$author$project$Main$view_,
+				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
 				A2(
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard,
-					A2($elm$core$List$map, $author$project$Main$displayCard, board.board)),
+					A2($elm$core$List$map, $author$project$Main$displayCard, board.cards)),
 				_List_Nil);
 		case 'FirstHalfCompletedByHop':
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A4(
+			return A5(
 				$author$project$Main$view_,
+				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
 				A2(
@@ -6787,8 +6824,9 @@ var $author$project$Main$view = function (_v0) {
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A4(
+			return A5(
 				$author$project$Main$view_,
+				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
 				A2(
@@ -6818,8 +6856,11 @@ var $author$project$Main$view = function (_v0) {
 			var second_from = coords.second_from;
 			var second_to = coords.second_to;
 			var board = currentStatus.b;
-			return A4(
+			return A5(
 				$author$project$Main$view_,
+				_Utils_eq(
+					A2($author$project$Main$isMatchFromCoords, coords, board),
+					$elm$core$Maybe$Just(true)) ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1),
 				false,
 				historyString,
 				A2(
