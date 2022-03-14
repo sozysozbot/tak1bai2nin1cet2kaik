@@ -110,7 +110,7 @@ view_ gameEndTweet history svgContent buttons =
                 , Html.text " および "
                 , cardHtmlImage { prof = Kua2, cardColor = Black }
                 , Html.text " = "
-                , cardHtmlImage { prof = Tuk2, cardColor = Black } 
+                , cardHtmlImage { prof = Tuk2, cardColor = Black }
                 , Html.text " = "
                 , cardHtmlImage { prof = Uai1, cardColor = Black }
                 ]
@@ -343,7 +343,7 @@ possibleSlidePosition board =
 possibleHopPosition : Board -> List Coordinate
 possibleHopPosition board =
     nthNeighbor 2 board.empty
-        |> List.filter (\neighbor -> isShownAt board (getMidPoint neighbor board.empty) /= Just True)
+        |> List.filter (\neighbor -> isShownAt board (getMidpoint neighbor board.empty) /= Just True)
 
 
 getCardAt : Board -> Coordinate -> Maybe CardOnBoard
@@ -397,7 +397,7 @@ view (Model { historyString, currentStatus }) =
                 )
                 [ simpleCancelButton ]
 
-        SecondHalfCompleted { first_from, first_to, second_from, second_to } board ->
+        SecondHalfCompleted ({ first_from, first_to, second_from, second_to } as coords) board ->
             view_ False
                 historyString
                 (backgroundWoodenBoard
@@ -405,7 +405,63 @@ view (Model { historyString, currentStatus }) =
                     :: drawArrow Green second_from second_to
                     :: List.map displayCard board.cards
                 )
-                []
+                [ if isMatchFromCoords coords board == Just True then
+                    matchButton
+
+                  else
+                    mismatchButton
+                ]
+
+
+isSlide : Coordinate -> Coordinate -> Bool
+isSlide a b =
+    -- Elm does not allow negative literals in pattern matching
+    case ( abs (a.x - b.x), abs (a.y - b.y) ) of
+        ( 1, 0 ) ->
+            True
+
+        ( 0, 1 ) ->
+            True
+
+        _ ->
+            False
+
+
+isMatchFromCoords : { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } -> Board -> Maybe Bool
+isMatchFromCoords { first_from, first_to, second_from, second_to } board =
+    getCardAt board (getMidpoint second_from second_to)
+        |> Maybe.andThen
+            (\second_card ->
+                (if isSlide first_from first_to then
+                    getCardAt board first_to
+
+                 else
+                    getCardAt board (getMidpoint first_from first_to)
+                )
+                    |> Maybe.andThen (\first_card -> Just (isMatch first_card second_card))
+            )
+
+
+isMatch : CardOnBoard -> CardOnBoard -> Bool
+isMatch a b =
+    if a.cardColor == b.cardColor then
+        False
+        -- the colors must be different
+
+    else if a.prof == b.prof then
+        True
+
+    else if List.member a.prof [ Io, Tam2 ] && List.member b.prof [ Io, Tam2 ] then
+        True
+
+    else if List.member a.prof [ Kua2, Tuk2, Uai1 ] && List.member b.prof [ Kua2, Tuk2, Uai1 ] then
+        True
+
+    else if List.member a.prof [ Dau2, Maun1 ] && List.member b.prof [ Dau2, Maun1 ] then
+        True
+
+    else
+        False
 
 
 
@@ -418,16 +474,17 @@ view (Model { historyString, currentStatus }) =
 
 simpleCancelButton : Html OriginalMsg
 simpleCancelButton =
-    Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "150%" ] [ text "キャンセル" ]
+    Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "100%" ] [ text "キャンセル" ]
 
 
+matchButton : Html OriginalMsg
+matchButton =
+    Html.button [ onClick Match, Html.Attributes.style "background-color" "#aaffaa", Html.Attributes.style "font-size" "150%" ] [ text "マッチ！" ]
 
-{-
-   turnEndButton : Html OriginalMsg
-   turnEndButton =
-       Html.button [ onClick TurnEnd, Html.Attributes.style "background-color" "#aaffaa", Html.Attributes.style "font-size" "150%" ] [ text "ターンエンド" ]
 
--}
+mismatchButton : Html OriginalMsg
+mismatchButton =
+    Html.button [ onClick Mismatch, Html.Attributes.style "background-color" "#aaaaff", Html.Attributes.style "font-size" "150%" ] [ text "ミスマッチ……" ]
 
 
 init : Flags -> ( Model, Cmd OriginalMsg )
@@ -530,7 +587,7 @@ updateStatus msg modl saved =
                     List.partition (\x -> x.coord == from) oldBoard.cards
 
                 ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
 
                 newBoard =
                     case ( cardsToBeMoved, cardsToBeFlipped ) of
@@ -565,7 +622,7 @@ updateStatus msg modl saved =
                     List.partition (\x -> x.coord == from) oldBoard.cards
 
                 ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
 
                 newBoard =
                     case ( cardsToBeMoved, cardsToBeFlipped ) of
@@ -584,7 +641,7 @@ updateStatus msg modl saved =
                     List.partition (\x -> x.coord == from) oldBoard.cards
 
                 ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidPoint from to) remainingCards
+                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
 
                 newBoard =
                     case ( cardsToBeMoved, cardsToBeFlipped ) of

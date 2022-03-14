@@ -5418,7 +5418,7 @@ var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
 	function (a, b) {
 		return {$: 'SecondHalfCompleted', a: a, b: b};
 	});
-var $author$project$Tak1Bai2Types$getMidPoint = F2(
+var $author$project$Tak1Bai2Types$getMidpoint = F2(
 	function (from, to) {
 		return {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
 	});
@@ -5504,7 +5504,7 @@ var $author$project$Main$updateStatus = F3(
 								function (x) {
 									return _Utils_eq(
 										x.coord,
-										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
 							var cardsToBeFlipped = _v3.a;
@@ -5557,7 +5557,7 @@ var $author$project$Main$updateStatus = F3(
 								function (x) {
 									return _Utils_eq(
 										x.coord,
-										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
 							var cardsToBeFlipped = _v11.a;
@@ -5610,7 +5610,7 @@ var $author$project$Main$updateStatus = F3(
 								function (x) {
 									return _Utils_eq(
 										x.coord,
-										A2($author$project$Tak1Bai2Types$getMidPoint, from, to));
+										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
 							var cardsToBeFlipped = _v17.a;
@@ -6031,6 +6031,15 @@ var $author$project$Main$drawArrow = F3(
 					_List_Nil)
 				]));
 	});
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6061,6 +6070,147 @@ var $author$project$Main$getCardAt = F2(
 				},
 				board.cards));
 	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $author$project$Main$isMatch = F2(
+	function (a, b) {
+		return _Utils_eq(a.cardColor, b.cardColor) ? false : (_Utils_eq(a.prof, b.prof) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2]))) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1]))) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1]))) ? true : false))));
+	});
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var $author$project$Main$isSlide = F2(
+	function (a, b) {
+		var _v0 = _Utils_Tuple2(
+			$elm$core$Basics$abs(a.x - b.x),
+			$elm$core$Basics$abs(a.y - b.y));
+		_v0$2:
+		while (true) {
+			switch (_v0.a) {
+				case 1:
+					if (!_v0.b) {
+						return true;
+					} else {
+						break _v0$2;
+					}
+				case 0:
+					if (_v0.b === 1) {
+						return true;
+					} else {
+						break _v0$2;
+					}
+				default:
+					break _v0$2;
+			}
+		}
+		return false;
+	});
+var $author$project$Main$isMatchFromCoords = F2(
+	function (_v0, board) {
+		var first_from = _v0.first_from;
+		var first_to = _v0.first_to;
+		var second_from = _v0.second_from;
+		var second_to = _v0.second_to;
+		return A2(
+			$elm$core$Maybe$andThen,
+			function (second_card) {
+				return A2(
+					$elm$core$Maybe$andThen,
+					function (first_card) {
+						return $elm$core$Maybe$Just(
+							A2($author$project$Main$isMatch, first_card, second_card));
+					},
+					A2($author$project$Main$isSlide, first_from, first_to) ? A2($author$project$Main$getCardAt, board, first_to) : A2(
+						$author$project$Main$getCardAt,
+						board,
+						A2($author$project$Tak1Bai2Types$getMidpoint, first_from, first_to)));
+			},
+			A2(
+				$author$project$Main$getCardAt,
+				board,
+				A2($author$project$Tak1Bai2Types$getMidpoint, second_from, second_to)));
+	});
+var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$matchButton = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Match),
+			A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
+			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+		]),
+	_List_fromArray(
+		[
+			$elm$svg$Svg$text('マッチ！')
+		]));
+var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
+var $author$project$Main$mismatchButton = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Mismatch),
+			A2($elm$html$Html$Attributes$style, 'background-color', '#aaaaff'),
+			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+		]),
+	_List_fromArray(
+		[
+			$elm$svg$Svg$text('ミスマッチ……')
+		]));
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6113,7 +6263,7 @@ var $author$project$Main$possibleHopPosition = function (board) {
 				A2(
 					$author$project$Main$isShownAt,
 					board,
-					A2($author$project$Tak1Bai2Types$getMidPoint, neighbor, board.empty)),
+					A2($author$project$Tak1Bai2Types$getMidpoint, neighbor, board.empty)),
 				$elm$core$Maybe$Just(true));
 		},
 		A2($author$project$Main$nthNeighbor, 2, board.empty));
@@ -6129,16 +6279,13 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
 };
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$simpleCancelButton = A2(
 	$elm$html$Html$button,
 	_List_fromArray(
 		[
 			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Cancel),
 			A2($elm$html$Html$Attributes$style, 'background-color', '#ffaaaa'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+			A2($elm$html$Html$Attributes$style, 'font-size', '100%')
 		]),
 	_List_fromArray(
 		[
@@ -6604,10 +6751,11 @@ var $author$project$Main$view = function (_v0) {
 				_List_fromArray(
 					[$author$project$Main$simpleCancelButton]));
 		default:
-			var first_from = currentStatus.a.first_from;
-			var first_to = currentStatus.a.first_to;
-			var second_from = currentStatus.a.second_from;
-			var second_to = currentStatus.a.second_to;
+			var coords = currentStatus.a;
+			var first_from = coords.first_from;
+			var first_to = coords.first_to;
+			var second_from = coords.second_from;
+			var second_to = coords.second_to;
 			var board = currentStatus.b;
 			return A4(
 				$author$project$Main$view_,
@@ -6623,7 +6771,12 @@ var $author$project$Main$view = function (_v0) {
 							$elm$core$List$cons,
 							A3($author$project$Main$drawArrow, $author$project$Main$Green, second_from, second_to),
 							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards)))),
-				_List_Nil);
+				_List_fromArray(
+					[
+						_Utils_eq(
+						A2($author$project$Main$isMatchFromCoords, coords, board),
+						$elm$core$Maybe$Just(true)) ? $author$project$Main$matchButton : $author$project$Main$mismatchButton
+					]));
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

@@ -61,9 +61,8 @@ type OriginalMsg
     | Slide { from : Coordinate, to : Coordinate }
     | Hop { from : Coordinate, to : Coordinate }
     | Cancel
-    | TurnEnd {- whether it is a capture or not is determined by whether there is an overlap -}
-    | SendToTrashBinPart2
-    | MovementToward Coordinate
+    | Match
+    | Mismatch
 
 
 toExternalSvgFilePath : { a | prof : Profession, cardColor : CardColor } -> String
@@ -134,6 +133,6 @@ type alias CardEncodedAsInt =
     Int
 
 
-getMidPoint : Coordinate -> Coordinate -> Coordinate
-getMidPoint from to =
+getMidpoint : Coordinate -> Coordinate -> Coordinate
+getMidpoint from to =
     { x = (from.x + to.x) // 2, y = (from.y + to.y) // 2 }
