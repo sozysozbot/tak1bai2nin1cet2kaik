@@ -10,7 +10,8 @@
 <body>
     <div id="myapp"></div>
     <script>
-        function shuffle(array) {
+        function shuffled(arr) {
+            var array = [...arr];
             var currentIndex = array.length, temporaryValue, randomIndex;
             while (0 !== currentIndex) {
                 randomIndex = Math.floor(Math.random() * currentIndex);
@@ -37,10 +38,26 @@
             10 // 皇
         ].map(a => a * 2);
         var red_cards = black_cards.map(a => a + 5);
-        var cards = [...black_cards, ...red_cards]
-        shuffle(cards);
+        var cards = [...black_cards, ...red_cards];
 
-        if (cards.length !== 48) { throw new Error("The number of cards is not 48") } else {
+        const url = new URL(location.href);
+        const params = new URLSearchParams(url.search);
+        if (params.has("initial")) {
+            const param_cards = params.get("initial").split(",").map(a => parseInt(a, 10));
+            const sorted_cards = [...cards].sort((a, b) => a - b);
+            const sorted_param_cards = [...param_cards].sort((a, b) => a - b);
+            if (param_cards.length === 48 && sorted_param_cards.every((val, ind) => sorted_cards[ind] === val)) {
+                // valid; use this as the initial configuration
+                initiateWith(param_cards);
+            } else {
+                initiateWith(shuffled(cards)); // param_cards is unusable
+            }
+        } else {
+            initiateWith(shuffled(cards));
+        }
+
+
+        function initiateWith(cards) {
             var app = Elm.Main.init({
                 node: document.getElementById('myapp'),
                 flags: {
@@ -48,6 +65,7 @@
                 }
             });
         }
+
     </script>
 </body>
 

@@ -5391,7 +5391,14 @@ var $author$project$Main$init = function (flags) {
 		$author$project$Main$initialBoard(flags.cards));
 	return _Utils_Tuple2(
 		$author$project$Main$Model(
-			{currentStatus: initialStatus, historyString: '', saved: initialStatus}),
+			{
+				currentStatus: initialStatus,
+				historyString: '初期配置: ' + (A2(
+					$elm$core$String$join,
+					',',
+					A2($elm$core$List$map, $elm$core$String$fromInt, flags.cards)) + '\n'),
+				saved: initialStatus
+			}),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$json$Json$Decode$int = _Json_decodeInt;

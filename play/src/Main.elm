@@ -10,6 +10,7 @@ import Svg.Attributes exposing (attributeName, d, dur, fill, height, repeatCount
 import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
 import Url.Builder exposing (crossOrigin)
+import List.Extra
 
 
 type alias Flags =
@@ -503,7 +504,7 @@ init flags =
     in
     ( Model
         { historyString =
-            ""
+            "初期配置: " ++ String.join "," (List.map String.fromInt flags.cards) ++ "\n"
         , currentStatus = initialStatus
         , saved = initialStatus
         }
