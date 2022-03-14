@@ -5422,6 +5422,78 @@ var $author$project$Tak1Bai2Types$getMidpoint = F2(
 	function (from, to) {
 		return {x: ((from.x + to.x) / 2) | 0, y: ((from.y + to.y) / 2) | 0};
 	});
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var $author$project$Main$isSlide = F2(
+	function (a, b) {
+		var _v0 = _Utils_Tuple2(
+			$elm$core$Basics$abs(a.x - b.x),
+			$elm$core$Basics$abs(a.y - b.y));
+		_v0$2:
+		while (true) {
+			switch (_v0.a) {
+				case 1:
+					if (!_v0.b) {
+						return true;
+					} else {
+						break _v0$2;
+					}
+				case 0:
+					if (_v0.b === 1) {
+						return true;
+					} else {
+						break _v0$2;
+					}
+				default:
+					break _v0$2;
+			}
+		}
+		return false;
+	});
+var $author$project$Main$coordsFlippedInATurn = function (_v0) {
+	var first_from = _v0.first_from;
+	var first_to = _v0.first_to;
+	var second_from = _v0.second_from;
+	var second_to = _v0.second_to;
+	return {
+		first_flipped: A2($author$project$Main$isSlide, first_from, first_to) ? first_to : A2($author$project$Tak1Bai2Types$getMidpoint, first_from, first_to),
+		second_flipped: A2($author$project$Tak1Bai2Types$getMidpoint, second_from, second_to)
+	};
+};
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
 var $elm$core$List$partition = F2(
 	function (pred, list) {
 		var step = F2(
@@ -5443,7 +5515,7 @@ var $elm$core$List$partition = F2(
 var $author$project$Main$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
-		_v0$5:
+		_v0$7:
 		while (true) {
 			switch (_v0.b.$) {
 				case 'Cancel':
@@ -5483,7 +5555,7 @@ var $author$project$Main$updateStatus = F3(
 							{from: from, to: to},
 							newBoard);
 					} else {
-						break _v0$5;
+						break _v0$7;
 					}
 				case 'Hop':
 					switch (_v0.a.$) {
@@ -5645,10 +5717,58 @@ var $author$project$Main$updateStatus = F3(
 								{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
 								newBoard);
 						default:
-							break _v0$5;
+							break _v0$7;
+					}
+				case 'Match':
+					if (_v0.a.$ === 'SecondHalfCompleted') {
+						var _v21 = _v0.a;
+						var oldBoard = _v21.b;
+						var _v22 = _v0.b;
+						return $author$project$Tak1Bai2Types$NothingSelected(oldBoard);
+					} else {
+						break _v0$7;
+					}
+				case 'Mismatch':
+					if (_v0.a.$ === 'SecondHalfCompleted') {
+						var _v23 = _v0.a;
+						var coords = _v23.a;
+						var oldBoard = _v23.b;
+						var _v24 = _v0.b;
+						var _v25 = $author$project$Main$coordsFlippedInATurn(coords);
+						var first_flipped = _v25.first_flipped;
+						var second_flipped = _v25.second_flipped;
+						var _v26 = A2(
+							$elm$core$List$partition,
+							function (x) {
+								return A2(
+									$elm$core$List$member,
+									x.coord,
+									_List_fromArray(
+										[first_flipped, second_flipped]));
+							},
+							oldBoard.cards);
+						var cardsToBeFlippedBack = _v26.a;
+						var remainingCards = _v26.b;
+						var newBoard = _Utils_update(
+							oldBoard,
+							{
+								cards: _Utils_ap(
+									A2(
+										$elm$core$List$map,
+										function (card) {
+											return _Utils_update(
+												card,
+												{shown: false});
+										},
+										cardsToBeFlippedBack),
+									remainingCards)
+							});
+						return $author$project$Tak1Bai2Types$NothingSelected(newBoard);
+					} else {
+						break _v0$7;
 					}
 				default:
-					break _v0$5;
+					break _v0$7;
 			}
 		}
 		return modl;
@@ -5976,9 +6096,6 @@ var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
 var $author$project$Main$drawArrow = F3(
 	function (uiColor, from, to) {
@@ -6070,36 +6187,6 @@ var $author$project$Main$getCardAt = F2(
 				},
 				board.cards));
 	});
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
 var $author$project$Main$isMatch = F2(
 	function (a, b) {
 		return _Utils_eq(a.cardColor, b.cardColor) ? false : (_Utils_eq(a.prof, b.prof) ? true : ((A2(
@@ -6128,41 +6215,11 @@ var $author$project$Main$isMatch = F2(
 			_List_fromArray(
 				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1]))) ? true : false))));
 	});
-var $elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var $author$project$Main$isSlide = F2(
-	function (a, b) {
-		var _v0 = _Utils_Tuple2(
-			$elm$core$Basics$abs(a.x - b.x),
-			$elm$core$Basics$abs(a.y - b.y));
-		_v0$2:
-		while (true) {
-			switch (_v0.a) {
-				case 1:
-					if (!_v0.b) {
-						return true;
-					} else {
-						break _v0$2;
-					}
-				case 0:
-					if (_v0.b === 1) {
-						return true;
-					} else {
-						break _v0$2;
-					}
-				default:
-					break _v0$2;
-			}
-		}
-		return false;
-	});
 var $author$project$Main$isMatchFromCoords = F2(
-	function (_v0, board) {
-		var first_from = _v0.first_from;
-		var first_to = _v0.first_to;
-		var second_from = _v0.second_from;
-		var second_to = _v0.second_to;
+	function (coords, board) {
+		var _v0 = $author$project$Main$coordsFlippedInATurn(coords);
+		var first_flipped = _v0.first_flipped;
+		var second_flipped = _v0.second_flipped;
 		return A2(
 			$elm$core$Maybe$andThen,
 			function (second_card) {
@@ -6172,15 +6229,9 @@ var $author$project$Main$isMatchFromCoords = F2(
 						return $elm$core$Maybe$Just(
 							A2($author$project$Main$isMatch, first_card, second_card));
 					},
-					A2($author$project$Main$isSlide, first_from, first_to) ? A2($author$project$Main$getCardAt, board, first_to) : A2(
-						$author$project$Main$getCardAt,
-						board,
-						A2($author$project$Tak1Bai2Types$getMidpoint, first_from, first_to)));
+					A2($author$project$Main$getCardAt, board, first_flipped));
 			},
-			A2(
-				$author$project$Main$getCardAt,
-				board,
-				A2($author$project$Tak1Bai2Types$getMidpoint, second_from, second_to)));
+			A2($author$project$Main$getCardAt, board, second_flipped));
 	});
 var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $elm$html$Html$button = _VirtualDom_node('button');

@@ -427,19 +427,27 @@ isSlide a b =
             False
 
 
-isMatchFromCoords : { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } -> Board -> Maybe Bool
-isMatchFromCoords { first_from, first_to, second_from, second_to } board =
-    getCardAt board (getMidpoint second_from second_to)
-        |> Maybe.andThen
-            (\second_card ->
-                (if isSlide first_from first_to then
-                    getCardAt board first_to
+coordsFlippedInATurn : { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } -> { first_flipped : Coordinate, second_flipped : Coordinate }
+coordsFlippedInATurn { first_from, first_to, second_from, second_to } =
+    { first_flipped =
+        if isSlide first_from first_to then
+            first_to
 
-                 else
-                    getCardAt board (getMidpoint first_from first_to)
-                )
-                    |> Maybe.andThen (\first_card -> Just (isMatch first_card second_card))
-            )
+        else
+            getMidpoint first_from first_to
+    , second_flipped = getMidpoint second_from second_to
+    }
+
+
+isMatchFromCoords : { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } -> Board -> Maybe Bool
+isMatchFromCoords coords board =
+    let
+        { first_flipped, second_flipped } =
+            coordsFlippedInATurn coords
+    in
+    getCardAt board second_flipped
+        |> Maybe.andThen
+            (\second_card -> getCardAt board first_flipped |> Maybe.andThen (\first_card -> Just (isMatch first_card second_card)))
 
 
 isMatch : CardOnBoard -> CardOnBoard -> Bool
@@ -653,6 +661,22 @@ updateStatus msg modl saved =
                             oldBoard
             in
             SecondHalfCompleted { first_from = first_fromto.from, first_to = first_fromto.to, second_from = from, second_to = to } newBoard
+
+        ( SecondHalfCompleted _ oldBoard, Match ) ->
+            NothingSelected oldBoard
+
+        ( SecondHalfCompleted coords oldBoard, Mismatch ) ->
+            let
+                { first_flipped, second_flipped } =
+                    coordsFlippedInATurn coords
+
+                ( cardsToBeFlippedBack, remainingCards ) =
+                    List.partition (\x -> List.member x.coord [ first_flipped, second_flipped ]) oldBoard.cards
+
+                newBoard =
+                    { oldBoard | cards = List.map (\card -> { card | shown = False }) cardsToBeFlippedBack ++ remainingCards }
+            in
+            NothingSelected newBoard
 
         _ ->
             modl
