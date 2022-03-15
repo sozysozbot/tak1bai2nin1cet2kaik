@@ -143,23 +143,31 @@ view_ pairnum gameEndTweet history svgContent buttons =
             [ Html.h2 [] [ Html.text "紙机戦ソリティア「衣糸紙机戦」" ]
             , Html.ul []
                 (List.map (\p -> Html.li [] [ p ])
-                    [ targetBlankLink [ href "https://https://sites.google.com/view/cet2kaik" ] [ Html.text "日本机戦連盟公式サイト" ]
+                    [ targetBlankLink [ href "https://sites.google.com/view/cet2kaik" ] [ Html.text "日本机戦連盟公式サイト" ]
+                    , targetBlankLink [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ] [ Html.text "バグを報告/機能を提案" ]
                     ]
                 )
-            , Html.div [ Html.Attributes.style "font-size" "50%" ]
-                (List.map (\t -> Html.p [] [ Html.text t ])
-                    [ "ここに開発ログ"
-                    ]
-                )
+
+            {- }, Html.div [ Html.Attributes.style "font-size" "50%" ]
+               (List.map (\t -> Html.p [] [ Html.text t ])
+                   [ "ここに開発ログ"
+                   ]
+               )
+            -}
+            , Html.h3 [ Html.Attributes.style "font-size" "80%" ] [ Html.text "ルール" ]
             , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ targetBlankLink
-                    [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ]
-                    [ Html.text "バグなどありましたらここをクリックしてご報告ください" ]
+                [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。"
+                , Html.br [] []
+                , Html.text "空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。"
+                , Html.br [] []
+                , Html.text "一打目では空きマスに向かってスライドすることもでき、"
+                , Html.br [] []
+                , Html.text "その場合はスライドしたカード自身がめくられます。"
+                , Html.br [] []
+                , Html.text "ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。"
                 ]
             , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.h3 [] [ Html.text "ルール" ], Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。" ]
-            , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.text "ただし "
+                [ Html.text "なお、 "
                 , cardHtmlImage { prof = Dau2, cardColor = Black }
                 , Html.text " = "
                 , cardHtmlImage { prof = Maun1, cardColor = Black }

@@ -7126,50 +7126,32 @@ var $author$project$Main$view_ = F5(
 										$author$project$Main$targetBlankLink,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$href('https://https://sites.google.com/view/cet2kaik')
+												$elm$html$Html$Attributes$href('https://sites.google.com/view/cet2kaik')
 											]),
 										_List_fromArray(
 											[
 												$elm$html$Html$text('日本机戦連盟公式サイト')
+											])),
+										A2(
+										$author$project$Main$targetBlankLink,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('バグを報告/機能を提案')
 											]))
 									]))),
 							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '50%')
-								]),
-							A2(
-								$elm$core$List$map,
-								function (t) {
-									return A2(
-										$elm$html$Html$p,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(t)
-											]));
-								},
-								_List_fromArray(
-									['ここに開発ログ']))),
-							A2(
-							$elm$html$Html$p,
+							$elm$html$Html$h3,
 							_List_fromArray(
 								[
 									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$author$project$Main$targetBlankLink,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$href('https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('バグなどありましたらここをクリックしてご報告ください')
-										]))
+									$elm$html$Html$text('ルール')
 								])),
 							A2(
 							$elm$html$Html$p,
@@ -7179,14 +7161,15 @@ var $author$project$Main$view_ = F5(
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$elm$html$Html$h3,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text('ルール')
-										])),
-									$elm$html$Html$text('カードをめくって、同一札の黒と赤でペアを作っていく遊びです。')
+									$elm$html$Html$text('カードをめくって、同一札の黒と赤でペアを作っていく遊びです。'),
+									A2($elm$html$Html$br, _List_Nil, _List_Nil),
+									$elm$html$Html$text('空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。'),
+									A2($elm$html$Html$br, _List_Nil, _List_Nil),
+									$elm$html$Html$text('一打目では空きマスに向かってスライドすることもでき、'),
+									A2($elm$html$Html$br, _List_Nil, _List_Nil),
+									$elm$html$Html$text('その場合はスライドしたカード自身がめくられます。'),
+									A2($elm$html$Html$br, _List_Nil, _List_Nil),
+									$elm$html$Html$text('ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。')
 								])),
 							A2(
 							$elm$html$Html$p,
@@ -7196,7 +7179,7 @@ var $author$project$Main$view_ = F5(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('ただし '),
+									$elm$html$Html$text('なお、 '),
 									$author$project$Main$cardHtmlImage(
 									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Dau2}),
 									$elm$html$Html$text(' = '),
