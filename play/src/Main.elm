@@ -1,9 +1,11 @@
 module Main exposing (init, main, view)
 
 import Browser
+import Browser.Events exposing (onKeyDown)
 import Buttons exposing (..)
 import Html exposing (Html)
 import Html.Attributes exposing (href)
+import Json.Decode as Decode
 import Sizes exposing (..)
 import Svg exposing (Attribute, Svg, g, path, rect, svg)
 import Svg.Attributes exposing (d, fill, height, stroke, strokeWidth, transform, viewBox, width, x, y)
@@ -34,45 +36,67 @@ main =
         }
 
 
-subscriptions : Model -> Sub msg
-subscriptions _ =
-    Sub.none
+keyDecoder : Decode.Decoder KeyValue
+keyDecoder =
+    Decode.map toKeyValue (Decode.field "key" Decode.string)
+
+
+toKeyValue : String -> KeyValue
+toKeyValue string =
+    case String.uncons string of
+        Just ( char, "" ) ->
+            Character char
+
+        _ ->
+            Control string
+
+
+subscriptions : Model -> Sub OriginalMsg
+subscriptions model =
+    Sub.batch
+        [ onKeyDown (Decode.map AddKey keyDecoder)
+        ]
 
 
 update : OriginalMsg -> Model -> ( Model, Cmd OriginalMsg )
 update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) =
-    if eyeIsOpen then
-        -- the only thing you can do is to close the eye
-        if msg == CloseTheEye then
-            ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
+    case msg of
+        AddKey (Control "Escape") ->
+            update Cancel modl
 
-        else
-            ( modl, Cmd.none )
+        _ ->
+            if eyeIsOpen then
+                -- the only thing you can do is to close the eye
+                if msg == CloseTheEye then
+                    ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
 
-    else if msg == OpenTheEye then
-        ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = True }, Cmd.none )
+                else
+                    ( modl, Cmd.none )
 
-    else
-        let
-            { newStatus, additionToHistory } =
-                updateStatus msg currentStatus saved
+            else if msg == OpenTheEye then
+                ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = True }, Cmd.none )
 
-            newHist =
-                historyString ++ additionToHistory
-        in
-        case newStatus of
-            NothingSelected cardState ->
-                ( Model
-                    { historyString = newHist
-                    , currentStatus = newStatus
-                    , saved = NothingSelected cardState -- update `saved`
-                    , eyeIsOpen = False
-                    }
-                , Cmd.none
-                )
+            else
+                let
+                    { newStatus, additionToHistory } =
+                        updateStatus msg currentStatus saved
 
-            _ ->
-                ( Model { historyString = newHist, currentStatus = newStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
+                    newHist =
+                        historyString ++ additionToHistory
+                in
+                case newStatus of
+                    NothingSelected cardState ->
+                        ( Model
+                            { historyString = newHist
+                            , currentStatus = newStatus
+                            , saved = NothingSelected cardState -- update `saved`
+                            , eyeIsOpen = False
+                            }
+                        , Cmd.none
+                        )
+
+                    _ ->
+                        ( Model { historyString = newHist, currentStatus = newStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
 
 
 newHistory : OriginalMsg -> CurrentStatus -> String
@@ -114,7 +138,7 @@ view_ pairnum gameEndTweet history svgContent buttons =
                     [ Html.text "バグなどありましたらここをクリックしてご報告ください" ]
                 ]
             , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。" ]
+                [ Html.h3 [] [ Html.text "ルール" ], Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。" ]
             , Html.p [ Html.Attributes.style "font-size" "80%" ]
                 [ Html.text "ただし "
                 , cardHtmlImage { prof = Dau2, cardColor = Black }
@@ -133,6 +157,11 @@ view_ pairnum gameEndTweet history svgContent buttons =
                 , Html.text " = "
                 , cardHtmlImage { prof = Tam2, cardColor = Black }
                 , Html.text " に注意。"
+                ]
+            , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                [ Html.h3 [] [ Html.text "キーボードでの操作" ]
+                , Html.text "盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、"
+                , Html.ul [] [Html.li [] [ Html.text "Esc キーでキャンセル"]]
                 ]
             ]
         , Html.div []

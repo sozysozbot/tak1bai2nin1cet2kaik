@@ -63,6 +63,16 @@ type OriginalMsg
     | Mismatch
     | OpenTheEye
     | CloseTheEye
+    | AddKey KeyValue
+
+
+type KeyValue
+    = Character Char
+    | Control String
+
+
+type alias Keys =
+    List KeyValue
 
 
 type UIColor
