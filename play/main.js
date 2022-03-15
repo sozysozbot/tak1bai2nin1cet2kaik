@@ -5397,7 +5397,7 @@ var $author$project$Main$init = function (flags) {
 				historyString: '初期配置: ' + (A2(
 					$elm$core$String$join,
 					',',
-					A2($elm$core$List$map, $elm$core$String$fromInt, flags.cards)) + '\n'),
+					A2($elm$core$List$map, $elm$core$String$fromInt, flags.cards)) + '\n\n'),
 				saved: initialStatus
 			}),
 		$elm$core$Platform$Cmd$none);
@@ -5411,11 +5411,6 @@ var $author$project$Main$subscriptions = function (_v0) {
 };
 var $author$project$Tak1Bai2Types$CloseTheEye = {$: 'CloseTheEye'};
 var $author$project$Tak1Bai2Types$OpenTheEye = {$: 'OpenTheEye'};
-var $author$project$Main$newHistory = F2(
-	function (msg, modl) {
-		var _v0 = _Utils_Tuple2(modl, msg);
-		return '';
-	});
 var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
 	function (a, b) {
 		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
@@ -5522,6 +5517,14 @@ var $elm$core$List$partition = F2(
 			_Utils_Tuple2(_List_Nil, _List_Nil),
 			list);
 	});
+var $author$project$Main$toHistory = function (a) {
+	var toStr = function (u) {
+		return _Utils_ap(
+			$elm$core$String$fromInt(1 + u.x),
+			$elm$core$String$fromInt(1 + u.y));
+	};
+	return toStr(a.first_from) + (';' + toStr(a.second_from));
+};
 var $author$project$Main$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
@@ -5530,7 +5533,7 @@ var $author$project$Main$updateStatus = F3(
 			switch (_v0.b.$) {
 				case 'Cancel':
 					var _v1 = _v0.b;
-					return saved;
+					return {additionToHistory: '', newStatus: saved};
 				case 'Slide':
 					if (_v0.a.$ === 'NothingSelected') {
 						var oldBoard = _v0.a.a;
@@ -5560,10 +5563,13 @@ var $author$project$Main$updateStatus = F3(
 								return oldBoard;
 							}
 						}();
-						return A2(
-							$author$project$Tak1Bai2Types$FirstHalfCompletedBySlide,
-							{from: from, to: to},
-							newBoard);
+						return {
+							additionToHistory: '',
+							newStatus: A2(
+								$author$project$Tak1Bai2Types$FirstHalfCompletedBySlide,
+								{from: from, to: to},
+								newBoard)
+						};
 					} else {
 						break _v0$7;
 					}
@@ -5616,10 +5622,13 @@ var $author$project$Main$updateStatus = F3(
 									return oldBoard;
 								}
 							}();
-							return A2(
-								$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
-								{from: from, to: to},
-								newBoard);
+							return {
+								additionToHistory: '',
+								newStatus: A2(
+									$author$project$Tak1Bai2Types$FirstHalfCompletedByHop,
+									{from: from, to: to},
+									newBoard)
+							};
 						case 'FirstHalfCompletedByHop':
 							var _v9 = _v0.a;
 							var first_fromto = _v9.a;
@@ -5669,10 +5678,13 @@ var $author$project$Main$updateStatus = F3(
 									return oldBoard;
 								}
 							}();
-							return A2(
-								$author$project$Tak1Bai2Types$SecondHalfCompleted,
-								{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
-								newBoard);
+							return {
+								additionToHistory: '',
+								newStatus: A2(
+									$author$project$Tak1Bai2Types$SecondHalfCompleted,
+									{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
+									newBoard)
+							};
 						case 'FirstHalfCompletedBySlide':
 							var _v15 = _v0.a;
 							var first_fromto = _v15.a;
@@ -5722,19 +5734,26 @@ var $author$project$Main$updateStatus = F3(
 									return oldBoard;
 								}
 							}();
-							return A2(
-								$author$project$Tak1Bai2Types$SecondHalfCompleted,
-								{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
-								newBoard);
+							return {
+								additionToHistory: '',
+								newStatus: A2(
+									$author$project$Tak1Bai2Types$SecondHalfCompleted,
+									{first_from: first_fromto.from, first_to: first_fromto.to, second_from: from, second_to: to},
+									newBoard)
+							};
 						default:
 							break _v0$7;
 					}
 				case 'Match':
 					if (_v0.a.$ === 'SecondHalfCompleted') {
 						var _v21 = _v0.a;
+						var coords = _v21.a;
 						var oldBoard = _v21.b;
 						var _v22 = _v0.b;
-						return $author$project$Tak1Bai2Types$NothingSelected(oldBoard);
+						return {
+							additionToHistory: $author$project$Main$toHistory(coords) + ' Match!\n\n',
+							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
+						};
 					} else {
 						break _v0$7;
 					}
@@ -5773,7 +5792,10 @@ var $author$project$Main$updateStatus = F3(
 										cardsToBeFlippedBack),
 									remainingCards)
 							});
-						return $author$project$Tak1Bai2Types$NothingSelected(newBoard);
+						return {
+							additionToHistory: $author$project$Main$toHistory(coords) + ', ',
+							newStatus: $author$project$Tak1Bai2Types$NothingSelected(newBoard)
+						};
 					} else {
 						break _v0$7;
 					}
@@ -5781,7 +5803,7 @@ var $author$project$Main$updateStatus = F3(
 					break _v0$7;
 			}
 		}
-		return modl;
+		return {additionToHistory: '', newStatus: modl};
 	});
 var $author$project$Main$update = F2(
 	function (msg, modl) {
@@ -5801,16 +5823,16 @@ var $author$project$Main$update = F2(
 						{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
 					$elm$core$Platform$Cmd$none);
 			} else {
-				var newStat = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
-				var newHist = _Utils_ap(
-					historyString,
-					A2($author$project$Main$newHistory, msg, currentStatus));
-				if (newStat.$ === 'NothingSelected') {
-					var cardState = newStat.a;
+				var _v0 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
+				var newStatus = _v0.newStatus;
+				var additionToHistory = _v0.additionToHistory;
+				var newHist = _Utils_ap(historyString, additionToHistory);
+				if (newStatus.$ === 'NothingSelected') {
+					var cardState = newStatus.a;
 					return _Utils_Tuple2(
 						$author$project$Main$Model(
 							{
-								currentStatus: newStat,
+								currentStatus: newStatus,
 								eyeIsOpen: false,
 								historyString: newHist,
 								saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
@@ -5819,7 +5841,7 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(
 						$author$project$Main$Model(
-							{currentStatus: newStat, eyeIsOpen: false, historyString: newHist, saved: saved}),
+							{currentStatus: newStatus, eyeIsOpen: false, historyString: newHist, saved: saved}),
 						$elm$core$Platform$Cmd$none);
 				}
 			}

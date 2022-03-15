@@ -54,17 +54,17 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
 
     else
         let
-            newHist =
-                historyString ++ newHistory msg currentStatus
-
-            newStat =
+            { newStatus, additionToHistory } =
                 updateStatus msg currentStatus saved
+
+            newHist =
+                historyString ++ additionToHistory
         in
-        case newStat of
+        case newStatus of
             NothingSelected cardState ->
                 ( Model
                     { historyString = newHist
-                    , currentStatus = newStat
+                    , currentStatus = newStatus
                     , saved = NothingSelected cardState -- update `saved`
                     , eyeIsOpen = False
                     }
@@ -72,7 +72,7 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
                 )
 
             _ ->
-                ( Model { historyString = newHist, currentStatus = newStat, saved = saved, eyeIsOpen = False }, Cmd.none )
+                ( Model { historyString = newHist, currentStatus = newStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
 
 
 newHistory : OriginalMsg -> CurrentStatus -> String
@@ -485,7 +485,7 @@ init flags =
     in
     ( Model
         { historyString =
-            "初期配置: " ++ String.join "," (List.map String.fromInt flags.cards) ++ "\n"
+            "初期配置: " ++ String.join "," (List.map String.fromInt flags.cards) ++ "\n\n"
         , currentStatus = initialStatus
         , saved = initialStatus
         , eyeIsOpen = False
@@ -550,12 +550,12 @@ drawArrow uiColor from to =
         [ path [ d d_data, fill (fromUIColor uiColor), stroke "#000", strokeWidth "2" ] [] ]
 
 
-updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> CurrentStatus
+updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
 updateStatus msg modl saved =
     case ( modl, msg ) of
         ( _, Cancel ) ->
             -- no matter what the state is, abort it and revert to what was saved last
-            saved
+            { additionToHistory = "", newStatus = saved }
 
         ( NothingSelected oldBoard, Hop { from, to } ) ->
             let
@@ -574,7 +574,7 @@ updateStatus msg modl saved =
                             -- this path is not taken
                             oldBoard
             in
-            FirstHalfCompletedByHop { from = from, to = to } newBoard
+            { additionToHistory = "", newStatus = FirstHalfCompletedByHop { from = from, to = to } newBoard }
 
         ( NothingSelected oldBoard, Slide { from, to } ) ->
             let
@@ -590,7 +590,7 @@ updateStatus msg modl saved =
                             -- this path is not taken
                             oldBoard
             in
-            FirstHalfCompletedBySlide { from = from, to = to } newBoard
+            { additionToHistory = "", newStatus = FirstHalfCompletedBySlide { from = from, to = to } newBoard }
 
         ( FirstHalfCompletedByHop first_fromto oldBoard, Hop { from, to } ) ->
             let
@@ -609,7 +609,16 @@ updateStatus msg modl saved =
                             -- this path is not taken
                             oldBoard
             in
-            SecondHalfCompleted { first_from = first_fromto.from, first_to = first_fromto.to, second_from = from, second_to = to } newBoard
+            { additionToHistory = ""
+            , newStatus =
+                SecondHalfCompleted
+                    { first_from = first_fromto.from
+                    , first_to = first_fromto.to
+                    , second_from = from
+                    , second_to = to
+                    }
+                    newBoard
+            }
 
         ( FirstHalfCompletedBySlide first_fromto oldBoard, Hop { from, to } ) ->
             let
@@ -628,10 +637,19 @@ updateStatus msg modl saved =
                             -- this path is not taken
                             oldBoard
             in
-            SecondHalfCompleted { first_from = first_fromto.from, first_to = first_fromto.to, second_from = from, second_to = to } newBoard
+            { additionToHistory = ""
+            , newStatus =
+                SecondHalfCompleted
+                    { first_from = first_fromto.from
+                    , first_to = first_fromto.to
+                    , second_from = from
+                    , second_to = to
+                    }
+                    newBoard
+            }
 
-        ( SecondHalfCompleted _ oldBoard, Match ) ->
-            NothingSelected oldBoard
+        ( SecondHalfCompleted coords oldBoard, Match ) ->
+            { additionToHistory = toHistory coords ++ " Match!\n\n", newStatus = NothingSelected oldBoard }
 
         ( SecondHalfCompleted coords oldBoard, Mismatch ) ->
             let
@@ -644,10 +662,19 @@ updateStatus msg modl saved =
                 newBoard =
                     { oldBoard | cards = List.map (\card -> { card | shown = False }) cardsToBeFlippedBack ++ remainingCards }
             in
-            NothingSelected newBoard
+            { additionToHistory = toHistory coords ++ ", ", newStatus = NothingSelected newBoard }
 
         _ ->
-            modl
+            { additionToHistory = "", newStatus = modl }
+
+
+toHistory : { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } -> String
+toHistory a =
+    let
+        toStr u =
+            String.fromInt (1 + u.x) ++ String.fromInt (1 + u.y)
+    in
+    toStr a.first_from ++ ";" ++ toStr a.second_from
 
 
 initialBoard : List CardEncodedAsInt -> Board
