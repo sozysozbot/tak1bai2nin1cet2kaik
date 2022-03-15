@@ -5393,6 +5393,7 @@ var $author$project$Main$init = function (flags) {
 		$author$project$Main$Model(
 			{
 				currentStatus: initialStatus,
+				eyeIsOpen: false,
 				historyString: '初期配置: ' + (A2(
 					$elm$core$String$join,
 					',',
@@ -5408,6 +5409,8 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
+var $author$project$Tak1Bai2Types$CloseTheEye = {$: 'CloseTheEye'};
+var $author$project$Tak1Bai2Types$OpenTheEye = {$: 'OpenTheEye'};
 var $author$project$Main$newHistory = F2(
 	function (msg, modl) {
 		var _v0 = _Utils_Tuple2(modl, msg);
@@ -5781,29 +5784,45 @@ var $author$project$Main$updateStatus = F3(
 		return modl;
 	});
 var $author$project$Main$update = F2(
-	function (msg, _v0) {
-		var historyString = _v0.a.historyString;
-		var currentStatus = _v0.a.currentStatus;
-		var saved = _v0.a.saved;
-		var newStat = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
-		var newHist = _Utils_ap(
-			historyString,
-			A2($author$project$Main$newHistory, msg, currentStatus));
-		if (newStat.$ === 'NothingSelected') {
-			var cardState = newStat.a;
-			return _Utils_Tuple2(
+	function (msg, modl) {
+		var historyString = modl.a.historyString;
+		var currentStatus = modl.a.currentStatus;
+		var saved = modl.a.saved;
+		var eyeIsOpen = modl.a.eyeIsOpen;
+		if (eyeIsOpen) {
+			return _Utils_eq(msg, $author$project$Tak1Bai2Types$CloseTheEye) ? _Utils_Tuple2(
 				$author$project$Main$Model(
-					{
-						currentStatus: newStat,
-						historyString: newHist,
-						saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
-					}),
-				$elm$core$Platform$Cmd$none);
+					{currentStatus: currentStatus, eyeIsOpen: false, historyString: historyString, saved: saved}),
+				$elm$core$Platform$Cmd$none) : _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
 		} else {
-			return _Utils_Tuple2(
-				$author$project$Main$Model(
-					{currentStatus: newStat, historyString: newHist, saved: saved}),
-				$elm$core$Platform$Cmd$none);
+			if (_Utils_eq(msg, $author$project$Tak1Bai2Types$OpenTheEye)) {
+				return _Utils_Tuple2(
+					$author$project$Main$Model(
+						{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
+					$elm$core$Platform$Cmd$none);
+			} else {
+				var newStat = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
+				var newHist = _Utils_ap(
+					historyString,
+					A2($author$project$Main$newHistory, msg, currentStatus));
+				if (newStat.$ === 'NothingSelected') {
+					var cardState = newStat.a;
+					return _Utils_Tuple2(
+						$author$project$Main$Model(
+							{
+								currentStatus: newStat,
+								eyeIsOpen: false,
+								historyString: newHist,
+								saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						$author$project$Main$Model(
+							{currentStatus: newStat, eyeIsOpen: false, historyString: newHist, saved: saved}),
+						$elm$core$Platform$Cmd$none);
+				}
+			}
 		}
 	});
 var $author$project$Main$Green = {$: 'Green'};
@@ -5821,17 +5840,20 @@ var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $author$project$Main$backgroundWoodenBoard = A2(
-	$elm$svg$Svg$rect,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Attributes$fill('#e0c39d'),
-			$elm$svg$Svg$Attributes$x('-100'),
-			$elm$svg$Svg$Attributes$y('-100'),
-			$elm$svg$Svg$Attributes$width('1050'),
-			$elm$svg$Svg$Attributes$height('1050')
-		]),
-	_List_Nil);
+var $author$project$Main$backgroundWoodenBoard = function (a) {
+	return A2(
+		$elm$svg$Svg$rect,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$fill(
+				a.eyeIsOpen ? '#bfbfbf' : '#e0c39d'),
+				$elm$svg$Svg$Attributes$x('-100'),
+				$elm$svg$Svg$Attributes$y('-100'),
+				$elm$svg$Svg$Attributes$width('1050'),
+				$elm$svg$Svg$Attributes$height('1050')
+			]),
+		_List_Nil);
+};
 var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
@@ -5875,8 +5897,8 @@ var $elm$svg$Svg$Attributes$values = function (value) {
 		'values',
 		_VirtualDom_noJavaScriptUri(value));
 };
-var $author$project$Main$candidateGreenSvg = F2(
-	function (msgToBeSent, coord) {
+var $author$project$Main$candidateGreenSvg = F3(
+	function (a, msgToBeSent, coord) {
 		return A2(
 			$elm$svg$Svg$g,
 			_List_fromArray(
@@ -5884,7 +5906,10 @@ var $author$project$Main$candidateGreenSvg = F2(
 					$elm$svg$Svg$Attributes$transform(
 					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
-					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					A2(
+					$elm$html$Html$Attributes$style,
+					'cursor',
+					a.eyeIsOpen ? 'not-allowed' : 'pointer')
 				]),
 			_List_fromArray(
 				[
@@ -5919,8 +5944,8 @@ var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
 var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
-var $author$project$Main$candidateYellowSvg = F2(
-	function (msgToBeSent, coord) {
+var $author$project$Main$candidateYellowSvg = F3(
+	function (a, msgToBeSent, coord) {
 		return A2(
 			$elm$svg$Svg$g,
 			_List_fromArray(
@@ -5928,7 +5953,10 @@ var $author$project$Main$candidateYellowSvg = F2(
 					$elm$svg$Svg$Attributes$transform(
 					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
-					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					A2(
+					$elm$html$Html$Attributes$style,
+					'cursor',
+					a.eyeIsOpen ? 'not-allowed' : 'pointer')
 				]),
 			_List_fromArray(
 				[
@@ -6007,97 +6035,98 @@ var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
 		'xlink:href',
 		_VirtualDom_noJavaScriptUri(value));
 };
-var $author$project$Main$displayCard = function (c) {
-	var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
-	var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
-	var parity = A2($elm$core$Basics$modBy, 2, c.coord.x + c.coord.y);
-	var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
-	var width_text = $elm$core$String$fromFloat(widthHalf * 2.0);
-	var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
-	var height_text = $elm$core$String$fromFloat(heightHalf * 2.0);
-	return A2(
-		$elm$svg$Svg$g,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$transform(
-				'translate(' + ($elm$core$String$fromFloat(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromFloat(y_coord_mid - heightHalf) + ')'))))
-			]),
-		(!c.shown) ? _List_fromArray(
-			[
-				A2(
-				$elm$svg$Svg$rect,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$x('0'),
-						$elm$svg$Svg$Attributes$y('0'),
-						$elm$svg$Svg$Attributes$width(width_text),
-						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill('#000000'),
-						$elm$svg$Svg$Attributes$stroke('none'),
-						$elm$svg$Svg$Attributes$strokeWidth('none')
-					]),
-				_List_Nil)
-			]) : ((!parity) ? _List_fromArray(
-			[
-				A2(
-				$elm$svg$Svg$rect,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$x('0'),
-						$elm$svg$Svg$Attributes$y('0'),
-						$elm$svg$Svg$Attributes$width(width_text),
-						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill('#ffffff'),
-						$elm$svg$Svg$Attributes$stroke('none'),
-						$elm$svg$Svg$Attributes$strokeWidth('none')
-					]),
-				_List_Nil),
-				A2(
-				$elm$svg$Svg$image,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$width(width_text),
-						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$xlinkHref(
-						$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
-					]),
-				_List_Nil)
-			]) : _List_fromArray(
-			[
-				A2(
-				$elm$svg$Svg$rect,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$x('0'),
-						$elm$svg$Svg$Attributes$y('0'),
-						$elm$svg$Svg$Attributes$width(width_text),
-						$elm$svg$Svg$Attributes$height(height_text),
-						$elm$svg$Svg$Attributes$fill('#ffffff'),
-						$elm$svg$Svg$Attributes$stroke('none'),
-						$elm$svg$Svg$Attributes$strokeWidth('none')
-					]),
-				_List_Nil),
-				A2(
-				$elm$svg$Svg$g,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$transform('translate(' + (width_text + ') rotate(90)'))
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$image,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$width(height_text),
-								$elm$svg$Svg$Attributes$height(width_text),
-								$elm$svg$Svg$Attributes$xlinkHref(
-								$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
-							]),
-						_List_Nil)
-					]))
-			])));
-};
+var $author$project$Main$displayCard = F2(
+	function (a, c) {
+		var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
+		var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
+		var parity = A2($elm$core$Basics$modBy, 2, c.coord.x + c.coord.y);
+		var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
+		var width_text = $elm$core$String$fromFloat(widthHalf * 2.0);
+		var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
+		var height_text = $elm$core$String$fromFloat(heightHalf * 2.0);
+		return A2(
+			$elm$svg$Svg$g,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$transform(
+					'translate(' + ($elm$core$String$fromFloat(x_coord_mid - widthHalf) + (' ' + ($elm$core$String$fromFloat(y_coord_mid - heightHalf) + ')'))))
+				]),
+			((!c.shown) && (!a.eyeIsOpen)) ? _List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x('0'),
+							$elm$svg$Svg$Attributes$y('0'),
+							$elm$svg$Svg$Attributes$width(width_text),
+							$elm$svg$Svg$Attributes$height(height_text),
+							$elm$svg$Svg$Attributes$fill('#000000'),
+							$elm$svg$Svg$Attributes$stroke('none'),
+							$elm$svg$Svg$Attributes$strokeWidth('none')
+						]),
+					_List_Nil)
+				]) : ((!parity) ? _List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x('0'),
+							$elm$svg$Svg$Attributes$y('0'),
+							$elm$svg$Svg$Attributes$width(width_text),
+							$elm$svg$Svg$Attributes$height(height_text),
+							$elm$svg$Svg$Attributes$fill('#ffffff'),
+							$elm$svg$Svg$Attributes$stroke('none'),
+							$elm$svg$Svg$Attributes$strokeWidth('none')
+						]),
+					_List_Nil),
+					A2(
+					$elm$svg$Svg$image,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$width(width_text),
+							$elm$svg$Svg$Attributes$height(height_text),
+							$elm$svg$Svg$Attributes$xlinkHref(
+							$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
+						]),
+					_List_Nil)
+				]) : _List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x('0'),
+							$elm$svg$Svg$Attributes$y('0'),
+							$elm$svg$Svg$Attributes$width(width_text),
+							$elm$svg$Svg$Attributes$height(height_text),
+							$elm$svg$Svg$Attributes$fill('#ffffff'),
+							$elm$svg$Svg$Attributes$stroke('none'),
+							$elm$svg$Svg$Attributes$strokeWidth('none')
+						]),
+					_List_Nil),
+					A2(
+					$elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$transform('translate(' + (width_text + ') rotate(90)'))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$svg$Svg$image,
+							_List_fromArray(
+								[
+									$elm$svg$Svg$Attributes$width(height_text),
+									$elm$svg$Svg$Attributes$height(width_text),
+									$elm$svg$Svg$Attributes$xlinkHref(
+									$author$project$Tak1Bai2Types$toExternalSvgFilePath(c))
+								]),
+							_List_Nil)
+						]))
+				])));
+	});
 var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
 var $elm$core$Basics$min = F2(
 	function (x, y) {
@@ -6155,6 +6184,49 @@ var $author$project$Main$drawArrow = F3(
 					_List_Nil)
 				]));
 	});
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$Main$eyeButton = function (a) {
+	return a.eyeIsOpen ? A2(
+		$elm$html$Html$input,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('image'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$CloseTheEye),
+				$elm$html$Html$Attributes$src('../img/eye.svg'),
+				$elm$html$Html$Attributes$height(50)
+			]),
+		_List_Nil) : A2(
+		$elm$html$Html$input,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('image'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$OpenTheEye),
+				$elm$html$Html$Attributes$src('../img/sleeping_eye.svg'),
+				$elm$html$Html$Attributes$height(50)
+			]),
+		_List_Nil);
+};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6256,31 +6328,45 @@ var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$matchButton = A2(
-	$elm$html$Html$button,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Match),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-		]),
-	_List_fromArray(
-		[
-			$elm$svg$Svg$text('マッチ！')
-		]));
+var $author$project$Main$matchButton = function (a) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'cursor',
+				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Match),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+			]),
+		_List_fromArray(
+			[
+				$elm$svg$Svg$text('マッチ！')
+			]));
+};
 var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
-var $author$project$Main$mismatchButton = A2(
-	$elm$html$Html$button,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Mismatch),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#aaaaff'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-		]),
-	_List_fromArray(
-		[
-			$elm$svg$Svg$text('ミスマッチ……')
-		]));
+var $author$project$Main$mismatchButton = function (a) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'cursor',
+				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Mismatch),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#aaaaff'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+			]),
+		_List_fromArray(
+			[
+				$elm$svg$Svg$text('ミスマッチ……')
+			]));
+};
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6349,40 +6435,27 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
 };
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
-var $author$project$Main$simpleCancelButton = A2(
-	$elm$html$Html$button,
-	_List_fromArray(
-		[
-			$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Cancel),
-			A2($elm$html$Html$Attributes$style, 'background-color', '#ffaaaa'),
-			A2($elm$html$Html$Attributes$style, 'font-size', '100%')
-		]),
-	_List_fromArray(
-		[
-			$elm$svg$Svg$text('キャンセル')
-		]));
+var $author$project$Main$simpleCancelButton = function (a) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'cursor',
+				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Cancel),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#ffaaaa'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '100%')
+			]),
+		_List_fromArray(
+			[
+				$elm$svg$Svg$text('キャンセル')
+			]));
+};
 var $elm$html$Html$br = _VirtualDom_node('br');
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
 var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
 var $author$project$Main$cardHtmlImage = function (a) {
 	return A2(
 		$elm$html$Html$img,
@@ -6744,6 +6817,7 @@ var $author$project$Main$view_ = F5(
 var $author$project$Main$view = function (_v0) {
 	var historyString = _v0.a.historyString;
 	var currentStatus = _v0.a.currentStatus;
+	var eyeIsOpen = _v0.a.eyeIsOpen;
 	switch (currentStatus.$) {
 		case 'NothingSelected':
 			var board = currentStatus.a;
@@ -6754,15 +6828,21 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard,
+					$author$project$Main$backgroundWoodenBoard(
+						{eyeIsOpen: eyeIsOpen}),
 					_Utils_ap(
-						A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
+						A2(
+							$elm$core$List$map,
+							$author$project$Main$displayCard(
+								{eyeIsOpen: eyeIsOpen}),
+							board.cards),
 						_Utils_ap(
 							A2(
 								$elm$core$List$map,
 								function (c) {
-									return A2(
+									return A3(
 										$author$project$Main$candidateYellowSvg,
+										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Slide(
 											{from: c, to: board.empty}),
 										c);
@@ -6771,14 +6851,19 @@ var $author$project$Main$view = function (_v0) {
 							A2(
 								$elm$core$List$map,
 								function (c) {
-									return A2(
+									return A3(
 										$author$project$Main$candidateYellowSvg,
+										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
 										c);
 								},
 								$author$project$Main$possibleHopPosition(board))))),
-				_List_Nil);
+				_List_fromArray(
+					[
+						$author$project$Main$eyeButton(
+						{eyeIsOpen: eyeIsOpen})
+					]));
 		case 'GameTerminated':
 			var board = currentStatus.a;
 			return A5(
@@ -6788,9 +6873,18 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard,
-					A2($elm$core$List$map, $author$project$Main$displayCard, board.cards)),
-				_List_Nil);
+					$author$project$Main$backgroundWoodenBoard(
+						{eyeIsOpen: eyeIsOpen}),
+					A2(
+						$elm$core$List$map,
+						$author$project$Main$displayCard(
+							{eyeIsOpen: eyeIsOpen}),
+						board.cards)),
+				_List_fromArray(
+					[
+						$author$project$Main$eyeButton(
+						{eyeIsOpen: eyeIsOpen})
+					]));
 		case 'FirstHalfCompletedByHop':
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
@@ -6802,24 +6896,35 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard,
+					$author$project$Main$backgroundWoodenBoard(
+						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
 						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
 						_Utils_ap(
-							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$displayCard(
+									{eyeIsOpen: eyeIsOpen}),
+								board.cards),
 							A2(
 								$elm$core$List$map,
 								function (c) {
-									return A2(
+									return A3(
 										$author$project$Main$candidateGreenSvg,
+										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
 										c);
 								},
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
-					[$author$project$Main$simpleCancelButton]));
+					[
+						$author$project$Main$eyeButton(
+						{eyeIsOpen: eyeIsOpen}),
+						$author$project$Main$simpleCancelButton(
+						{eyeIsOpen: eyeIsOpen})
+					]));
 		case 'FirstHalfCompletedBySlide':
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
@@ -6831,24 +6936,35 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard,
+					$author$project$Main$backgroundWoodenBoard(
+						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
 						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
 						_Utils_ap(
-							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards),
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$displayCard(
+									{eyeIsOpen: eyeIsOpen}),
+								board.cards),
 							A2(
 								$elm$core$List$map,
 								function (c) {
-									return A2(
+									return A3(
 										$author$project$Main$candidateGreenSvg,
+										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
 										c);
 								},
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
-					[$author$project$Main$simpleCancelButton]));
+					[
+						$author$project$Main$eyeButton(
+						{eyeIsOpen: eyeIsOpen}),
+						$author$project$Main$simpleCancelButton(
+						{eyeIsOpen: eyeIsOpen})
+					]));
 		default:
 			var coords = currentStatus.a;
 			var first_from = coords.first_from;
@@ -6865,19 +6981,28 @@ var $author$project$Main$view = function (_v0) {
 				historyString,
 				A2(
 					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard,
+					$author$project$Main$backgroundWoodenBoard(
+						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
 						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, first_from, first_to),
 						A2(
 							$elm$core$List$cons,
 							A3($author$project$Main$drawArrow, $author$project$Main$Green, second_from, second_to),
-							A2($elm$core$List$map, $author$project$Main$displayCard, board.cards)))),
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$displayCard(
+									{eyeIsOpen: eyeIsOpen}),
+								board.cards)))),
 				_List_fromArray(
 					[
+						$author$project$Main$eyeButton(
+						{eyeIsOpen: eyeIsOpen}),
 						_Utils_eq(
 						A2($author$project$Main$isMatchFromCoords, coords, board),
-						$elm$core$Maybe$Just(true)) ? $author$project$Main$matchButton : $author$project$Main$mismatchButton
+						$elm$core$Maybe$Just(true)) ? $author$project$Main$matchButton(
+						{eyeIsOpen: eyeIsOpen}) : $author$project$Main$mismatchButton(
+						{eyeIsOpen: eyeIsOpen})
 					]));
 	}
 };

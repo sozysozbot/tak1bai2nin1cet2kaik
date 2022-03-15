@@ -19,6 +19,7 @@ type Model
         { saved : CurrentStatus -- Reverts to here when canceled
         , historyString : HistoryString
         , currentStatus : CurrentStatus
+        , eyeIsOpen : Bool
         }
 
 
@@ -38,26 +39,39 @@ subscriptions _ =
 
 
 update : OriginalMsg -> Model -> ( Model, Cmd OriginalMsg )
-update msg (Model { historyString, currentStatus, saved }) =
-    let
-        newHist =
-            historyString ++ newHistory msg currentStatus
+update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) =
+    if eyeIsOpen then
+        -- the only thing you can do is to close the eye
+        if msg == CloseTheEye then
+            ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
 
-        newStat =
-            updateStatus msg currentStatus saved
-    in
-    case newStat of
-        NothingSelected cardState ->
-            ( Model
-                { historyString = newHist
-                , currentStatus = newStat
-                , saved = NothingSelected cardState -- update `saved`
-                }
-            , Cmd.none
-            )
+        else
+            ( modl, Cmd.none )
 
-        _ ->
-            ( Model { historyString = newHist, currentStatus = newStat, saved = saved }, Cmd.none )
+    else if msg == OpenTheEye then
+        ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = True }, Cmd.none )
+
+    else
+        let
+            newHist =
+                historyString ++ newHistory msg currentStatus
+
+            newStat =
+                updateStatus msg currentStatus saved
+        in
+        case newStat of
+            NothingSelected cardState ->
+                ( Model
+                    { historyString = newHist
+                    , currentStatus = newStat
+                    , saved = NothingSelected cardState -- update `saved`
+                    , eyeIsOpen = False
+                    }
+                , Cmd.none
+                )
+
+            _ ->
+                ( Model { historyString = newHist, currentStatus = newStat, saved = saved, eyeIsOpen = False }, Cmd.none )
 
 
 newHistory : OriginalMsg -> CurrentStatus -> String
@@ -198,8 +212,8 @@ lattice_size =
     shortEdgeHalf + longEdgeHalf + spacing
 
 
-displayCard : CardOnBoard -> Svg msg
-displayCard c =
+displayCard : { eyeIsOpen : Bool } -> CardOnBoard -> Svg msg
+displayCard a c =
     let
         parity =
             modBy 2 (c.coord.x + c.coord.y)
@@ -239,7 +253,7 @@ displayCard c =
                 ++ ")"
             )
         ]
-        (if not c.shown then
+        (if not c.shown && not a.eyeIsOpen then
             [ rect
                 [ x "0"
                 , y "0"
@@ -297,12 +311,18 @@ displayCard c =
         )
 
 
-candidateYellowSvg : msg -> Coordinate -> Svg msg
-candidateYellowSvg msgToBeSent coord =
+candidateYellowSvg : { eyeIsOpen : Bool } -> msg -> Coordinate -> Svg msg
+candidateYellowSvg a msgToBeSent coord =
     g
         [ transform ("translate(" ++ String.fromFloat (toFloat coord.x * lattice_size) ++ " " ++ String.fromFloat (toFloat coord.y * lattice_size) ++ ")")
         , Svg.Events.onClick msgToBeSent
-        , Html.Attributes.style "cursor" "pointer"
+        , Html.Attributes.style "cursor"
+            (if a.eyeIsOpen then
+                "not-allowed"
+
+             else
+                "pointer"
+            )
         ]
         [ Svg.circle [ Svg.Attributes.cx "0", Svg.Attributes.cy "0", Svg.Attributes.r "25", fill (fromUIColor Yellow) ]
             [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
@@ -310,12 +330,18 @@ candidateYellowSvg msgToBeSent coord =
         ]
 
 
-candidateGreenSvg : msg -> Coordinate -> Svg msg
-candidateGreenSvg msgToBeSent coord =
+candidateGreenSvg : { eyeIsOpen : Bool } -> msg -> Coordinate -> Svg msg
+candidateGreenSvg a msgToBeSent coord =
     g
         [ transform ("translate(" ++ String.fromFloat (toFloat coord.x * lattice_size) ++ " " ++ String.fromFloat (toFloat coord.y * lattice_size) ++ ")")
         , Svg.Events.onClick msgToBeSent
-        , Html.Attributes.style "cursor" "pointer"
+        , Html.Attributes.style "cursor"
+            (if a.eyeIsOpen then
+                "not-allowed"
+
+             else
+                "pointer"
+            )
         ]
         [ Svg.rect [ Svg.Attributes.transform "rotate(45)", Svg.Attributes.x "-23", Svg.Attributes.y "-23", Svg.Attributes.width "46", Svg.Attributes.height "46", fill (fromUIColor Green) ]
             [ animate [ attributeName "opacity", dur "1.62s", values "0;1;0", repeatCount "indefinite" ] []
@@ -333,9 +359,22 @@ nthNeighbor n coord =
         |> List.filter (\c -> c.x >= 0 && c.x < 7 && c.y >= 0 && c.y < 7)
 
 
-backgroundWoodenBoard : Svg msg
-backgroundWoodenBoard =
-    rect [ fill "#e0c39d", x "-100", y "-100", width "1050", height "1050" ] []
+backgroundWoodenBoard : { a | eyeIsOpen : Bool } -> Svg msg
+backgroundWoodenBoard a =
+    rect
+        [ fill
+            (if a.eyeIsOpen then
+                "#bfbfbf"
+
+             else
+                "#e0c39d"
+            )
+        , x "-100"
+        , y "-100"
+        , width "1050"
+        , height "1050"
+        ]
+        []
 
 
 possibleSlidePosition : Board -> List Coordinate
@@ -367,49 +406,49 @@ getPairNumFromBoard b =
 
 
 view : Model -> Html OriginalMsg
-view (Model { historyString, currentStatus }) =
+view (Model { historyString, currentStatus, eyeIsOpen }) =
     case currentStatus of
         NothingSelected board ->
             view_ (getPairNumFromBoard board)
                 False
                 historyString
-                (backgroundWoodenBoard
-                    :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateYellowSvg (Slide { from = c, to = board.empty }) c) (possibleSlidePosition board)
-                    ++ List.map (\c -> candidateYellowSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
+                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
+                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
+                    ++ List.map (\c -> candidateYellowSvg { eyeIsOpen = eyeIsOpen } (Slide { from = c, to = board.empty }) c) (possibleSlidePosition board)
+                    ++ List.map (\c -> candidateYellowSvg { eyeIsOpen = eyeIsOpen } (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
-                [{- default state. no need to cancel everything: the state has been saved -}]
+                [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
         GameTerminated board ->
             view_ (getPairNumFromBoard board)
                 False
                 historyString
-                (backgroundWoodenBoard
-                    :: List.map displayCard board.cards
+                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
+                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                 )
-                [{- The game has ended. No cancelling allowed. -}]
+                [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedByHop { from, to } board ->
             view_ (getPairNumFromBoard board)
                 False
                 historyString
-                (backgroundWoodenBoard
+                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
-                    :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
+                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
+                    ++ List.map (\c -> candidateGreenSvg { eyeIsOpen = eyeIsOpen } (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
-                [ simpleCancelButton ]
+                [ eyeButton { eyeIsOpen = eyeIsOpen }, simpleCancelButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedBySlide { from, to } board ->
             view_ (getPairNumFromBoard board)
                 False
                 historyString
-                (backgroundWoodenBoard
+                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
-                    :: List.map displayCard board.cards
-                    ++ List.map (\c -> candidateGreenSvg (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
+                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
+                    ++ List.map (\c -> candidateGreenSvg { eyeIsOpen = eyeIsOpen } (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
                 )
-                [ simpleCancelButton ]
+                [ eyeButton { eyeIsOpen = eyeIsOpen }, simpleCancelButton { eyeIsOpen = eyeIsOpen } ]
 
         SecondHalfCompleted ({ first_from, first_to, second_from, second_to } as coords) board ->
             view_
@@ -417,20 +456,22 @@ view (Model { historyString, currentStatus }) =
                     getPairNumFromBoard board
 
                  else
-                    getPairNumFromBoard board - 1 -- two cards are mismatched, so we must subtract it
+                    getPairNumFromBoard board - 1
+                 -- two cards are mismatched, so we must subtract it
                 )
                 False
                 historyString
-                (backgroundWoodenBoard
+                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow first_from first_to
                     :: drawArrow Green second_from second_to
-                    :: List.map displayCard board.cards
+                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                 )
-                [ if isMatchFromCoords coords board == Just True then
-                    matchButton
+                [ eyeButton { eyeIsOpen = eyeIsOpen }
+                , if isMatchFromCoords coords board == Just True then
+                    matchButton { eyeIsOpen = eyeIsOpen }
 
                   else
-                    mismatchButton
+                    mismatchButton { eyeIsOpen = eyeIsOpen }
                 ]
 
 
@@ -493,27 +534,67 @@ isMatch a b =
         False
 
 
+eyeButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+eyeButton a =
+    if a.eyeIsOpen then
+        Html.input [ Html.Attributes.type_ "image", onClick CloseTheEye, Html.Attributes.src "../img/eye.svg", Html.Attributes.height 50 ] []
 
-{-
-   cancelAllButton : Html OriginalMsg
-   cancelAllButton =
-       Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "150%" ] [ text "全てをキャンセル" ]
--}
-
-
-simpleCancelButton : Html OriginalMsg
-simpleCancelButton =
-    Html.button [ onClick Cancel, Html.Attributes.style "background-color" "#ffaaaa", Html.Attributes.style "font-size" "100%" ] [ text "キャンセル" ]
+    else
+        Html.input [ Html.Attributes.type_ "image", onClick OpenTheEye, Html.Attributes.src "../img/sleeping_eye.svg", Html.Attributes.height 50 ] []
 
 
-matchButton : Html OriginalMsg
-matchButton =
-    Html.button [ onClick Match, Html.Attributes.style "background-color" "#aaffaa", Html.Attributes.style "font-size" "150%" ] [ text "マッチ！" ]
+simpleCancelButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+simpleCancelButton a =
+    Html.button
+        [ Html.Attributes.type_ "button"
+        , Html.Attributes.style "cursor"
+            (if a.eyeIsOpen then
+                "not-allowed"
+
+             else
+                "pointer"
+            )
+        , onClick Cancel
+        , Html.Attributes.style "background-color" "#ffaaaa"
+        , Html.Attributes.style "font-size" "100%"
+        ]
+        [ text "キャンセル" ]
 
 
-mismatchButton : Html OriginalMsg
-mismatchButton =
-    Html.button [ onClick Mismatch, Html.Attributes.style "background-color" "#aaaaff", Html.Attributes.style "font-size" "150%" ] [ text "ミスマッチ……" ]
+matchButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+matchButton a =
+    Html.button
+        [ Html.Attributes.type_ "button"
+        , Html.Attributes.style "cursor"
+            (if a.eyeIsOpen then
+                "not-allowed"
+
+             else
+                "pointer"
+            )
+        , onClick Match
+        , Html.Attributes.style "background-color" "#aaffaa"
+        , Html.Attributes.style "font-size" "150%"
+        ]
+        [ text "マッチ！" ]
+
+
+mismatchButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+mismatchButton a =
+    Html.button
+        [ Html.Attributes.type_ "button"
+        , Html.Attributes.style "cursor"
+            (if a.eyeIsOpen then
+                "not-allowed"
+
+             else
+                "pointer"
+            )
+        , onClick Mismatch
+        , Html.Attributes.style "background-color" "#aaaaff"
+        , Html.Attributes.style "font-size" "150%"
+        ]
+        [ text "ミスマッチ……" ]
 
 
 init : Flags -> ( Model, Cmd OriginalMsg )
@@ -527,6 +608,7 @@ init flags =
             "初期配置: " ++ String.join "," (List.map String.fromInt flags.cards) ++ "\n"
         , currentStatus = initialStatus
         , saved = initialStatus
+        , eyeIsOpen = False
         }
     , Cmd.none
     )

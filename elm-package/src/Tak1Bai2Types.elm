@@ -61,6 +61,8 @@ type OriginalMsg
     | Cancel
     | Match
     | Mismatch
+    | OpenTheEye
+    | CloseTheEye
 
 
 toExternalSvgFilePath : { a | prof : Profession, cardColor : CardColor } -> String
