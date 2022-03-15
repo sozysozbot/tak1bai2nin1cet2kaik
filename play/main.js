@@ -5825,14 +5825,14 @@ var $author$project$Main$update = F2(
 			}
 		}
 	});
-var $author$project$Main$Green = {$: 'Green'};
+var $author$project$Tak1Bai2Types$Green = {$: 'Green'};
 var $author$project$Tak1Bai2Types$Hop = function (a) {
 	return {$: 'Hop', a: a};
 };
 var $author$project$Tak1Bai2Types$Slide = function (a) {
 	return {$: 'Slide', a: a};
 };
-var $author$project$Main$Yellow = {$: 'Yellow'};
+var $author$project$Tak1Bai2Types$Yellow = {$: 'Yellow'};
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
@@ -5858,7 +5858,7 @@ var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
 var $elm$core$String$fromFloat = _String_fromNumber;
-var $author$project$Main$fromUIColor = function (c) {
+var $author$project$Tak1Bai2Types$fromUIColor = function (c) {
 	if (c.$ === 'Green') {
 		return '#aeff01';
 	} else {
@@ -5866,10 +5866,10 @@ var $author$project$Main$fromUIColor = function (c) {
 	}
 };
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $author$project$Main$longEdgeHalf = 79.239;
-var $author$project$Main$shortEdgeHalf = 21.242;
-var $author$project$Main$spacing = 40;
-var $author$project$Main$lattice_size = ($author$project$Main$shortEdgeHalf + $author$project$Main$longEdgeHalf) + $author$project$Main$spacing;
+var $author$project$Sizes$longEdgeHalf = 79.239;
+var $author$project$Sizes$shortEdgeHalf = 21.242;
+var $author$project$Sizes$spacing = 40;
+var $author$project$Sizes$lattice_size = ($author$project$Sizes$shortEdgeHalf + $author$project$Sizes$longEdgeHalf) + $author$project$Sizes$spacing;
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5897,14 +5897,14 @@ var $elm$svg$Svg$Attributes$values = function (value) {
 		'values',
 		_VirtualDom_noJavaScriptUri(value));
 };
-var $author$project$Main$candidateGreenSvg = F3(
+var $author$project$Buttons$candidateGreenSvg = F3(
 	function (a, msgToBeSent, coord) {
 		return A2(
 			$elm$svg$Svg$g,
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
+					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Sizes$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Sizes$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
 					A2(
 					$elm$html$Html$Attributes$style,
@@ -5923,7 +5923,7 @@ var $author$project$Main$candidateGreenSvg = F3(
 							$elm$svg$Svg$Attributes$width('46'),
 							$elm$svg$Svg$Attributes$height('46'),
 							$elm$svg$Svg$Attributes$fill(
-							$author$project$Main$fromUIColor($author$project$Main$Green))
+							$author$project$Tak1Bai2Types$fromUIColor($author$project$Tak1Bai2Types$Green))
 						]),
 					_List_fromArray(
 						[
@@ -5944,14 +5944,14 @@ var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
 var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
-var $author$project$Main$candidateYellowSvg = F3(
+var $author$project$Buttons$candidateYellowSvg = F3(
 	function (a, msgToBeSent, coord) {
 		return A2(
 			$elm$svg$Svg$g,
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Main$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Main$lattice_size) + ')')))),
+					'translate(' + ($elm$core$String$fromFloat(coord.x * $author$project$Sizes$lattice_size) + (' ' + ($elm$core$String$fromFloat(coord.y * $author$project$Sizes$lattice_size) + ')')))),
 					$elm$svg$Svg$Events$onClick(msgToBeSent),
 					A2(
 					$elm$html$Html$Attributes$style,
@@ -5968,7 +5968,7 @@ var $author$project$Main$candidateYellowSvg = F3(
 							$elm$svg$Svg$Attributes$cy('0'),
 							$elm$svg$Svg$Attributes$r('25'),
 							$elm$svg$Svg$Attributes$fill(
-							$author$project$Main$fromUIColor($author$project$Main$Yellow))
+							$author$project$Tak1Bai2Types$fromUIColor($author$project$Tak1Bai2Types$Yellow))
 						]),
 					_List_fromArray(
 						[
@@ -6037,12 +6037,12 @@ var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
 };
 var $author$project$Main$displayCard = F2(
 	function (a, c) {
-		var y_coord_mid = c.coord.y * $author$project$Main$lattice_size;
-		var x_coord_mid = c.coord.x * $author$project$Main$lattice_size;
+		var y_coord_mid = c.coord.y * $author$project$Sizes$lattice_size;
+		var x_coord_mid = c.coord.x * $author$project$Sizes$lattice_size;
 		var parity = A2($elm$core$Basics$modBy, 2, c.coord.x + c.coord.y);
-		var widthHalf = (!parity) ? $author$project$Main$shortEdgeHalf : $author$project$Main$longEdgeHalf;
+		var widthHalf = (!parity) ? $author$project$Sizes$shortEdgeHalf : $author$project$Sizes$longEdgeHalf;
 		var width_text = $elm$core$String$fromFloat(widthHalf * 2.0);
-		var heightHalf = (!parity) ? $author$project$Main$longEdgeHalf : $author$project$Main$shortEdgeHalf;
+		var heightHalf = (!parity) ? $author$project$Sizes$longEdgeHalf : $author$project$Sizes$shortEdgeHalf;
 		var height_text = $elm$core$String$fromFloat(heightHalf * 2.0);
 		return A2(
 			$elm$svg$Svg$g,
@@ -6142,19 +6142,19 @@ var $author$project$Main$drawArrow = F3(
 		var d_data = function () {
 			if (_Utils_eq(from.x, to.x) && (_Utils_cmp(from.y, to.y) > 0)) {
 				var delta = from.y - to.y;
-				return 'm31.6 ' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Main$lattice_size)) + ('h5.8v' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Main$lattice_size))) + 'l-21.3 31 4.5 3.2 11-16z')));
+				return 'm31.6 ' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Sizes$lattice_size)) + ('h5.8v' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Sizes$lattice_size))) + 'l-21.3 31 4.5 3.2 11-16z')));
 			} else {
 				if (_Utils_eq(from.x, to.x) && (_Utils_cmp(from.y, to.y) < 0)) {
 					var delta = to.y - from.y;
-					return 'm31.6 18.7h5.8v' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Main$lattice_size)) + 'l-21.3-31 4.5-3.2 11 16z');
+					return 'm31.6 18.7h5.8v' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Sizes$lattice_size)) + 'l-21.3-31 4.5-3.2 11 16z');
 				} else {
 					if (_Utils_eq(from.y, to.y) && (_Utils_cmp(from.x, to.x) > 0)) {
 						var delta = from.x - to.x;
-						return 'm' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Main$lattice_size)) + (' 31.6v5.8h' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Main$lattice_size))) + 'l31-21.3 3.2 4.5-16 11z')));
+						return 'm' + ($elm$core$String$fromFloat(51.3 + (delta * $author$project$Sizes$lattice_size)) + (' 31.6v5.8h' + ($elm$core$String$fromFloat(-(34.5 + (delta * $author$project$Sizes$lattice_size))) + 'l31-21.3 3.2 4.5-16 11z')));
 					} else {
 						if (_Utils_eq(from.y, to.y) && (_Utils_cmp(from.x, to.x) < 0)) {
 							var delta = to.x - from.x;
-							return 'm18.7 31.6v5.8h' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Main$lattice_size)) + 'l-31-21.3-3.2 4.5 16 11z');
+							return 'm18.7 31.6v5.8h' + ($elm$core$String$fromFloat(34.5 + (delta * $author$project$Sizes$lattice_size)) + 'l-31-21.3-3.2 4.5 16 11z');
 						} else {
 							return '';
 						}
@@ -6167,7 +6167,7 @@ var $author$project$Main$drawArrow = F3(
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$transform(
-					'translate(' + ($elm$core$String$fromFloat(top_left.x * $author$project$Main$lattice_size) + (',' + ($elm$core$String$fromFloat(top_left.y * $author$project$Main$lattice_size) + ')'))))
+					'translate(' + ($elm$core$String$fromFloat(top_left.x * $author$project$Sizes$lattice_size) + (',' + ($elm$core$String$fromFloat(top_left.y * $author$project$Sizes$lattice_size) + ')'))))
 				]),
 			_List_fromArray(
 				[
@@ -6177,7 +6177,7 @@ var $author$project$Main$drawArrow = F3(
 						[
 							$elm$svg$Svg$Attributes$d(d_data),
 							$elm$svg$Svg$Attributes$fill(
-							$author$project$Main$fromUIColor(uiColor)),
+							$author$project$Tak1Bai2Types$fromUIColor(uiColor)),
 							$elm$svg$Svg$Attributes$stroke('#000'),
 							$elm$svg$Svg$Attributes$strokeWidth('2')
 						]),
@@ -6206,7 +6206,7 @@ var $elm$html$Html$Attributes$src = function (url) {
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $author$project$Main$eyeButton = function (a) {
+var $author$project$Buttons$eyeButton = function (a) {
 	return a.eyeIsOpen ? A2(
 		$elm$html$Html$input,
 		_List_fromArray(
@@ -6328,7 +6328,7 @@ var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$matchButton = function (a) {
+var $author$project$Buttons$matchButton = function (a) {
 	return A2(
 		$elm$html$Html$button,
 		_List_fromArray(
@@ -6348,7 +6348,7 @@ var $author$project$Main$matchButton = function (a) {
 			]));
 };
 var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
-var $author$project$Main$mismatchButton = function (a) {
+var $author$project$Buttons$mismatchButton = function (a) {
 	return A2(
 		$elm$html$Html$button,
 		_List_fromArray(
@@ -6435,7 +6435,7 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
 };
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
-var $author$project$Main$simpleCancelButton = function (a) {
+var $author$project$Buttons$simpleCancelButton = function (a) {
 	return A2(
 		$elm$html$Html$button,
 		_List_fromArray(
@@ -6841,7 +6841,7 @@ var $author$project$Main$view = function (_v0) {
 								$elm$core$List$map,
 								function (c) {
 									return A3(
-										$author$project$Main$candidateYellowSvg,
+										$author$project$Buttons$candidateYellowSvg,
 										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Slide(
 											{from: c, to: board.empty}),
@@ -6852,7 +6852,7 @@ var $author$project$Main$view = function (_v0) {
 								$elm$core$List$map,
 								function (c) {
 									return A3(
-										$author$project$Main$candidateYellowSvg,
+										$author$project$Buttons$candidateYellowSvg,
 										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
@@ -6861,7 +6861,7 @@ var $author$project$Main$view = function (_v0) {
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
 					[
-						$author$project$Main$eyeButton(
+						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
 		case 'GameTerminated':
@@ -6882,7 +6882,7 @@ var $author$project$Main$view = function (_v0) {
 						board.cards)),
 				_List_fromArray(
 					[
-						$author$project$Main$eyeButton(
+						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
 		case 'FirstHalfCompletedByHop':
@@ -6900,7 +6900,7 @@ var $author$project$Main$view = function (_v0) {
 						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
-						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
+						A3($author$project$Main$drawArrow, $author$project$Tak1Bai2Types$Yellow, from, to),
 						_Utils_ap(
 							A2(
 								$elm$core$List$map,
@@ -6911,7 +6911,7 @@ var $author$project$Main$view = function (_v0) {
 								$elm$core$List$map,
 								function (c) {
 									return A3(
-										$author$project$Main$candidateGreenSvg,
+										$author$project$Buttons$candidateGreenSvg,
 										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
@@ -6920,9 +6920,9 @@ var $author$project$Main$view = function (_v0) {
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
 					[
-						$author$project$Main$eyeButton(
+						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen}),
-						$author$project$Main$simpleCancelButton(
+						$author$project$Buttons$simpleCancelButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
 		case 'FirstHalfCompletedBySlide':
@@ -6940,7 +6940,7 @@ var $author$project$Main$view = function (_v0) {
 						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
-						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, from, to),
+						A3($author$project$Main$drawArrow, $author$project$Tak1Bai2Types$Yellow, from, to),
 						_Utils_ap(
 							A2(
 								$elm$core$List$map,
@@ -6951,7 +6951,7 @@ var $author$project$Main$view = function (_v0) {
 								$elm$core$List$map,
 								function (c) {
 									return A3(
-										$author$project$Main$candidateGreenSvg,
+										$author$project$Buttons$candidateGreenSvg,
 										{eyeIsOpen: eyeIsOpen},
 										$author$project$Tak1Bai2Types$Hop(
 											{from: c, to: board.empty}),
@@ -6960,9 +6960,9 @@ var $author$project$Main$view = function (_v0) {
 								$author$project$Main$possibleHopPosition(board))))),
 				_List_fromArray(
 					[
-						$author$project$Main$eyeButton(
+						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen}),
-						$author$project$Main$simpleCancelButton(
+						$author$project$Buttons$simpleCancelButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
 		default:
@@ -6985,10 +6985,10 @@ var $author$project$Main$view = function (_v0) {
 						{eyeIsOpen: eyeIsOpen}),
 					A2(
 						$elm$core$List$cons,
-						A3($author$project$Main$drawArrow, $author$project$Main$Yellow, first_from, first_to),
+						A3($author$project$Main$drawArrow, $author$project$Tak1Bai2Types$Yellow, first_from, first_to),
 						A2(
 							$elm$core$List$cons,
-							A3($author$project$Main$drawArrow, $author$project$Main$Green, second_from, second_to),
+							A3($author$project$Main$drawArrow, $author$project$Tak1Bai2Types$Green, second_from, second_to),
 							A2(
 								$elm$core$List$map,
 								$author$project$Main$displayCard(
@@ -6996,12 +6996,12 @@ var $author$project$Main$view = function (_v0) {
 								board.cards)))),
 				_List_fromArray(
 					[
-						$author$project$Main$eyeButton(
+						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen}),
 						_Utils_eq(
 						A2($author$project$Main$isMatchFromCoords, coords, board),
-						$elm$core$Maybe$Just(true)) ? $author$project$Main$matchButton(
-						{eyeIsOpen: eyeIsOpen}) : $author$project$Main$mismatchButton(
+						$elm$core$Maybe$Just(true)) ? $author$project$Buttons$matchButton(
+						{eyeIsOpen: eyeIsOpen}) : $author$project$Buttons$mismatchButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
 	}

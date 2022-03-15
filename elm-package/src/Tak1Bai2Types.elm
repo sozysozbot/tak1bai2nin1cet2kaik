@@ -65,6 +65,21 @@ type OriginalMsg
     | CloseTheEye
 
 
+type UIColor
+    = Green
+    | Yellow
+
+
+fromUIColor : UIColor -> String
+fromUIColor c =
+    case c of
+        Green ->
+            "#aeff01"
+
+        Yellow ->
+            "#ffff00"
+
+
 toExternalSvgFilePath : { a | prof : Profession, cardColor : CardColor } -> String
 toExternalSvgFilePath a =
     "../img/svg/" ++ colorToStr a.cardColor ++ profToStr a.prof ++ ".svg"
