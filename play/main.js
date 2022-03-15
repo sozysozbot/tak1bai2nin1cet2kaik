@@ -5840,18 +5840,17 @@ var $author$project$Main$subscriptions = function (_v0) {
 };
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
 var $author$project$Tak1Bai2Types$CloseTheEye = {$: 'CloseTheEye'};
+var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
+var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
 var $author$project$Tak1Bai2Types$OpenTheEye = {$: 'OpenTheEye'};
-var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
-	function (a, b) {
-		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
-	});
-var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
-	function (a, b) {
-		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
-	});
-var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
-	function (a, b) {
-		return {$: 'SecondHalfCompleted', a: a, b: b};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
 	});
 var $author$project$Tak1Bai2Types$getMidpoint = F2(
 	function (from, to) {
@@ -5899,6 +5898,36 @@ var $author$project$Main$coordsFlippedInATurn = function (_v0) {
 		second_flipped: A2($author$project$Tak1Bai2Types$getMidpoint, second_from, second_to)
 	};
 };
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Main$getCardAt = F2(
+	function (board, coord) {
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (c) {
+					return _Utils_eq(c.coord, coord);
+				},
+				board.cards));
+	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -5928,6 +5957,64 @@ var $elm$core$List$member = F2(
 				return _Utils_eq(a, x);
 			},
 			xs);
+	});
+var $author$project$Main$isMatch = F2(
+	function (a, b) {
+		return _Utils_eq(a.cardColor, b.cardColor) ? false : (_Utils_eq(a.prof, b.prof) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2]))) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1]))) ? true : ((A2(
+			$elm$core$List$member,
+			a.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1])) && A2(
+			$elm$core$List$member,
+			b.prof,
+			_List_fromArray(
+				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1]))) ? true : false))));
+	});
+var $author$project$Main$isMatchFromCoords = F2(
+	function (coords, board) {
+		var _v0 = $author$project$Main$coordsFlippedInATurn(coords);
+		var first_flipped = _v0.first_flipped;
+		var second_flipped = _v0.second_flipped;
+		return A2(
+			$elm$core$Maybe$andThen,
+			function (second_card) {
+				return A2(
+					$elm$core$Maybe$andThen,
+					function (first_card) {
+						return $elm$core$Maybe$Just(
+							A2($author$project$Main$isMatch, first_card, second_card));
+					},
+					A2($author$project$Main$getCardAt, board, first_flipped));
+			},
+			A2($author$project$Main$getCardAt, board, second_flipped));
+	});
+var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
+	function (a, b) {
+		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
+	});
+var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
+	function (a, b) {
+		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
+	});
+var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
+	function (a, b) {
+		return {$: 'SecondHalfCompleted', a: a, b: b};
 	});
 var $elm$core$List$partition = F2(
 	function (pred, list) {
@@ -6243,18 +6330,46 @@ var $author$project$Main$update = F2(
 			var currentStatus = modl.a.currentStatus;
 			var saved = modl.a.saved;
 			var eyeIsOpen = modl.a.eyeIsOpen;
-			_v0$2:
+			_v0$3:
 			while (true) {
 				if (msg.$ === 'AddKey') {
 					if (msg.a.$ === 'Control') {
-						if (msg.a.a === 'Escape') {
-							var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
-								$temp$modl = modl;
-							msg = $temp$msg;
-							modl = $temp$modl;
-							continue update;
-						} else {
-							break _v0$2;
+						switch (msg.a.a) {
+							case 'Escape':
+								var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
+									$temp$modl = modl;
+								msg = $temp$msg;
+								modl = $temp$modl;
+								continue update;
+							case 'Enter':
+								var enterMeansMatch = function () {
+									if (currentStatus.$ === 'SecondHalfCompleted') {
+										var coords = currentStatus.a;
+										var board = currentStatus.b;
+										return A2($author$project$Main$isMatchFromCoords, coords, board);
+									} else {
+										return $elm$core$Maybe$Nothing;
+									}
+								}();
+								if (enterMeansMatch.$ === 'Just') {
+									if (enterMeansMatch.a) {
+										var $temp$msg = $author$project$Tak1Bai2Types$Match,
+											$temp$modl = modl;
+										msg = $temp$msg;
+										modl = $temp$modl;
+										continue update;
+									} else {
+										var $temp$msg = $author$project$Tak1Bai2Types$Mismatch,
+											$temp$modl = modl;
+										msg = $temp$msg;
+										modl = $temp$modl;
+										continue update;
+									}
+								} else {
+									return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+								}
+							default:
+								break _v0$3;
 						}
 					} else {
 						if ('e' === msg.a.a.valueOf()) {
@@ -6272,11 +6387,11 @@ var $author$project$Main$update = F2(
 								continue update;
 							}
 						} else {
-							break _v0$2;
+							break _v0$3;
 						}
 					}
 				} else {
-					break _v0$2;
+					break _v0$3;
 				}
 			}
 			if (eyeIsOpen) {
@@ -6291,9 +6406,9 @@ var $author$project$Main$update = F2(
 							{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var _v1 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
-					var newStatus = _v1.newStatus;
-					var additionToHistory = _v1.additionToHistory;
+					var _v3 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
+					var newStatus = _v3.newStatus;
+					var additionToHistory = _v3.additionToHistory;
 					var newHist = _Utils_ap(historyString, additionToHistory);
 					if (newStatus.$ === 'NothingSelected') {
 						var cardState = newStatus.a;
@@ -6718,17 +6833,6 @@ var $author$project$Buttons$eyeButton = function (a) {
 			]),
 		_List_Nil);
 };
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
 var $author$project$Main$getPairNumFromBoard = function (b) {
 	return function (x) {
 		return (x / 2) | 0;
@@ -6741,81 +6845,6 @@ var $author$project$Main$getPairNumFromBoard = function (b) {
 				},
 				b.cards)));
 };
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $author$project$Main$getCardAt = F2(
-	function (board, coord) {
-		return $elm$core$List$head(
-			A2(
-				$elm$core$List$filter,
-				function (c) {
-					return _Utils_eq(c.coord, coord);
-				},
-				board.cards));
-	});
-var $author$project$Main$isMatch = F2(
-	function (a, b) {
-		return _Utils_eq(a.cardColor, b.cardColor) ? false : (_Utils_eq(a.prof, b.prof) ? true : ((A2(
-			$elm$core$List$member,
-			a.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2])) && A2(
-			$elm$core$List$member,
-			b.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Io, $author$project$Tak1Bai2Types$Tam2]))) ? true : ((A2(
-			$elm$core$List$member,
-			a.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1])) && A2(
-			$elm$core$List$member,
-			b.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Kua2, $author$project$Tak1Bai2Types$Tuk2, $author$project$Tak1Bai2Types$Uai1]))) ? true : ((A2(
-			$elm$core$List$member,
-			a.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1])) && A2(
-			$elm$core$List$member,
-			b.prof,
-			_List_fromArray(
-				[$author$project$Tak1Bai2Types$Dau2, $author$project$Tak1Bai2Types$Maun1]))) ? true : false))));
-	});
-var $author$project$Main$isMatchFromCoords = F2(
-	function (coords, board) {
-		var _v0 = $author$project$Main$coordsFlippedInATurn(coords);
-		var first_flipped = _v0.first_flipped;
-		var second_flipped = _v0.second_flipped;
-		return A2(
-			$elm$core$Maybe$andThen,
-			function (second_card) {
-				return A2(
-					$elm$core$Maybe$andThen,
-					function (first_card) {
-						return $elm$core$Maybe$Just(
-							A2($author$project$Main$isMatch, first_card, second_card));
-					},
-					A2($author$project$Main$getCardAt, board, first_flipped));
-			},
-			A2($author$project$Main$getCardAt, board, second_flipped));
-	});
-var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
@@ -6838,7 +6867,6 @@ var $author$project$Buttons$matchButton = function (a) {
 				$elm$svg$Svg$text('マッチ！')
 			]));
 };
-var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
 var $author$project$Buttons$mismatchButton = function (a) {
 	return A2(
 		$elm$html$Html$button,
@@ -7234,6 +7262,13 @@ var $author$project$Main$view_ = F5(
 											_List_fromArray(
 												[
 													$elm$html$Html$text('E キーで目の開閉')
+												])),
+											A2(
+											$elm$html$Html$li,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Enter キーで「マッチ」または「ミスマッチ」')
 												]))
 										]))
 								]))
@@ -7292,9 +7327,10 @@ var $author$project$Main$view_ = F5(
 							_List_fromArray(
 								[
 									$elm$html$Html$Attributes$rows(20),
-									$elm$html$Html$Attributes$cols(40),
+									$elm$html$Html$Attributes$cols(60),
 									$elm$html$Html$Attributes$readonly(true),
-									A2($elm$html$Html$Attributes$style, 'font-family', 'monospace')
+									A2($elm$html$Html$Attributes$style, 'font-family', 'monospace'),
+									A2($elm$html$Html$Attributes$style, 'font-size', '70%')
 								]),
 							_List_fromArray(
 								[

@@ -64,6 +64,26 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
         AddKey (Control "Escape") ->
             update Cancel modl
 
+        AddKey (Control "Enter") ->
+            let
+                enterMeansMatch =
+                    case currentStatus of
+                        SecondHalfCompleted coords board ->
+                            isMatchFromCoords coords board
+
+                        _ ->
+                            Nothing
+            in
+            case enterMeansMatch of
+                Just True ->
+                    update Match modl
+
+                Just False ->
+                    update Mismatch modl
+
+                _ ->
+                    ( modl, Cmd.none )
+
         AddKey (Character 'e') ->
             if eyeIsOpen then
                 update CloseTheEye modl
@@ -163,6 +183,7 @@ view_ pairnum gameEndTweet history svgContent buttons =
                 , Html.ul []
                     [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
                     , Html.li [] [ Html.text "E キーで目の開閉" ]
+                    , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
                     ]
                 ]
             ]
@@ -181,9 +202,10 @@ view_ pairnum gameEndTweet history svgContent buttons =
         , Html.div [ Html.Attributes.style "margin-left" "15px" ]
             [ Html.textarea
                 [ Html.Attributes.rows 20
-                , Html.Attributes.cols 40
+                , Html.Attributes.cols 60
                 , Html.Attributes.readonly True
                 , Html.Attributes.style "font-family" "monospace"
+                , Html.Attributes.style "font-size" "70%"
                 ]
                 [ Html.text history ]
             , Html.br [] []
