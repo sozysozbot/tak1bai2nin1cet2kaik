@@ -52,7 +52,7 @@ toKeyValue string =
 
 
 subscriptions : Model -> Sub OriginalMsg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ onKeyDown (Decode.map AddKey keyDecoder)
         ]
@@ -63,6 +63,13 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
     case msg of
         AddKey (Control "Escape") ->
             update Cancel modl
+
+        AddKey (Character 'e') ->
+            if eyeIsOpen then
+                update CloseTheEye modl
+
+            else
+                update OpenTheEye modl
 
         _ ->
             if eyeIsOpen then
@@ -97,14 +104,6 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
 
                     _ ->
                         ( Model { historyString = newHist, currentStatus = newStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
-
-
-newHistory : OriginalMsg -> CurrentStatus -> String
-newHistory msg modl =
-    case ( modl, msg ) of
-        _ ->
-            {- Do nothing -}
-            ""
 
 
 targetBlankLink : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -161,7 +160,10 @@ view_ pairnum gameEndTweet history svgContent buttons =
             , Html.p [ Html.Attributes.style "font-size" "80%" ]
                 [ Html.h3 [] [ Html.text "キーボードでの操作" ]
                 , Html.text "盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、"
-                , Html.ul [] [Html.li [] [ Html.text "Esc キーでキャンセル"]]
+                , Html.ul []
+                    [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
+                    , Html.li [] [ Html.text "E キーで目の開閉" ]
+                    ]
                 ]
             ]
         , Html.div []

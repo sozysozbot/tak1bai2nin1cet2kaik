@@ -1,14 +1,12 @@
 module Buttons exposing (..)
 
-import Browser
 import Html exposing (Html)
-import Html.Attributes exposing (href)
+import Html.Attributes
 import Sizes exposing (..)
-import Svg exposing (Attribute, Svg, animate, g, path, rect, svg, text)
-import Svg.Attributes exposing (attributeName, d, dur, fill, height, repeatCount, stroke, strokeWidth, transform, values, viewBox, width, x, y)
+import Svg exposing (Svg, animate, g, text)
+import Svg.Attributes exposing (attributeName, dur, fill, repeatCount, transform, values)
 import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
-import Url.Builder exposing (crossOrigin)
 
 
 eyeButton : { eyeIsOpen : Bool } -> Html OriginalMsg

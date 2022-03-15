@@ -5830,7 +5830,7 @@ var $elm$browser$Browser$Events$on = F3(
 			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
 	});
 var $elm$browser$Browser$Events$onKeyDown = A2($elm$browser$Browser$Events$on, $elm$browser$Browser$Events$Document, 'keydown');
-var $author$project$Main$subscriptions = function (model) {
+var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
@@ -6243,46 +6243,74 @@ var $author$project$Main$update = F2(
 			var currentStatus = modl.a.currentStatus;
 			var saved = modl.a.saved;
 			var eyeIsOpen = modl.a.eyeIsOpen;
-			if (((msg.$ === 'AddKey') && (msg.a.$ === 'Control')) && (msg.a.a === 'Escape')) {
-				var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
-					$temp$modl = modl;
-				msg = $temp$msg;
-				modl = $temp$modl;
-				continue update;
-			} else {
-				if (eyeIsOpen) {
-					return _Utils_eq(msg, $author$project$Tak1Bai2Types$CloseTheEye) ? _Utils_Tuple2(
-						$author$project$Main$Model(
-							{currentStatus: currentStatus, eyeIsOpen: false, historyString: historyString, saved: saved}),
-						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+			_v0$2:
+			while (true) {
+				if (msg.$ === 'AddKey') {
+					if (msg.a.$ === 'Control') {
+						if (msg.a.a === 'Escape') {
+							var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
+								$temp$modl = modl;
+							msg = $temp$msg;
+							modl = $temp$modl;
+							continue update;
+						} else {
+							break _v0$2;
+						}
+					} else {
+						if ('e' === msg.a.a.valueOf()) {
+							if (eyeIsOpen) {
+								var $temp$msg = $author$project$Tak1Bai2Types$CloseTheEye,
+									$temp$modl = modl;
+								msg = $temp$msg;
+								modl = $temp$modl;
+								continue update;
+							} else {
+								var $temp$msg = $author$project$Tak1Bai2Types$OpenTheEye,
+									$temp$modl = modl;
+								msg = $temp$msg;
+								modl = $temp$modl;
+								continue update;
+							}
+						} else {
+							break _v0$2;
+						}
+					}
 				} else {
-					if (_Utils_eq(msg, $author$project$Tak1Bai2Types$OpenTheEye)) {
+					break _v0$2;
+				}
+			}
+			if (eyeIsOpen) {
+				return _Utils_eq(msg, $author$project$Tak1Bai2Types$CloseTheEye) ? _Utils_Tuple2(
+					$author$project$Main$Model(
+						{currentStatus: currentStatus, eyeIsOpen: false, historyString: historyString, saved: saved}),
+					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+			} else {
+				if (_Utils_eq(msg, $author$project$Tak1Bai2Types$OpenTheEye)) {
+					return _Utils_Tuple2(
+						$author$project$Main$Model(
+							{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					var _v1 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
+					var newStatus = _v1.newStatus;
+					var additionToHistory = _v1.additionToHistory;
+					var newHist = _Utils_ap(historyString, additionToHistory);
+					if (newStatus.$ === 'NothingSelected') {
+						var cardState = newStatus.a;
 						return _Utils_Tuple2(
 							$author$project$Main$Model(
-								{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
+								{
+									currentStatus: newStatus,
+									eyeIsOpen: false,
+									historyString: newHist,
+									saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
+								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						var _v1 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
-						var newStatus = _v1.newStatus;
-						var additionToHistory = _v1.additionToHistory;
-						var newHist = _Utils_ap(historyString, additionToHistory);
-						if (newStatus.$ === 'NothingSelected') {
-							var cardState = newStatus.a;
-							return _Utils_Tuple2(
-								$author$project$Main$Model(
-									{
-										currentStatus: newStatus,
-										eyeIsOpen: false,
-										historyString: newHist,
-										saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								$author$project$Main$Model(
-									{currentStatus: newStatus, eyeIsOpen: false, historyString: newHist, saved: saved}),
-								$elm$core$Platform$Cmd$none);
-						}
+						return _Utils_Tuple2(
+							$author$project$Main$Model(
+								{currentStatus: newStatus, eyeIsOpen: false, historyString: newHist, saved: saved}),
+							$elm$core$Platform$Cmd$none);
 					}
 				}
 			}
@@ -7199,6 +7227,13 @@ var $author$project$Main$view_ = F5(
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Esc キーでキャンセル')
+												])),
+											A2(
+											$elm$html$Html$li,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text('E キーで目の開閉')
 												]))
 										]))
 								]))
