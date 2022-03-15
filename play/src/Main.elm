@@ -136,122 +136,136 @@ cardHtmlImage a =
     Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 100, Html.Attributes.style "vertical-align" "middle" ] []
 
 
-view_ : Int -> Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
-view_ pairnum gameEndTweet history svgContent buttons =
-    Html.div [ Html.Attributes.style "display" "flex" ]
-        [ Html.div [ Html.Attributes.style "padding" "0px 20px 0 20px", Html.Attributes.style "min-width" "360px" ]
-            [ Html.h2 [] [ Html.text "紙机戦ソリティア「衣糸紙机戦」" ]
-            , Html.ul []
-                (List.map (\p -> Html.li [] [ p ])
-                    [ targetBlankLink [ href "https://sites.google.com/view/cet2kaik" ] [ Html.text "日本机戦連盟公式サイト" ]
-                    , targetBlankLink [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ] [ Html.text "バグを報告/機能を提案" ]
-                    ]
-                )
+view_ : Maybe String -> Int -> Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
+view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
+    let
+        audio =
+            case maybeAudioUrl of
+                Nothing ->
+                    []
 
-            {- }, Html.div [ Html.Attributes.style "font-size" "50%" ]
-               (List.map (\t -> Html.p [] [ Html.text t ])
-                   [ "ここに開発ログ"
-                   ]
-               )
-            -}
-            , Html.h3 [ Html.Attributes.style "font-size" "80%" ] [ Html.text "ルール" ]
-            , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。"
-                , Html.br [] []
-                , Html.text "空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。"
-                , Html.br [] []
-                , Html.text "一打目では空きマスに向かってスライドすることもでき、"
-                , Html.br [] []
-                , Html.text "その場合はスライドしたカード自身がめくられます。"
-                , Html.br [] []
-                , Html.text "ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。"
-                ]
-            , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.text "なお、 "
-                , cardHtmlImage { prof = Dau2, cardColor = Black }
-                , Html.text " = "
-                , cardHtmlImage { prof = Maun1, cardColor = Black }
-                , Html.text " および "
-                , cardHtmlImage { prof = Kua2, cardColor = Black }
-                , Html.text " = "
-                , cardHtmlImage { prof = Tuk2, cardColor = Black }
-                , Html.text " = "
-                , cardHtmlImage { prof = Uai1, cardColor = Black }
-                ]
-            , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.text "そして "
-                , cardHtmlImage { prof = Io, cardColor = Black }
-                , Html.text " = "
-                , cardHtmlImage { prof = Tam2, cardColor = Black }
-                , Html.text " に注意。"
-                ]
-            , Html.p [ Html.Attributes.style "font-size" "80%" ]
-                [ Html.h3 [] [ Html.text "キーボードでの操作" ]
-                , Html.text "盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、"
-                , Html.ul []
-                    [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
-                    , Html.li [] [ Html.text "E キーで目の開閉" ]
-                    , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
-                    ]
-                ]
-            ]
-        , Html.div []
-            (Html.div
-                [ Html.Attributes.style "min-height" "35px"
-                , Html.Attributes.style "margin-top" "25px"
-                , Html.Attributes.style "text-align" "center"
-                ]
-                [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
-                ]
-                :: svg [ viewBox "-100 -100 1050 1050", width "540" ] svgContent
-                :: Html.br [] []
-                :: List.intersperse (Html.text " ") buttons
-            )
-        , Html.div [ Html.Attributes.style "margin-left" "15px" ]
-            [ Html.textarea
-                [ Html.Attributes.rows 20
-                , Html.Attributes.cols 60
-                , Html.Attributes.readonly True
-                , Html.Attributes.style "font-family" "monospace"
-                , Html.Attributes.style "font-size" "70%"
-                ]
-                [ Html.text history ]
-            , Html.br [] []
-            , targetBlankLink
-                [ href
-                    (crossOrigin
-                        "https://twitter.com"
-                        [ "intent", "tweet" ]
-                        [ Url.Builder.string "text"
-                            ("架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u{000D}\n"
-                                ++ crossOrigin "https://keserima.github.io"
-                                    [ "playback", "index.html" ]
-                                    [ Url.Builder.string "playback" history
-                                    ]
-                            )
+                Just audioUrl ->
+                    [ Html.audio [ Html.Attributes.controls False, Html.Attributes.autoplay True ]
+                        [ Html.source [ Html.Attributes.src audioUrl ] []
                         ]
-                    )
-                , Html.Attributes.style "font-size"
-                    (if gameEndTweet then
-                        "250%"
+                    ]
+    in
+    Html.div [ Html.Attributes.style "display" "flex" ]
+        (audio
+            ++ [ Html.div [ Html.Attributes.style "padding" "0px 20px 0 20px", Html.Attributes.style "min-width" "360px" ]
+                    [ Html.h2 [] [ Html.text "紙机戦ソリティア「衣糸紙机戦」" ]
+                    , Html.ul []
+                        (List.map (\p -> Html.li [] [ p ])
+                            [ targetBlankLink [ href "https://sites.google.com/view/cet2kaik" ] [ Html.text "日本机戦連盟公式サイト" ]
+                            , targetBlankLink [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ] [ Html.text "バグを報告/機能を提案" ]
+                            ]
+                        )
 
-                     else
-                        "120%"
+                    {- }, Html.div [ Html.Attributes.style "font-size" "50%" ]
+                       (List.map (\t -> Html.p [] [ Html.text t ])
+                           [ "ここに開発ログ"
+                           ]
+                       )
+                    -}
+                    , Html.h3 [ Html.Attributes.style "font-size" "80%" ] [ Html.text "ルール" ]
+                    , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                        [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。"
+                        , Html.br [] []
+                        , Html.text "空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。"
+                        , Html.br [] []
+                        , Html.text "一打目では空きマスに向かってスライドすることもでき、"
+                        , Html.br [] []
+                        , Html.text "その場合はスライドしたカード自身がめくられます。"
+                        , Html.br [] []
+                        , Html.text "ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。"
+                        ]
+                    , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                        [ Html.text "なお、 "
+                        , cardHtmlImage { prof = Dau2, cardColor = Black }
+                        , Html.text " = "
+                        , cardHtmlImage { prof = Maun1, cardColor = Black }
+                        , Html.text " および "
+                        , cardHtmlImage { prof = Kua2, cardColor = Black }
+                        , Html.text " = "
+                        , cardHtmlImage { prof = Tuk2, cardColor = Black }
+                        , Html.text " = "
+                        , cardHtmlImage { prof = Uai1, cardColor = Black }
+                        ]
+                    , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                        [ Html.text "そして "
+                        , cardHtmlImage { prof = Io, cardColor = Black }
+                        , Html.text " = "
+                        , cardHtmlImage { prof = Tam2, cardColor = Black }
+                        , Html.text " に注意。"
+                        ]
+                    , Html.p [ Html.Attributes.style "font-size" "80%" ]
+                        [ Html.h3 [] [ Html.text "キーボードでの操作" ]
+                        , Html.text "盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、"
+                        , Html.ul []
+                            [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
+                            , Html.li [] [ Html.text "E キーで目の開閉" ]
+                            , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
+                            ]
+                        ]
+                    ]
+               , Html.div []
+                    (Html.div
+                        [ Html.Attributes.style "min-height" "35px"
+                        , Html.Attributes.style "margin-top" "25px"
+                        , Html.Attributes.style "text-align" "center"
+                        ]
+                        [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
+                        ]
+                        :: svg [ viewBox "-100 -100 1050 1050", width "540" ] svgContent
+                        :: Html.br [] []
+                        :: List.intersperse (Html.text " ") buttons
                     )
-                , Html.Attributes.style "font-weight" "bold"
-                ]
-                [ Html.text
-                    (if gameEndTweet then
-                        "棋譜をツイートしましょう！！"
+               , Html.div [ Html.Attributes.style "margin-left" "15px" ]
+                    [ Html.textarea
+                        [ Html.Attributes.rows 20
+                        , Html.Attributes.cols 60
+                        , Html.Attributes.readonly True
+                        , Html.Attributes.style "font-family" "monospace"
+                        , Html.Attributes.style "font-size" "70%"
+                        ]
+                        [ Html.text history ]
+                    , Html.br [] []
+                    , targetBlankLink
+                        [ href
+                            (crossOrigin
+                                "https://twitter.com"
+                                [ "intent", "tweet" ]
+                                [ Url.Builder.string "text"
+                                    ("架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u{000D}\n"
+                                        ++ crossOrigin "https://keserima.github.io"
+                                            [ "playback", "index.html" ]
+                                            [ Url.Builder.string "playback" history
+                                            ]
+                                    )
+                                ]
+                            )
+                        , Html.Attributes.style "font-size"
+                            (if gameEndTweet then
+                                "250%"
 
-                     else
-                        "ここまでの棋譜をツイートする"
-                    )
-                , Html.br [] []
-                , Html.img [ Html.Attributes.src "../imgs/keserima.png", Html.Attributes.height 200 ] []
-                ]
-            ]
-        ]
+                             else
+                                "120%"
+                            )
+                        , Html.Attributes.style "font-weight" "bold"
+                        ]
+                        [ Html.text
+                            (if gameEndTweet then
+                                "棋譜をツイートしましょう！！"
+
+                             else
+                                "ここまでの棋譜をツイートする"
+                            )
+                        , Html.br [] []
+                        , Html.img [ Html.Attributes.src "../imgs/keserima.png", Html.Attributes.height 200 ] []
+                        ]
+                    ]
+               ]
+        )
 
 
 displayCard : { eyeIsOpen : Bool } -> CardOnBoard -> Svg msg
@@ -413,7 +427,8 @@ view : Model -> Html OriginalMsg
 view (Model { historyString, currentStatus, eyeIsOpen }) =
     case currentStatus of
         NothingSelected board ->
-            view_ (getPairNumFromBoard board)
+            view_ Nothing
+                (getPairNumFromBoard board)
                 False
                 historyString
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
@@ -424,7 +439,8 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
         GameTerminated board ->
-            view_ (getPairNumFromBoard board)
+            view_ Nothing
+                (getPairNumFromBoard board)
                 False
                 historyString
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
@@ -433,7 +449,8 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedByHop { from, to } board ->
-            view_ (getPairNumFromBoard board)
+            view_ Nothing
+                (getPairNumFromBoard board)
                 False
                 historyString
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
@@ -444,7 +461,8 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen }, simpleCancelButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedBySlide { from, to } board ->
-            view_ (getPairNumFromBoard board)
+            view_ Nothing
+                (getPairNumFromBoard board)
                 False
                 historyString
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
@@ -455,8 +473,18 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen }, simpleCancelButton { eyeIsOpen = eyeIsOpen } ]
 
         SecondHalfCompleted ({ first_from, first_to, second_from, second_to } as coords) board ->
+            let
+                isMatching =
+                    isMatchFromCoords coords board == Just True
+            in
             view_
-                (if isMatchFromCoords coords board == Just True then
+                (if isMatching then
+                    Just "sound/success.wav"
+
+                 else
+                    Just "sound/failure.wav"
+                )
+                (if isMatching then
                     getPairNumFromBoard board
 
                  else
@@ -471,7 +499,7 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                 )
                 [ eyeButton { eyeIsOpen = eyeIsOpen }
-                , if isMatchFromCoords coords board == Just True then
+                , if isMatching then
                     matchButton { eyeIsOpen = eyeIsOpen }
 
                   else

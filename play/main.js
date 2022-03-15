@@ -6972,6 +6972,16 @@ var $author$project$Buttons$simpleCancelButton = function (a) {
 				$elm$svg$Svg$text('キャンセル')
 			]));
 };
+var $elm$html$Html$audio = _VirtualDom_node('audio');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $author$project$Main$cardHtmlImage = function (a) {
@@ -6992,6 +7002,7 @@ var $elm$html$Html$Attributes$cols = function (n) {
 		'cols',
 		$elm$core$String$fromInt(n));
 };
+var $elm$html$Html$Attributes$controls = $elm$html$Html$Attributes$boolProperty('controls');
 var $elm$url$Url$Builder$toQueryPair = function (_v0) {
 	var key = _v0.a;
 	var value = _v0.b;
@@ -7040,14 +7051,6 @@ var $elm$core$List$intersperse = F2(
 	});
 var $elm$html$Html$li = _VirtualDom_node('li');
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
 var $elm$html$Html$Attributes$readonly = $elm$html$Html$Attributes$boolProperty('readOnly');
 var $elm$html$Html$Attributes$rows = function (n) {
 	return A2(
@@ -7055,6 +7058,7 @@ var $elm$html$Html$Attributes$rows = function (n) {
 		'rows',
 		$elm$core$String$fromInt(n));
 };
+var $elm$html$Html$source = _VirtualDom_node('source');
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$url$Url$Builder$QueryParameter = F2(
 	function (a, b) {
@@ -7082,291 +7086,320 @@ var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $author$project$Main$view_ = F5(
-	function (pairnum, gameEndTweet, history, svgContent, buttons) {
+var $author$project$Main$view_ = F6(
+	function (maybeAudioUrl, pairnum, gameEndTweet, history, svgContent, buttons) {
+		var audio = function () {
+			if (maybeAudioUrl.$ === 'Nothing') {
+				return _List_Nil;
+			} else {
+				var audioUrl = maybeAudioUrl.a;
+				return _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$audio,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$controls(false),
+								$elm$html$Html$Attributes$autoplay(true)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$source,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src(audioUrl)
+									]),
+								_List_Nil)
+							]))
+					]);
+			}
+		}();
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					A2($elm$html$Html$Attributes$style, 'display', 'flex')
 				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'padding', '0px 20px 0 20px'),
-							A2($elm$html$Html$Attributes$style, 'min-width', '360px')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$h2,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('紙机戦ソリティア「衣糸紙机戦」')
-								])),
-							A2(
-							$elm$html$Html$ul,
-							_List_Nil,
-							A2(
-								$elm$core$List$map,
-								function (p) {
-									return A2(
-										$elm$html$Html$li,
+			_Utils_ap(
+				audio,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'padding', '0px 20px 0 20px'),
+								A2($elm$html$Html$Attributes$style, 'min-width', '360px')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h2,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('紙机戦ソリティア「衣糸紙机戦」')
+									])),
+								A2(
+								$elm$html$Html$ul,
+								_List_Nil,
+								A2(
+									$elm$core$List$map,
+									function (p) {
+										return A2(
+											$elm$html$Html$li,
+											_List_Nil,
+											_List_fromArray(
+												[p]));
+									},
+									_List_fromArray(
+										[
+											A2(
+											$author$project$Main$targetBlankLink,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$href('https://sites.google.com/view/cet2kaik')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('日本机戦連盟公式サイト')
+												])),
+											A2(
+											$author$project$Main$targetBlankLink,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$href('https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('バグを報告/機能を提案')
+												]))
+										]))),
+								A2(
+								$elm$html$Html$h3,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('ルール')
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('カードをめくって、同一札の黒と赤でペアを作っていく遊びです。'),
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										$elm$html$Html$text('空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。'),
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										$elm$html$Html$text('一打目では空きマスに向かってスライドすることもでき、'),
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										$elm$html$Html$text('その場合はスライドしたカード自身がめくられます。'),
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										$elm$html$Html$text('ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。')
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('なお、 '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Dau2}),
+										$elm$html$Html$text(' = '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Maun1}),
+										$elm$html$Html$text(' および '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Kua2}),
+										$elm$html$Html$text(' = '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tuk2}),
+										$elm$html$Html$text(' = '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Uai1})
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('そして '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Io}),
+										$elm$html$Html$text(' = '),
+										$author$project$Main$cardHtmlImage(
+										{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tam2}),
+										$elm$html$Html$text(' に注意。')
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', '80%')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$h3,
 										_List_Nil,
 										_List_fromArray(
-											[p]));
-								},
-								_List_fromArray(
-									[
-										A2(
-										$author$project$Main$targetBlankLink,
-										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$href('https://sites.google.com/view/cet2kaik')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('日本机戦連盟公式サイト')
+												$elm$html$Html$text('キーボードでの操作')
 											])),
+										$elm$html$Html$text('盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、'),
 										A2(
-										$author$project$Main$targetBlankLink,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$href('https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('バグを報告/機能を提案')
-											]))
-									]))),
-							A2(
-							$elm$html$Html$h3,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('ルール')
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('カードをめくって、同一札の黒と赤でペアを作っていく遊びです。'),
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
-									$elm$html$Html$text('空きマスに向かって飛び越えると、飛び越えられたカードがめくられます。'),
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
-									$elm$html$Html$text('一打目では空きマスに向かってスライドすることもでき、'),
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
-									$elm$html$Html$text('その場合はスライドしたカード自身がめくられます。'),
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
-									$elm$html$Html$text('ペアができたらそのペアはずっと表のままです。手詰まりになったら終了。')
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('なお、 '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Dau2}),
-									$elm$html$Html$text(' = '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Maun1}),
-									$elm$html$Html$text(' および '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Kua2}),
-									$elm$html$Html$text(' = '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tuk2}),
-									$elm$html$Html$text(' = '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Uai1})
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('そして '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Io}),
-									$elm$html$Html$text(' = '),
-									$author$project$Main$cardHtmlImage(
-									{cardColor: $author$project$Tak1Bai2Types$Black, prof: $author$project$Tak1Bai2Types$Tam2}),
-									$elm$html$Html$text(' に注意。')
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'font-size', '80%')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$h3,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text('キーボードでの操作')
-										])),
-									$elm$html$Html$text('盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、'),
-									A2(
-									$elm$html$Html$ul,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$li,
-											_List_Nil,
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Esc キーでキャンセル')
-												])),
-											A2(
-											$elm$html$Html$li,
-											_List_Nil,
-											_List_fromArray(
-												[
-													$elm$html$Html$text('E キーで目の開閉')
-												])),
-											A2(
-											$elm$html$Html$li,
-											_List_Nil,
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Enter キーで「マッチ」または「ミスマッチ」')
-												]))
-										]))
-								]))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_Nil,
-					A2(
-						$elm$core$List$cons,
-						A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'min-height', '35px'),
-									A2($elm$html$Html$Attributes$style, 'margin-top', '25px'),
-									A2($elm$html$Html$Attributes$style, 'text-align', 'center')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$span,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text(
-											'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
-										]))
-								])),
-						A2(
-							$elm$core$List$cons,
-							A2(
-								$elm$svg$Svg$svg,
-								_List_fromArray(
-									[
-										$elm$svg$Svg$Attributes$viewBox('-100 -100 1050 1050'),
-										$elm$svg$Svg$Attributes$width('540')
-									]),
-								svgContent),
-							A2(
-								$elm$core$List$cons,
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								A2(
-									$elm$core$List$intersperse,
-									$elm$html$Html$text(' '),
-									buttons))))),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'margin-left', '15px')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$textarea,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$rows(20),
-									$elm$html$Html$Attributes$cols(60),
-									$elm$html$Html$Attributes$readonly(true),
-									A2($elm$html$Html$Attributes$style, 'font-family', 'monospace'),
-									A2($elm$html$Html$Attributes$style, 'font-size', '70%')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(history)
-								])),
-							A2($elm$html$Html$br, _List_Nil, _List_Nil),
-							A2(
-							$author$project$Main$targetBlankLink,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href(
-									A3(
-										$elm$url$Url$Builder$crossOrigin,
-										'https://twitter.com',
-										_List_fromArray(
-											['intent', 'tweet']),
+										$elm$html$Html$ul,
+										_List_Nil,
 										_List_fromArray(
 											[
 												A2(
-												$elm$url$Url$Builder$string,
-												'text',
-												'架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u000D\n' + A3(
-													$elm$url$Url$Builder$crossOrigin,
-													'https://keserima.github.io',
-													_List_fromArray(
-														['playback', 'index.html']),
-													_List_fromArray(
-														[
-															A2($elm$url$Url$Builder$string, 'playback', history)
-														])))
-											]))),
-									A2(
-									$elm$html$Html$Attributes$style,
-									'font-size',
-									gameEndTweet ? '250%' : '120%'),
-									A2($elm$html$Html$Attributes$style, 'font-weight', 'bold')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									gameEndTweet ? '棋譜をツイートしましょう！！' : 'ここまでの棋譜をツイートする'),
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
-									A2(
-									$elm$html$Html$img,
+												$elm$html$Html$li,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Esc キーでキャンセル')
+													])),
+												A2(
+												$elm$html$Html$li,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('E キーで目の開閉')
+													])),
+												A2(
+												$elm$html$Html$li,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Enter キーで「マッチ」または「ミスマッチ」')
+													]))
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						A2(
+							$elm$core$List$cons,
+							A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'min-height', '35px'),
+										A2($elm$html$Html$Attributes$style, 'margin-top', '25px'),
+										A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$span,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
+											]))
+									])),
+							A2(
+								$elm$core$List$cons,
+								A2(
+									$elm$svg$Svg$svg,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$src('../imgs/keserima.png'),
-											$elm$html$Html$Attributes$height(200)
+											$elm$svg$Svg$Attributes$viewBox('-100 -100 1050 1050'),
+											$elm$svg$Svg$Attributes$width('540')
 										]),
-									_List_Nil)
-								]))
-						]))
-				]));
+									svgContent),
+								A2(
+									$elm$core$List$cons,
+									A2($elm$html$Html$br, _List_Nil, _List_Nil),
+									A2(
+										$elm$core$List$intersperse,
+										$elm$html$Html$text(' '),
+										buttons))))),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'margin-left', '15px')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$textarea,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$rows(20),
+										$elm$html$Html$Attributes$cols(60),
+										$elm$html$Html$Attributes$readonly(true),
+										A2($elm$html$Html$Attributes$style, 'font-family', 'monospace'),
+										A2($elm$html$Html$Attributes$style, 'font-size', '70%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(history)
+									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								A2(
+								$author$project$Main$targetBlankLink,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href(
+										A3(
+											$elm$url$Url$Builder$crossOrigin,
+											'https://twitter.com',
+											_List_fromArray(
+												['intent', 'tweet']),
+											_List_fromArray(
+												[
+													A2(
+													$elm$url$Url$Builder$string,
+													'text',
+													'架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u000D\n' + A3(
+														$elm$url$Url$Builder$crossOrigin,
+														'https://keserima.github.io',
+														_List_fromArray(
+															['playback', 'index.html']),
+														_List_fromArray(
+															[
+																A2($elm$url$Url$Builder$string, 'playback', history)
+															])))
+												]))),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'font-size',
+										gameEndTweet ? '250%' : '120%'),
+										A2($elm$html$Html$Attributes$style, 'font-weight', 'bold')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										gameEndTweet ? '棋譜をツイートしましょう！！' : 'ここまでの棋譜をツイートする'),
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										A2(
+										$elm$html$Html$img,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$src('../imgs/keserima.png'),
+												$elm$html$Html$Attributes$height(200)
+											]),
+										_List_Nil)
+									]))
+							]))
+					])));
 	});
 var $author$project$Main$view = function (_v0) {
 	var historyString = _v0.a.historyString;
@@ -7375,8 +7408,9 @@ var $author$project$Main$view = function (_v0) {
 	switch (currentStatus.$) {
 		case 'NothingSelected':
 			var board = currentStatus.a;
-			return A5(
+			return A6(
 				$author$project$Main$view_,
+				$elm$core$Maybe$Nothing,
 				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
@@ -7420,8 +7454,9 @@ var $author$project$Main$view = function (_v0) {
 					]));
 		case 'GameTerminated':
 			var board = currentStatus.a;
-			return A5(
+			return A6(
 				$author$project$Main$view_,
+				$elm$core$Maybe$Nothing,
 				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
@@ -7443,8 +7478,9 @@ var $author$project$Main$view = function (_v0) {
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A5(
+			return A6(
 				$author$project$Main$view_,
+				$elm$core$Maybe$Nothing,
 				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
@@ -7483,8 +7519,9 @@ var $author$project$Main$view = function (_v0) {
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A5(
+			return A6(
 				$author$project$Main$view_,
+				$elm$core$Maybe$Nothing,
 				$author$project$Main$getPairNumFromBoard(board),
 				false,
 				historyString,
@@ -7526,11 +7563,13 @@ var $author$project$Main$view = function (_v0) {
 			var second_from = coords.second_from;
 			var second_to = coords.second_to;
 			var board = currentStatus.b;
-			return A5(
+			var isMatching = _Utils_eq(
+				A2($author$project$Main$isMatchFromCoords, coords, board),
+				$elm$core$Maybe$Just(true));
+			return A6(
 				$author$project$Main$view_,
-				_Utils_eq(
-					A2($author$project$Main$isMatchFromCoords, coords, board),
-					$elm$core$Maybe$Just(true)) ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1),
+				isMatching ? $elm$core$Maybe$Just('sound/success.wav') : $elm$core$Maybe$Just('sound/failure.wav'),
+				isMatching ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1),
 				false,
 				historyString,
 				A2(
@@ -7552,9 +7591,7 @@ var $author$project$Main$view = function (_v0) {
 					[
 						$author$project$Buttons$eyeButton(
 						{eyeIsOpen: eyeIsOpen}),
-						_Utils_eq(
-						A2($author$project$Main$isMatchFromCoords, coords, board),
-						$elm$core$Maybe$Just(true)) ? $author$project$Buttons$matchButton(
+						isMatching ? $author$project$Buttons$matchButton(
 						{eyeIsOpen: eyeIsOpen}) : $author$project$Buttons$mismatchButton(
 						{eyeIsOpen: eyeIsOpen})
 					]));
