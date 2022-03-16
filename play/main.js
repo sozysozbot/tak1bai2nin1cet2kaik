@@ -5169,20 +5169,6 @@ var $author$project$Main$Model = function (a) {
 var $author$project$Tak1Bai2Types$NothingSelected = function (a) {
 	return {$: 'NothingSelected', a: a};
 };
-var $author$project$Tak1Bai2Types$Black = {$: 'Black'};
-var $author$project$Tak1Bai2Types$Dau2 = {$: 'Dau2'};
-var $author$project$Tak1Bai2Types$Gua2 = {$: 'Gua2'};
-var $author$project$Tak1Bai2Types$Io = {$: 'Io'};
-var $author$project$Tak1Bai2Types$Kauk2 = {$: 'Kauk2'};
-var $author$project$Tak1Bai2Types$Kaun1 = {$: 'Kaun1'};
-var $author$project$Tak1Bai2Types$Kua2 = {$: 'Kua2'};
-var $author$project$Tak1Bai2Types$Maun1 = {$: 'Maun1'};
-var $author$project$Tak1Bai2Types$Mun1 = {$: 'Mun1'};
-var $author$project$Tak1Bai2Types$Nuak1 = {$: 'Nuak1'};
-var $author$project$Tak1Bai2Types$Red = {$: 'Red'};
-var $author$project$Tak1Bai2Types$Tam2 = {$: 'Tam2'};
-var $author$project$Tak1Bai2Types$Tuk2 = {$: 'Tuk2'};
-var $author$project$Tak1Bai2Types$Uai1 = {$: 'Uai1'};
 var $elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -5330,55 +5316,69 @@ var $elm$core$List$take = F2(
 	function (n, list) {
 		return A3($elm$core$List$takeFast, 0, n, list);
 	});
+var $author$project$Tak1Bai2Types$Black = {$: 'Black'};
+var $author$project$Tak1Bai2Types$Dau2 = {$: 'Dau2'};
+var $author$project$Tak1Bai2Types$Gua2 = {$: 'Gua2'};
+var $author$project$Tak1Bai2Types$Io = {$: 'Io'};
+var $author$project$Tak1Bai2Types$Kauk2 = {$: 'Kauk2'};
+var $author$project$Tak1Bai2Types$Kaun1 = {$: 'Kaun1'};
+var $author$project$Tak1Bai2Types$Kua2 = {$: 'Kua2'};
+var $author$project$Tak1Bai2Types$Maun1 = {$: 'Maun1'};
+var $author$project$Tak1Bai2Types$Mun1 = {$: 'Mun1'};
+var $author$project$Tak1Bai2Types$Nuak1 = {$: 'Nuak1'};
+var $author$project$Tak1Bai2Types$Red = {$: 'Red'};
+var $author$project$Tak1Bai2Types$Tam2 = {$: 'Tam2'};
+var $author$project$Tak1Bai2Types$Tuk2 = {$: 'Tuk2'};
+var $author$project$Tak1Bai2Types$Uai1 = {$: 'Uai1'};
+var $author$project$Main$toCardOnBoard = F2(
+	function (index, card) {
+		return {
+			cardColor: (!(card % 2)) ? $author$project$Tak1Bai2Types$Black : $author$project$Tak1Bai2Types$Red,
+			coord: {x: index % 7, y: (index / 7) | 0},
+			prof: function () {
+				var _v0 = (card / 2) | 0;
+				switch (_v0) {
+					case 0:
+						return $author$project$Tak1Bai2Types$Mun1;
+					case 1:
+						return $author$project$Tak1Bai2Types$Kauk2;
+					case 2:
+						return $author$project$Tak1Bai2Types$Gua2;
+					case 3:
+						return $author$project$Tak1Bai2Types$Kaun1;
+					case 4:
+						return $author$project$Tak1Bai2Types$Dau2;
+					case 5:
+						return $author$project$Tak1Bai2Types$Maun1;
+					case 6:
+						return $author$project$Tak1Bai2Types$Kua2;
+					case 7:
+						return $author$project$Tak1Bai2Types$Tuk2;
+					case 8:
+						return $author$project$Tak1Bai2Types$Uai1;
+					case 9:
+						return $author$project$Tak1Bai2Types$Io;
+					case 10:
+						return $author$project$Tak1Bai2Types$Tam2;
+					default:
+						return $author$project$Tak1Bai2Types$Nuak1;
+				}
+			}(),
+			shown: false
+		};
+	});
 var $author$project$Main$initialBoard = function (cards) {
-	var foo = F2(
-		function (i, card) {
-			return {
-				cardColor: (!(card % 2)) ? $author$project$Tak1Bai2Types$Black : $author$project$Tak1Bai2Types$Red,
-				coord: {x: i % 7, y: (i / 7) | 0},
-				prof: function () {
-					var _v0 = (card / 2) | 0;
-					switch (_v0) {
-						case 0:
-							return $author$project$Tak1Bai2Types$Mun1;
-						case 1:
-							return $author$project$Tak1Bai2Types$Kauk2;
-						case 2:
-							return $author$project$Tak1Bai2Types$Gua2;
-						case 3:
-							return $author$project$Tak1Bai2Types$Kaun1;
-						case 4:
-							return $author$project$Tak1Bai2Types$Dau2;
-						case 5:
-							return $author$project$Tak1Bai2Types$Maun1;
-						case 6:
-							return $author$project$Tak1Bai2Types$Kua2;
-						case 7:
-							return $author$project$Tak1Bai2Types$Tuk2;
-						case 8:
-							return $author$project$Tak1Bai2Types$Uai1;
-						case 9:
-							return $author$project$Tak1Bai2Types$Io;
-						case 10:
-							return $author$project$Tak1Bai2Types$Tam2;
-						default:
-							return $author$project$Tak1Bai2Types$Nuak1;
-					}
-				}(),
-				shown: false
-			};
-		});
 	return {
 		cards: _Utils_ap(
 			A2(
 				$elm$core$List$indexedMap,
-				foo,
+				$author$project$Main$toCardOnBoard,
 				A2($elm$core$List$take, 24, cards)),
 			A2(
 				$elm$core$List$indexedMap,
 				F2(
 					function (i, card) {
-						return A2(foo, i + 25, card);
+						return A2($author$project$Main$toCardOnBoard, i + 25, card);
 					}),
 				A2($elm$core$List$drop, 24, cards))),
 		empty: {x: 3, y: 3}
@@ -6055,32 +6055,55 @@ var $author$project$Main$applyHop = F2(
 			remainingCards);
 		var cardsToBeFlipped = _v1.a;
 		var remainingCards2 = _v1.b;
-		var newBoard = function () {
-			var _v2 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
-			if (((_v2.a.b && (!_v2.a.b.b)) && _v2.b.b) && (!_v2.b.b.b)) {
-				var _v3 = _v2.a;
-				var moved = _v3.a;
-				var _v4 = _v2.b;
-				var flipped = _v4.a;
-				return {
-					cards: A2(
+		var _v2 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+		if (((_v2.a.b && (!_v2.a.b.b)) && _v2.b.b) && (!_v2.b.b.b)) {
+			var _v3 = _v2.a;
+			var moved = _v3.a;
+			var _v4 = _v2.b;
+			var flipped = _v4.a;
+			return {
+				cards: A2(
+					$elm$core$List$cons,
+					_Utils_update(
+						moved,
+						{coord: to}),
+					A2(
 						$elm$core$List$cons,
 						_Utils_update(
-							moved,
-							{coord: to}),
-						A2(
-							$elm$core$List$cons,
-							_Utils_update(
-								flipped,
-								{shown: true}),
-							remainingCards2)),
-					empty: from
-				};
-			} else {
-				return oldBoard;
-			}
-		}();
-		return newBoard;
+							flipped,
+							{shown: true}),
+						remainingCards2)),
+				empty: from
+			};
+		} else {
+			return oldBoard;
+		}
+	});
+var $author$project$Main$applySlide = F2(
+	function (oldBoard, from) {
+		var to = oldBoard.empty;
+		var _v0 = A2(
+			$elm$core$List$partition,
+			function (x) {
+				return _Utils_eq(x.coord, from);
+			},
+			oldBoard.cards);
+		var cardsToBeMoved = _v0.a;
+		var remainingCards = _v0.b;
+		if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
+			var cardToBeMoved = cardsToBeMoved.a;
+			return {
+				cards: A2(
+					$elm$core$List$cons,
+					_Utils_update(
+						cardToBeMoved,
+						{coord: to, shown: true}),
+					remainingCards),
+				empty: from
+			};
+		} else {
+			return oldBoard;
+		}
 	});
 var $author$project$Main$toHistory = function (a) {
 	var toStr = function (u) {
@@ -6110,36 +6133,12 @@ var $author$project$Main$updateStatus = F3(
 						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
-						var _v4 = A2(
-							$elm$core$List$partition,
-							function (x) {
-								return _Utils_eq(x.coord, from);
-							},
-							oldBoard.cards);
-						var cardsToBeMoved = _v4.a;
-						var remainingCards = _v4.b;
-						var newBoard = function () {
-							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
-								var cardToBeMoved = cardsToBeMoved.a;
-								return {
-									cards: A2(
-										$elm$core$List$cons,
-										_Utils_update(
-											cardToBeMoved,
-											{coord: to, shown: true}),
-										remainingCards),
-									empty: from
-								};
-							} else {
-								return oldBoard;
-							}
-						}();
 						return {
 							additionToHistory: '',
 							newStatus: A2(
 								$author$project$Tak1Bai2Types$FirstHalfCompletedBySlide,
 								{from: from, to: to},
-								newBoard)
+								A2($author$project$Main$applySlide, oldBoard, from))
 						};
 					} else {
 						break _v0$8;
@@ -6158,9 +6157,9 @@ var $author$project$Main$updateStatus = F3(
 									A2($author$project$Main$applyHop, oldBoard, from))
 							};
 						case 'FirstHalfCompletedByHop':
-							var _v6 = _v0.a;
-							var first_fromto = _v6.a;
-							var oldBoard = _v6.b;
+							var _v4 = _v0.a;
+							var first_fromto = _v4.a;
+							var oldBoard = _v4.b;
 							var from = _v0.b.a.from;
 							var to = _v0.b.a.to;
 							return {
@@ -6171,9 +6170,9 @@ var $author$project$Main$updateStatus = F3(
 									A2($author$project$Main$applyHop, oldBoard, from))
 							};
 						case 'FirstHalfCompletedBySlide':
-							var _v7 = _v0.a;
-							var first_fromto = _v7.a;
-							var oldBoard = _v7.b;
+							var _v5 = _v0.a;
+							var first_fromto = _v5.a;
+							var oldBoard = _v5.b;
 							var from = _v0.b.a.from;
 							var to = _v0.b.a.to;
 							return {
@@ -6188,10 +6187,10 @@ var $author$project$Main$updateStatus = F3(
 					}
 				case 'Match':
 					if (_v0.a.$ === 'SecondHalfCompleted') {
-						var _v8 = _v0.a;
-						var coords = _v8.a;
-						var oldBoard = _v8.b;
-						var _v9 = _v0.b;
+						var _v6 = _v0.a;
+						var coords = _v6.a;
+						var oldBoard = _v6.b;
+						var _v7 = _v0.b;
 						return {
 							additionToHistory: $author$project$Main$toHistory(coords) + ' Match!\n\n',
 							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
@@ -6201,14 +6200,14 @@ var $author$project$Main$updateStatus = F3(
 					}
 				case 'Mismatch':
 					if (_v0.a.$ === 'SecondHalfCompleted') {
-						var _v10 = _v0.a;
-						var coords = _v10.a;
-						var oldBoard = _v10.b;
-						var _v11 = _v0.b;
-						var _v12 = $author$project$Main$coordsFlippedInATurn(coords);
-						var first_flipped = _v12.first_flipped;
-						var second_flipped = _v12.second_flipped;
-						var _v13 = A2(
+						var _v8 = _v0.a;
+						var coords = _v8.a;
+						var oldBoard = _v8.b;
+						var _v9 = _v0.b;
+						var _v10 = $author$project$Main$coordsFlippedInATurn(coords);
+						var first_flipped = _v10.first_flipped;
+						var second_flipped = _v10.second_flipped;
+						var _v11 = A2(
 							$elm$core$List$partition,
 							function (x) {
 								return A2(
@@ -6218,8 +6217,8 @@ var $author$project$Main$updateStatus = F3(
 										[first_flipped, second_flipped]));
 							},
 							oldBoard.cards);
-						var cardsToBeFlippedBack = _v13.a;
-						var remainingCards = _v13.b;
+						var cardsToBeFlippedBack = _v11.a;
+						var remainingCards = _v11.b;
 						var newBoard = _Utils_update(
 							oldBoard,
 							{
@@ -6770,46 +6769,24 @@ var $author$project$Main$getPairNumFromBoard = function (b) {
 				},
 				b.cards)));
 };
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Buttons$matchButton = function (a) {
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$type_('button'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'cursor',
-				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
-				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Match),
-				A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
-				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-			]),
-		_List_fromArray(
-			[
-				$elm$svg$Svg$text('マッチ！')
-			]));
-};
-var $author$project$Buttons$mismatchButton = function (a) {
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$type_('button'),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'cursor',
-				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
-				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Mismatch),
-				A2($elm$html$Html$Attributes$style, 'background-color', '#aaaaff'),
-				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
-			]),
-		_List_fromArray(
-			[
-				$elm$svg$Svg$text('ミスマッチ……')
-			]));
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
 };
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -6877,6 +6854,71 @@ var $author$project$Main$possibleSlidePosition = function (board) {
 				$elm$core$Maybe$Just(true));
 		},
 		A2($author$project$Main$nthNeighbor, 1, board.empty));
+};
+var $author$project$Main$isStuck = function (board) {
+	if ($elm$core$List$isEmpty(
+		_Utils_ap(
+			$author$project$Main$possibleHopPosition(board),
+			$author$project$Main$possibleSlidePosition(board)))) {
+		return true;
+	} else {
+		var slides = A2(
+			$elm$core$List$map,
+			$author$project$Main$applySlide(board),
+			$author$project$Main$possibleSlidePosition(board));
+		var hops = A2(
+			$elm$core$List$map,
+			$author$project$Main$applyHop(board),
+			$author$project$Main$possibleHopPosition(board));
+		return A2(
+			$elm$core$List$all,
+			function (b) {
+				return $elm$core$List$isEmpty(
+					$author$project$Main$possibleHopPosition(b));
+			},
+			_Utils_ap(hops, slides));
+	}
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Buttons$matchButton = function (a) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'cursor',
+				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Match),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#aaffaa'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+			]),
+		_List_fromArray(
+			[
+				$elm$svg$Svg$text('マッチ！')
+			]));
+};
+var $author$project$Buttons$mismatchButton = function (a) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'cursor',
+				a.eyeIsOpen ? 'not-allowed' : 'pointer'),
+				$elm$svg$Svg$Events$onClick($author$project$Tak1Bai2Types$Mismatch),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#aaaaff'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+			]),
+		_List_fromArray(
+			[
+				$elm$svg$Svg$text('ミスマッチ……')
+			]));
 };
 var $author$project$Buttons$simpleCancelButton = function (a) {
 	return A2(
@@ -7012,7 +7054,7 @@ var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $author$project$Main$view_ = F6(
-	function (maybeAudioUrl, pairnum, gameEndTweet, history, svgContent, buttons) {
+	function (maybeAudioUrl, pairnum, gameEnd, history, svgContent, buttons) {
 		var audio = function () {
 			if (maybeAudioUrl.$ === 'Nothing') {
 				return _List_Nil;
@@ -7233,38 +7275,61 @@ var $author$project$Main$view_ = F6(
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										A2($elm$html$Html$Attributes$style, 'min-height', '35px'),
-										A2($elm$html$Html$Attributes$style, 'margin-top', '25px'),
+										A2($elm$html$Html$Attributes$style, 'min-height', '25px'),
 										A2($elm$html$Html$Attributes$style, 'text-align', 'center')
 									]),
-								_List_fromArray(
+								gameEnd ? _List_fromArray(
 									[
 										A2(
 										$elm$html$Html$span,
-										_List_Nil,
 										_List_fromArray(
 											[
-												$elm$html$Html$text(
-												'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
+												A2($elm$html$Html$Attributes$style, 'font-weight', 'bold'),
+												A2($elm$html$Html$Attributes$style, 'font-size', '150%'),
+												A2($elm$html$Html$Attributes$style, 'color', '#0000ee')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('詰み！！')
 											]))
-									])),
+									]) : _List_Nil),
 							A2(
 								$elm$core$List$cons,
 								A2(
-									$elm$svg$Svg$svg,
+									$elm$html$Html$div,
 									_List_fromArray(
 										[
-											$elm$svg$Svg$Attributes$viewBox('-100 -100 1050 1050'),
-											$elm$svg$Svg$Attributes$width('540')
+											A2($elm$html$Html$Attributes$style, 'min-height', '35px'),
+											A2($elm$html$Html$Attributes$style, 'text-align', 'center')
 										]),
-									svgContent),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$span,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
+												]))
+										])),
 								A2(
 									$elm$core$List$cons,
-									A2($elm$html$Html$br, _List_Nil, _List_Nil),
 									A2(
-										$elm$core$List$intersperse,
-										$elm$html$Html$text(' '),
-										buttons))))),
+										$elm$svg$Svg$svg,
+										_List_fromArray(
+											[
+												$elm$svg$Svg$Attributes$viewBox('-100 -100 1050 1050'),
+												$elm$svg$Svg$Attributes$width('540')
+											]),
+										svgContent),
+									A2(
+										$elm$core$List$cons,
+										A2($elm$html$Html$br, _List_Nil, _List_Nil),
+										A2(
+											$elm$core$List$intersperse,
+											$elm$html$Html$text(' '),
+											buttons)))))),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -7316,13 +7381,13 @@ var $author$project$Main$view_ = F6(
 										A2(
 										$elm$html$Html$Attributes$style,
 										'font-size',
-										gameEndTweet ? '250%' : '120%'),
+										gameEnd ? '250%' : '120%'),
 										A2($elm$html$Html$Attributes$style, 'font-weight', 'bold')
 									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										gameEndTweet ? '棋譜をツイートしましょう！！' : 'ここまでの棋譜をツイートする'),
+										gameEnd ? '棋譜をツイートしましょう！！' : 'ここまでの棋譜をツイートする'),
 										A2($elm$html$Html$br, _List_Nil, _List_Nil),
 										A2(
 										$elm$html$Html$img,
@@ -7347,7 +7412,7 @@ var $author$project$Main$view = function (_v0) {
 				$author$project$Main$view_,
 				$elm$core$Maybe$Nothing,
 				$author$project$Main$getPairNumFromBoard(board),
-				false,
+				$author$project$Main$isStuck(board),
 				historyString,
 				A2(
 					$elm$core$List$cons,
@@ -7382,28 +7447,6 @@ var $author$project$Main$view = function (_v0) {
 										c);
 								},
 								$author$project$Main$possibleHopPosition(board))))),
-				_List_fromArray(
-					[
-						$author$project$Buttons$eyeButton(
-						{eyeIsOpen: eyeIsOpen})
-					]));
-		case 'GameTerminated':
-			var board = currentStatus.a;
-			return A6(
-				$author$project$Main$view_,
-				$elm$core$Maybe$Nothing,
-				$author$project$Main$getPairNumFromBoard(board),
-				false,
-				historyString,
-				A2(
-					$elm$core$List$cons,
-					$author$project$Main$backgroundWoodenBoard(
-						{eyeIsOpen: eyeIsOpen}),
-					A2(
-						$elm$core$List$map,
-						$author$project$Main$displayCard(
-							{eyeIsOpen: eyeIsOpen}),
-						board.cards)),
 				_List_fromArray(
 					[
 						$author$project$Buttons$eyeButton(

@@ -6,6 +6,7 @@ import Buttons exposing (..)
 import Html exposing (Html)
 import Html.Attributes exposing (href)
 import Json.Decode as Decode
+import List exposing (isEmpty)
 import Sizes exposing (..)
 import Svg exposing (Attribute, Svg, g, path, rect, svg)
 import Svg.Attributes exposing (d, fill, height, stroke, strokeWidth, transform, viewBox, width, x, y)
@@ -137,7 +138,7 @@ cardHtmlImage a =
 
 
 view_ : Maybe String -> Int -> Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
-view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
+view_ maybeAudioUrl pairnum gameEnd history svgContent buttons =
     let
         audio =
             case maybeAudioUrl of
@@ -161,13 +162,6 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                             , targetBlankLink [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ] [ Html.text "バグを報告/機能を提案" ]
                             ]
                         )
-
-                    {- }, Html.div [ Html.Attributes.style "font-size" "50%" ]
-                       (List.map (\t -> Html.p [] [ Html.text t ])
-                           [ "ここに開発ログ"
-                           ]
-                       )
-                    -}
                     , Html.h3 [ Html.Attributes.style "font-size" "80%" ] [ Html.text "ルール" ]
                     , Html.p [ Html.Attributes.style "font-size" "80%" ]
                         [ Html.text "カードをめくって、同一札の黒と赤でペアを作っていく遊びです。"
@@ -211,12 +205,27 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                     ]
                , Html.div []
                     (Html.div
-                        [ Html.Attributes.style "min-height" "35px"
-                        , Html.Attributes.style "margin-top" "25px"
+                        [ Html.Attributes.style "min-height" "25px"
                         , Html.Attributes.style "text-align" "center"
                         ]
-                        [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
-                        ]
+                        (if gameEnd then
+                            [ Html.span
+                                [ Html.Attributes.style "font-weight" "bold"
+                                , Html.Attributes.style "font-size" "150%"
+                                , Html.Attributes.style "color" "#0000ee"
+                                ]
+                                [ Html.text "詰み！！" ]
+                            ]
+
+                         else
+                            []
+                        )
+                        :: Html.div
+                            [ Html.Attributes.style "min-height" "35px"
+                            , Html.Attributes.style "text-align" "center"
+                            ]
+                            [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
+                            ]
                         :: svg [ viewBox "-100 -100 1050 1050", width "540" ] svgContent
                         :: Html.br [] []
                         :: List.intersperse (Html.text " ") buttons
@@ -246,7 +255,7 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                                 ]
                             )
                         , Html.Attributes.style "font-size"
-                            (if gameEndTweet then
+                            (if gameEnd then
                                 "250%"
 
                              else
@@ -255,7 +264,7 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                         , Html.Attributes.style "font-weight" "bold"
                         ]
                         [ Html.text
-                            (if gameEndTweet then
+                            (if gameEnd then
                                 "棋譜をツイートしましょう！！"
 
                              else
@@ -430,22 +439,12 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
         NothingSelected board ->
             view_ Nothing
                 (getPairNumFromBoard board)
-                False
+                (isStuck board)
                 historyString
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                     ++ List.map (\c -> candidateYellowSvg { eyeIsOpen = eyeIsOpen } (Slide { from = c, to = board.empty }) c) (possibleSlidePosition board)
                     ++ List.map (\c -> candidateYellowSvg { eyeIsOpen = eyeIsOpen } (Hop { from = c, to = board.empty }) c) (possibleHopPosition board)
-                )
-                [ eyeButton { eyeIsOpen = eyeIsOpen } ]
-
-        GameTerminated board ->
-            view_ Nothing
-                (getPairNumFromBoard board)
-                False
-                historyString
-                (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
-                    :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                 )
                 [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
@@ -638,6 +637,23 @@ drawArrow uiColor from to =
         [ transform ("translate(" ++ String.fromFloat (toFloat top_left.x * lattice_size) ++ "," ++ String.fromFloat (toFloat top_left.y * lattice_size) ++ ")")
         ]
         [ path [ d d_data, fill (fromUIColor uiColor), stroke "#000", strokeWidth "2" ] [] ]
+
+
+isStuck : Board -> Bool
+isStuck board =
+    if possibleHopPosition board ++ possibleSlidePosition board |> isEmpty then
+        -- The first move cannot be taken; hence stuck
+        True
+
+    else
+        let
+            hops =
+                possibleHopPosition board |> List.map (applyHop board)
+
+            slides =
+                possibleSlidePosition board |> List.map (applySlide board)
+        in
+        (hops ++ slides) |> List.all (\b -> possibleHopPosition b |> isEmpty)
 
 
 applyHop : Board -> Coordinate -> Board
