@@ -311,11 +311,13 @@ view__ :
     , gameEnd : Bool
     , history : HistoryString
     , currentTimer : TimerStatus
+    , wasdEnabled : Bool
+    , arrowKeyEnabled : Bool
     }
     -> List (Svg Msg)
     -> List (Html Msg)
     -> Html Msg
-view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent buttons =
+view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer, wasdEnabled, arrowKeyEnabled } svgContent buttons =
     let
         audio =
             case maybeAudioUrl of
@@ -383,6 +385,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                                     , Html.Attributes.id "wasd"
                                     , Html.Attributes.name "wasd"
                                     , onCheck AcceptWasd
+                                    , Html.Attributes.checked wasdEnabled
                                     ]
                                     []
                                 , Html.label [ Html.Attributes.for "wasd" ] [ Html.text "一打目に W,A,S,D キーでカードをスライド" ]
@@ -393,6 +396,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                                     , Html.Attributes.id "arrowkey"
                                     , Html.Attributes.name "arrowkey"
                                     , onCheck AcceptArrowKey
+                                    , Html.Attributes.checked arrowKeyEnabled
                                     ]
                                     []
                                 , Html.label [ Html.Attributes.for "arrowkey" ] [ Html.text "矢印キーでカードでの飛び越え" ]
@@ -644,7 +648,7 @@ getPairNumFromBoard b =
 
 
 view : Model -> Html Msg
-view { historyString, currentStatus, eyeIsOpen, currentTimer } =
+view { historyString, currentStatus, eyeIsOpen, currentTimer, arrowKeyEnabled, wasdEnabled } =
     case currentStatus of
         NothingSelected board ->
             view__
@@ -653,6 +657,8 @@ view { historyString, currentStatus, eyeIsOpen, currentTimer } =
                 , gameEnd = isStuck board
                 , history = historyString
                 , currentTimer = currentTimer
+                , arrowKeyEnabled = arrowKeyEnabled
+                , wasdEnabled = wasdEnabled
                 }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
@@ -668,6 +674,8 @@ view { historyString, currentStatus, eyeIsOpen, currentTimer } =
                 , gameEnd = False
                 , history = historyString
                 , currentTimer = currentTimer
+                , arrowKeyEnabled = arrowKeyEnabled
+                , wasdEnabled = wasdEnabled
                 }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
@@ -683,6 +691,8 @@ view { historyString, currentStatus, eyeIsOpen, currentTimer } =
                 , gameEnd = False
                 , history = historyString
                 , currentTimer = currentTimer
+                , arrowKeyEnabled = arrowKeyEnabled
+                , wasdEnabled = wasdEnabled
                 }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
@@ -715,6 +725,8 @@ view { historyString, currentStatus, eyeIsOpen, currentTimer } =
                 , history =
                     historyString
                 , currentTimer = currentTimer
+                , arrowKeyEnabled = arrowKeyEnabled
+                , wasdEnabled = wasdEnabled
                 }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow first_from first_to

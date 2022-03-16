@@ -7746,6 +7746,7 @@ var $author$project$Main$cardHtmlImage = function (a) {
 			]),
 		_List_Nil);
 };
+var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$Attributes$cols = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -7863,6 +7864,8 @@ var $author$project$Main$view__ = F3(
 		var gameEnd = _v0.gameEnd;
 		var history = _v0.history;
 		var currentTimer = _v0.currentTimer;
+		var wasdEnabled = _v0.wasdEnabled;
+		var arrowKeyEnabled = _v0.arrowKeyEnabled;
 		var audio = function () {
 			if (maybeAudioUrl.$ === 'Nothing') {
 				return _List_Nil;
@@ -8083,7 +8086,8 @@ var $author$project$Main$view__ = F3(
 																$elm$html$Html$Attributes$type_('checkbox'),
 																$elm$html$Html$Attributes$id('wasd'),
 																$elm$html$Html$Attributes$name('wasd'),
-																$elm$html$Html$Events$onCheck($author$project$Tak1Bai2Types$AcceptWasd)
+																$elm$html$Html$Events$onCheck($author$project$Tak1Bai2Types$AcceptWasd),
+																$elm$html$Html$Attributes$checked(wasdEnabled)
 															]),
 														_List_Nil),
 														A2(
@@ -8109,7 +8113,8 @@ var $author$project$Main$view__ = F3(
 																$elm$html$Html$Attributes$type_('checkbox'),
 																$elm$html$Html$Attributes$id('arrowkey'),
 																$elm$html$Html$Attributes$name('arrowkey'),
-																$elm$html$Html$Events$onCheck($author$project$Tak1Bai2Types$AcceptArrowKey)
+																$elm$html$Html$Events$onCheck($author$project$Tak1Bai2Types$AcceptArrowKey),
+																$elm$html$Html$Attributes$checked(arrowKeyEnabled)
 															]),
 														_List_Nil),
 														A2(
@@ -8266,17 +8271,21 @@ var $author$project$Main$view = function (_v0) {
 	var currentStatus = _v0.currentStatus;
 	var eyeIsOpen = _v0.eyeIsOpen;
 	var currentTimer = _v0.currentTimer;
+	var arrowKeyEnabled = _v0.arrowKeyEnabled;
+	var wasdEnabled = _v0.wasdEnabled;
 	switch (currentStatus.$) {
 		case 'NothingSelected':
 			var board = currentStatus.a;
 			return A3(
 				$author$project$Main$view__,
 				{
+					arrowKeyEnabled: arrowKeyEnabled,
 					currentTimer: currentTimer,
 					gameEnd: $author$project$Main$isStuck(board),
 					history: historyString,
 					maybeAudioUrl: $elm$core$Maybe$Nothing,
-					pairnum: $author$project$Main$getPairNumFromBoard(board)
+					pairnum: $author$project$Main$getPairNumFromBoard(board),
+					wasdEnabled: wasdEnabled
 				},
 				A2(
 					$elm$core$List$cons,
@@ -8323,11 +8332,13 @@ var $author$project$Main$view = function (_v0) {
 			return A3(
 				$author$project$Main$view__,
 				{
+					arrowKeyEnabled: arrowKeyEnabled,
 					currentTimer: currentTimer,
 					gameEnd: false,
 					history: historyString,
 					maybeAudioUrl: $elm$core$Maybe$Nothing,
-					pairnum: $author$project$Main$getPairNumFromBoard(board)
+					pairnum: $author$project$Main$getPairNumFromBoard(board),
+					wasdEnabled: wasdEnabled
 				},
 				A2(
 					$elm$core$List$cons,
@@ -8367,11 +8378,13 @@ var $author$project$Main$view = function (_v0) {
 			return A3(
 				$author$project$Main$view__,
 				{
+					arrowKeyEnabled: arrowKeyEnabled,
 					currentTimer: currentTimer,
 					gameEnd: false,
 					history: historyString,
 					maybeAudioUrl: $elm$core$Maybe$Nothing,
-					pairnum: $author$project$Main$getPairNumFromBoard(board)
+					pairnum: $author$project$Main$getPairNumFromBoard(board),
+					wasdEnabled: wasdEnabled
 				},
 				A2(
 					$elm$core$List$cons,
@@ -8417,11 +8430,13 @@ var $author$project$Main$view = function (_v0) {
 			return A3(
 				$author$project$Main$view__,
 				{
+					arrowKeyEnabled: arrowKeyEnabled,
 					currentTimer: currentTimer,
 					gameEnd: false,
 					history: historyString,
 					maybeAudioUrl: isMatching ? $elm$core$Maybe$Just('sound/success.wav') : $elm$core$Maybe$Just('sound/failure.wav'),
-					pairnum: isMatching ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1)
+					pairnum: isMatching ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1),
+					wasdEnabled: wasdEnabled
 				},
 				A2(
 					$elm$core$List$cons,
