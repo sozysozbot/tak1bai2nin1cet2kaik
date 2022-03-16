@@ -640,6 +640,30 @@ drawArrow uiColor from to =
         [ path [ d d_data, fill (fromUIColor uiColor), stroke "#000", strokeWidth "2" ] [] ]
 
 
+applyHop : Board -> Coordinate -> Board
+applyHop oldBoard from =
+    let
+        to =
+            oldBoard.empty
+
+        ( cardsToBeMoved, remainingCards ) =
+            List.partition (\x -> x.coord == from) oldBoard.cards
+
+        ( cardsToBeFlipped, remainingCards2 ) =
+            List.partition (\x -> x.coord == getMidpoint from to) remainingCards
+
+        newBoard =
+            case ( cardsToBeMoved, cardsToBeFlipped ) of
+                ( [ moved ], [ flipped ] ) ->
+                    { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
+
+                _ ->
+                    -- this path is not taken
+                    oldBoard
+    in
+    newBoard
+
+
 updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
 updateStatus msg modl saved =
     case ( modl, msg ) of
@@ -652,23 +676,7 @@ updateStatus msg modl saved =
             { additionToHistory = "", newStatus = saved }
 
         ( NothingSelected oldBoard, Hop { from, to } ) ->
-            let
-                ( cardsToBeMoved, remainingCards ) =
-                    List.partition (\x -> x.coord == from) oldBoard.cards
-
-                ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
-
-                newBoard =
-                    case ( cardsToBeMoved, cardsToBeFlipped ) of
-                        ( [ moved ], [ flipped ] ) ->
-                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
-
-                        _ ->
-                            -- this path is not taken
-                            oldBoard
-            in
-            { additionToHistory = "", newStatus = FirstHalfCompletedByHop { from = from, to = to } newBoard }
+            { additionToHistory = "", newStatus = FirstHalfCompletedByHop { from = from, to = to } (applyHop oldBoard from) }
 
         ( NothingSelected oldBoard, Slide { from, to } ) ->
             let
@@ -687,22 +695,6 @@ updateStatus msg modl saved =
             { additionToHistory = "", newStatus = FirstHalfCompletedBySlide { from = from, to = to } newBoard }
 
         ( FirstHalfCompletedByHop first_fromto oldBoard, Hop { from, to } ) ->
-            let
-                ( cardsToBeMoved, remainingCards ) =
-                    List.partition (\x -> x.coord == from) oldBoard.cards
-
-                ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
-
-                newBoard =
-                    case ( cardsToBeMoved, cardsToBeFlipped ) of
-                        ( [ moved ], [ flipped ] ) ->
-                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
-
-                        _ ->
-                            -- this path is not taken
-                            oldBoard
-            in
             { additionToHistory = ""
             , newStatus =
                 SecondHalfCompleted
@@ -711,26 +703,10 @@ updateStatus msg modl saved =
                     , second_from = from
                     , second_to = to
                     }
-                    newBoard
+                    (applyHop oldBoard from)
             }
 
         ( FirstHalfCompletedBySlide first_fromto oldBoard, Hop { from, to } ) ->
-            let
-                ( cardsToBeMoved, remainingCards ) =
-                    List.partition (\x -> x.coord == from) oldBoard.cards
-
-                ( cardsToBeFlipped, remainingCards2 ) =
-                    List.partition (\x -> x.coord == getMidpoint from to) remainingCards
-
-                newBoard =
-                    case ( cardsToBeMoved, cardsToBeFlipped ) of
-                        ( [ moved ], [ flipped ] ) ->
-                            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
-
-                        _ ->
-                            -- this path is not taken
-                            oldBoard
-            in
             { additionToHistory = ""
             , newStatus =
                 SecondHalfCompleted
@@ -739,7 +715,7 @@ updateStatus msg modl saved =
                     , second_from = from
                     , second_to = to
                     }
-                    newBoard
+                    (applyHop oldBoard from)
             }
 
         ( SecondHalfCompleted coords oldBoard, Match ) ->
