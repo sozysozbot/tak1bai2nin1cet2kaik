@@ -574,7 +574,7 @@ init flags =
     in
     ( Model
         { historyString =
-            "初期配置: " ++ String.join "," (List.map String.fromInt flags.cards) ++ "\n\n"
+            String.join "," (List.map String.fromInt flags.cards) ++ "\n\n"
         , currentStatus = initialStatus
         , saved = initialStatus
         , eyeIsOpen = False

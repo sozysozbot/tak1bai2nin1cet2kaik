@@ -5394,10 +5394,10 @@ var $author$project$Main$init = function (flags) {
 			{
 				currentStatus: initialStatus,
 				eyeIsOpen: false,
-				historyString: '初期配置: ' + (A2(
+				historyString: A2(
 					$elm$core$String$join,
 					',',
-					A2($elm$core$List$map, $elm$core$String$fromInt, flags.cards)) + '\n\n'),
+					A2($elm$core$List$map, $elm$core$String$fromInt, flags.cards)) + '\n\n',
 				saved: initialStatus
 			}),
 		$elm$core$Platform$Cmd$none);

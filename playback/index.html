@@ -1,1 +1,5 @@
 <!DOCTYPE html>
+<script>
+	const historyString = new URLSearchParams((new URL(location.href)).search).get("playback");
+	location.replace("../play/index.html?initial=" + encodeURIComponent(historyString.split("\n")[0]));
+</script>
