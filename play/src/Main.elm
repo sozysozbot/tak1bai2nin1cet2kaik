@@ -306,7 +306,7 @@ targetBlankLink attributes =
 
 cardHtmlImage : { a | prof : Profession, cardColor : CardColor } -> Html msg
 cardHtmlImage a =
-    Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 100, Html.Attributes.style "vertical-align" "middle" ] []
+    Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 80, Html.Attributes.style "vertical-align" "middle" ] []
 
 
 stringFromTimer : TimerStatus -> String

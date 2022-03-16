@@ -7723,7 +7723,7 @@ var $author$project$Main$cardHtmlImage = function (a) {
 			[
 				$elm$html$Html$Attributes$src(
 				$author$project$Tak1Bai2Types$toExternalSvgFilePath(a)),
-				$elm$html$Html$Attributes$height(100),
+				$elm$html$Html$Attributes$height(80),
 				A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle')
 			]),
 		_List_Nil);
