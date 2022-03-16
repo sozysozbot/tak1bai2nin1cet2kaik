@@ -148,6 +148,58 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
             else
                 update OpenTheEye modl
 
+        AddKey (Character 'w') ->
+            case currentStatus of
+                NothingSelected board ->
+                    case possibleSlidePosition board |> List.filter (\c -> c.y == board.empty.y - 1 && c.x == board.empty.x) of
+                        [ from ] ->
+                            update (Slide { from = from, to = board.empty }) modl
+
+                        _ ->
+                            ( modl, Cmd.none )
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        AddKey (Character 'a') ->
+            case currentStatus of
+                NothingSelected board ->
+                    case possibleSlidePosition board |> List.filter (\c -> c.x == board.empty.x - 1 && c.y == board.empty.y) of
+                        [ from ] ->
+                            update (Slide { from = from, to = board.empty }) modl
+
+                        _ ->
+                            ( modl, Cmd.none )
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        AddKey (Character 's') ->
+            case currentStatus of
+                NothingSelected board ->
+                    case possibleSlidePosition board |> List.filter (\c -> c.y == board.empty.y + 1 && c.x == board.empty.x) of
+                        [ from ] ->
+                            update (Slide { from = from, to = board.empty }) modl
+
+                        _ ->
+                            ( modl, Cmd.none )
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        AddKey (Character 'd') ->
+            case currentStatus of
+                NothingSelected board ->
+                    case possibleSlidePosition board |> List.filter (\c -> c.x == board.empty.x + 1 && c.y == board.empty.y) of
+                        [ from ] ->
+                            update (Slide { from = from, to = board.empty }) modl
+
+                        _ ->
+                            ( modl, Cmd.none )
+
+                _ ->
+                    ( modl, Cmd.none )
+
         _ ->
             if eyeIsOpen then
                 -- the only thing you can do is to close the eye
@@ -313,6 +365,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                             [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
                             , Html.li [] [ Html.text "E キーで目の開閉（カナ入力になっていると失敗することがある）" ]
                             , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
+                            , Html.li [] [ Html.text "一打目に W,A,S,D キーで[上/左/下/右]方向にあるカードをスライド" ]
                             ]
                         ]
                     ]
