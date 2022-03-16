@@ -157,6 +157,7 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                     , Html.ul []
                         (List.map (\p -> Html.li [] [ p ])
                             [ targetBlankLink [ href "https://sites.google.com/view/cet2kaik" ] [ Html.text "日本机戦連盟公式サイト" ]
+                            , targetBlankLink [ href "https://cet2kaik.booth.pm/" ] [ Html.text "机戦・紙机戦の購入はこちらから" ]
                             , targetBlankLink [ href "https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new" ] [ Html.text "バグを報告/機能を提案" ]
                             ]
                         )
@@ -261,7 +262,7 @@ view_ maybeAudioUrl pairnum gameEndTweet history svgContent buttons =
                                 "ここまでの棋譜をツイートする"
                             )
                         , Html.br [] []
-                        , Html.img [ Html.Attributes.src "../imgs/keserima.png", Html.Attributes.height 200 ] []
+                        , Html.img [ Html.Attributes.src "../img/nin1cet2kaik_photo.jpg", Html.Attributes.height 200 ] []
                         ]
                     ]
                ]
@@ -642,8 +643,12 @@ drawArrow uiColor from to =
 updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
 updateStatus msg modl saved =
     case ( modl, msg ) of
+        ( SecondHalfCompleted _ _, Cancel ) ->
+            -- this shall not be canceled
+            { additionToHistory = "", newStatus = modl }
+
         ( _, Cancel ) ->
-            -- no matter what the state is, abort it and revert to what was saved last
+            -- otherwise, abort it and revert to what was saved last
             { additionToHistory = "", newStatus = saved }
 
         ( NothingSelected oldBoard, Hop { from, to } ) ->

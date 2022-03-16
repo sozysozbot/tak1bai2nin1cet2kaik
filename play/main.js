@@ -6045,25 +6045,31 @@ var $author$project$Main$toHistory = function (a) {
 var $author$project$Main$updateStatus = F3(
 	function (msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
-		_v0$7:
+		_v0$8:
 		while (true) {
 			switch (_v0.b.$) {
 				case 'Cancel':
-					var _v1 = _v0.b;
-					return {additionToHistory: '', newStatus: saved};
+					if (_v0.a.$ === 'SecondHalfCompleted') {
+						var _v1 = _v0.a;
+						var _v2 = _v0.b;
+						return {additionToHistory: '', newStatus: modl};
+					} else {
+						var _v3 = _v0.b;
+						return {additionToHistory: '', newStatus: saved};
+					}
 				case 'Slide':
 					if (_v0.a.$ === 'NothingSelected') {
 						var oldBoard = _v0.a.a;
 						var from = _v0.b.a.from;
 						var to = _v0.b.a.to;
-						var _v7 = A2(
+						var _v9 = A2(
 							$elm$core$List$partition,
 							function (x) {
 								return _Utils_eq(x.coord, from);
 							},
 							oldBoard.cards);
-						var cardsToBeMoved = _v7.a;
-						var remainingCards = _v7.b;
+						var cardsToBeMoved = _v9.a;
+						var remainingCards = _v9.b;
 						var newBoard = function () {
 							if (cardsToBeMoved.b && (!cardsToBeMoved.b.b)) {
 								var cardToBeMoved = cardsToBeMoved.a;
@@ -6088,7 +6094,7 @@ var $author$project$Main$updateStatus = F3(
 								newBoard)
 						};
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'Hop':
 					switch (_v0.a.$) {
@@ -6096,15 +6102,15 @@ var $author$project$Main$updateStatus = F3(
 							var oldBoard = _v0.a.a;
 							var from = _v0.b.a.from;
 							var to = _v0.b.a.to;
-							var _v2 = A2(
+							var _v4 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(x.coord, from);
 								},
 								oldBoard.cards);
-							var cardsToBeMoved = _v2.a;
-							var remainingCards = _v2.b;
-							var _v3 = A2(
+							var cardsToBeMoved = _v4.a;
+							var remainingCards = _v4.b;
+							var _v5 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(
@@ -6112,15 +6118,15 @@ var $author$project$Main$updateStatus = F3(
 										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
-							var cardsToBeFlipped = _v3.a;
-							var remainingCards2 = _v3.b;
+							var cardsToBeFlipped = _v5.a;
+							var remainingCards2 = _v5.b;
 							var newBoard = function () {
-								var _v4 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
-								if (((_v4.a.b && (!_v4.a.b.b)) && _v4.b.b) && (!_v4.b.b.b)) {
-									var _v5 = _v4.a;
-									var moved = _v5.a;
-									var _v6 = _v4.b;
-									var flipped = _v6.a;
+								var _v6 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v6.a.b && (!_v6.a.b.b)) && _v6.b.b) && (!_v6.b.b.b)) {
+									var _v7 = _v6.a;
+									var moved = _v7.a;
+									var _v8 = _v6.b;
+									var flipped = _v8.a;
 									return {
 										cards: A2(
 											$elm$core$List$cons,
@@ -6147,20 +6153,20 @@ var $author$project$Main$updateStatus = F3(
 									newBoard)
 							};
 						case 'FirstHalfCompletedByHop':
-							var _v9 = _v0.a;
-							var first_fromto = _v9.a;
-							var oldBoard = _v9.b;
+							var _v11 = _v0.a;
+							var first_fromto = _v11.a;
+							var oldBoard = _v11.b;
 							var from = _v0.b.a.from;
 							var to = _v0.b.a.to;
-							var _v10 = A2(
+							var _v12 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(x.coord, from);
 								},
 								oldBoard.cards);
-							var cardsToBeMoved = _v10.a;
-							var remainingCards = _v10.b;
-							var _v11 = A2(
+							var cardsToBeMoved = _v12.a;
+							var remainingCards = _v12.b;
+							var _v13 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(
@@ -6168,15 +6174,15 @@ var $author$project$Main$updateStatus = F3(
 										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
-							var cardsToBeFlipped = _v11.a;
-							var remainingCards2 = _v11.b;
+							var cardsToBeFlipped = _v13.a;
+							var remainingCards2 = _v13.b;
 							var newBoard = function () {
-								var _v12 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
-								if (((_v12.a.b && (!_v12.a.b.b)) && _v12.b.b) && (!_v12.b.b.b)) {
-									var _v13 = _v12.a;
-									var moved = _v13.a;
-									var _v14 = _v12.b;
-									var flipped = _v14.a;
+								var _v14 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v14.a.b && (!_v14.a.b.b)) && _v14.b.b) && (!_v14.b.b.b)) {
+									var _v15 = _v14.a;
+									var moved = _v15.a;
+									var _v16 = _v14.b;
+									var flipped = _v16.a;
 									return {
 										cards: A2(
 											$elm$core$List$cons,
@@ -6203,20 +6209,20 @@ var $author$project$Main$updateStatus = F3(
 									newBoard)
 							};
 						case 'FirstHalfCompletedBySlide':
-							var _v15 = _v0.a;
-							var first_fromto = _v15.a;
-							var oldBoard = _v15.b;
+							var _v17 = _v0.a;
+							var first_fromto = _v17.a;
+							var oldBoard = _v17.b;
 							var from = _v0.b.a.from;
 							var to = _v0.b.a.to;
-							var _v16 = A2(
+							var _v18 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(x.coord, from);
 								},
 								oldBoard.cards);
-							var cardsToBeMoved = _v16.a;
-							var remainingCards = _v16.b;
-							var _v17 = A2(
+							var cardsToBeMoved = _v18.a;
+							var remainingCards = _v18.b;
+							var _v19 = A2(
 								$elm$core$List$partition,
 								function (x) {
 									return _Utils_eq(
@@ -6224,15 +6230,15 @@ var $author$project$Main$updateStatus = F3(
 										A2($author$project$Tak1Bai2Types$getMidpoint, from, to));
 								},
 								remainingCards);
-							var cardsToBeFlipped = _v17.a;
-							var remainingCards2 = _v17.b;
+							var cardsToBeFlipped = _v19.a;
+							var remainingCards2 = _v19.b;
 							var newBoard = function () {
-								var _v18 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
-								if (((_v18.a.b && (!_v18.a.b.b)) && _v18.b.b) && (!_v18.b.b.b)) {
-									var _v19 = _v18.a;
-									var moved = _v19.a;
-									var _v20 = _v18.b;
-									var flipped = _v20.a;
+								var _v20 = _Utils_Tuple2(cardsToBeMoved, cardsToBeFlipped);
+								if (((_v20.a.b && (!_v20.a.b.b)) && _v20.b.b) && (!_v20.b.b.b)) {
+									var _v21 = _v20.a;
+									var moved = _v21.a;
+									var _v22 = _v20.b;
+									var flipped = _v22.a;
 									return {
 										cards: A2(
 											$elm$core$List$cons,
@@ -6259,31 +6265,31 @@ var $author$project$Main$updateStatus = F3(
 									newBoard)
 							};
 						default:
-							break _v0$7;
+							break _v0$8;
 					}
 				case 'Match':
-					if (_v0.a.$ === 'SecondHalfCompleted') {
-						var _v21 = _v0.a;
-						var coords = _v21.a;
-						var oldBoard = _v21.b;
-						var _v22 = _v0.b;
-						return {
-							additionToHistory: $author$project$Main$toHistory(coords) + ' Match!\n\n',
-							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
-						};
-					} else {
-						break _v0$7;
-					}
-				case 'Mismatch':
 					if (_v0.a.$ === 'SecondHalfCompleted') {
 						var _v23 = _v0.a;
 						var coords = _v23.a;
 						var oldBoard = _v23.b;
 						var _v24 = _v0.b;
-						var _v25 = $author$project$Main$coordsFlippedInATurn(coords);
-						var first_flipped = _v25.first_flipped;
-						var second_flipped = _v25.second_flipped;
-						var _v26 = A2(
+						return {
+							additionToHistory: $author$project$Main$toHistory(coords) + ' Match!\n\n',
+							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
+						};
+					} else {
+						break _v0$8;
+					}
+				case 'Mismatch':
+					if (_v0.a.$ === 'SecondHalfCompleted') {
+						var _v25 = _v0.a;
+						var coords = _v25.a;
+						var oldBoard = _v25.b;
+						var _v26 = _v0.b;
+						var _v27 = $author$project$Main$coordsFlippedInATurn(coords);
+						var first_flipped = _v27.first_flipped;
+						var second_flipped = _v27.second_flipped;
+						var _v28 = A2(
 							$elm$core$List$partition,
 							function (x) {
 								return A2(
@@ -6293,8 +6299,8 @@ var $author$project$Main$updateStatus = F3(
 										[first_flipped, second_flipped]));
 							},
 							oldBoard.cards);
-						var cardsToBeFlippedBack = _v26.a;
-						var remainingCards = _v26.b;
+						var cardsToBeFlippedBack = _v28.a;
+						var remainingCards = _v28.b;
 						var newBoard = _Utils_update(
 							oldBoard,
 							{
@@ -6314,10 +6320,10 @@ var $author$project$Main$updateStatus = F3(
 							newStatus: $author$project$Tak1Bai2Types$NothingSelected(newBoard)
 						};
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				default:
-					break _v0$7;
+					break _v0$8;
 			}
 		}
 		return {additionToHistory: '', newStatus: modl};
@@ -7169,6 +7175,16 @@ var $author$project$Main$view_ = F6(
 											$author$project$Main$targetBlankLink,
 											_List_fromArray(
 												[
+													$elm$html$Html$Attributes$href('https://cet2kaik.booth.pm/')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('机戦・紙机戦の購入はこちらから')
+												])),
+											A2(
+											$author$project$Main$targetBlankLink,
+											_List_fromArray(
+												[
 													$elm$html$Html$Attributes$href('https://github.com/sozysozbot/tak1bai2nin1cet2kaik/issues/new')
 												]),
 											_List_fromArray(
@@ -7393,7 +7409,7 @@ var $author$project$Main$view_ = F6(
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src('../imgs/keserima.png'),
+												$elm$html$Html$Attributes$src('../img/nin1cet2kaik_photo.jpg'),
 												$elm$html$Html$Attributes$height(200)
 											]),
 										_List_Nil)
