@@ -311,7 +311,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                         , Html.text "盤の下までいちいちマウスカーソルを持って行くのが面倒という人のために、"
                         , Html.ul []
                             [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
-                            , Html.li [] [ Html.text "E キーで目の開閉" ]
+                            , Html.li [] [ Html.text "E キーで目の開閉（カナ入力になっていると失敗することがある）" ]
                             , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
                             ]
                         ]

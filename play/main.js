@@ -7887,7 +7887,7 @@ var $author$project$Main$view__ = F3(
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text('E キーで目の開閉')
+														$elm$html$Html$text('E キーで目の開閉（カナ入力になっていると失敗することがある）')
 													])),
 												A2(
 												$elm$html$Html$li,
