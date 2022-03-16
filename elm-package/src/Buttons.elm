@@ -9,7 +9,7 @@ import Svg.Events exposing (onClick)
 import Tak1Bai2Types exposing (..)
 
 
-eyeButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+eyeButton : { eyeIsOpen : Bool } -> Html Msg
 eyeButton a =
     if a.eyeIsOpen then
         Html.input [ Html.Attributes.type_ "image", onClick CloseTheEye, Html.Attributes.src "../img/eye.svg", Html.Attributes.height 50 ] []
@@ -18,7 +18,7 @@ eyeButton a =
         Html.input [ Html.Attributes.type_ "image", onClick OpenTheEye, Html.Attributes.src "../img/sleeping_eye.svg", Html.Attributes.height 50 ] []
 
 
-simpleCancelButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+simpleCancelButton : { eyeIsOpen : Bool } -> Html Msg
 simpleCancelButton a =
     Html.button
         [ Html.Attributes.type_ "button"
@@ -36,7 +36,7 @@ simpleCancelButton a =
         [ text "キャンセル" ]
 
 
-matchButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+matchButton : { eyeIsOpen : Bool } -> Html Msg
 matchButton a =
     Html.button
         [ Html.Attributes.type_ "button"
@@ -54,7 +54,7 @@ matchButton a =
         [ text "マッチ！" ]
 
 
-mismatchButton : { eyeIsOpen : Bool } -> Html OriginalMsg
+mismatchButton : { eyeIsOpen : Bool } -> Html Msg
 mismatchButton a =
     Html.button
         [ Html.Attributes.type_ "button"

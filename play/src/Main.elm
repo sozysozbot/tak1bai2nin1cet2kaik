@@ -7,10 +7,12 @@ import Html exposing (Html)
 import Html.Attributes exposing (href)
 import Json.Decode as Decode
 import List exposing (isEmpty)
+import Round
 import Sizes exposing (..)
 import Svg exposing (Attribute, Svg, g, path, rect, svg)
 import Svg.Attributes exposing (d, fill, height, stroke, strokeWidth, transform, viewBox, width, x, y)
 import Tak1Bai2Types exposing (..)
+import Time
 import Url.Builder exposing (crossOrigin)
 
 
@@ -24,10 +26,17 @@ type Model
         , historyString : HistoryString
         , currentStatus : CurrentStatus
         , eyeIsOpen : Bool
+        , currentTimer : TimerStatus
         }
 
 
-main : Program Flags Model OriginalMsg
+type TimerStatus
+    = NotStarted
+    | CurrentlyCounting Int
+    | StoppedCounting Int
+
+
+main : Program Flags Model Msg
 main =
     Browser.element
         { init = init
@@ -52,16 +61,63 @@ toKeyValue string =
             Control string
 
 
-subscriptions : Model -> Sub OriginalMsg
+subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ onKeyDown (Decode.map AddKey keyDecoder)
+        , Time.every 100 (\_ -> Tick)
         ]
 
 
-update : OriginalMsg -> Model -> ( Model, Cmd OriginalMsg )
-update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) =
+initiateTimerIfOff : TimerStatus -> TimerStatus
+initiateTimerIfOff a =
+    case a of
+        NotStarted ->
+            CurrentlyCounting 0
+
+        _ ->
+            a
+
+
+stopTimer : TimerStatus -> TimerStatus
+stopTimer a =
+    case a of
+        NotStarted ->
+            StoppedCounting 0
+
+        CurrentlyCounting i ->
+            StoppedCounting i
+
+        StoppedCounting i ->
+            StoppedCounting i
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
     case msg of
+        Tick ->
+            let
+                newTimer =
+                    case currentTimer of
+                        NotStarted ->
+                            NotStarted
+
+                        CurrentlyCounting i ->
+                            CurrentlyCounting (i + 1)
+
+                        StoppedCounting i ->
+                            StoppedCounting i
+            in
+            ( Model
+                { historyString = historyString
+                , currentStatus = currentStatus
+                , saved = saved
+                , eyeIsOpen = eyeIsOpen
+                , currentTimer = newTimer
+                }
+            , Cmd.none
+            )
+
         AddKey (Control "Escape") ->
             update Cancel modl
 
@@ -96,35 +152,78 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen }) as modl) 
             if eyeIsOpen then
                 -- the only thing you can do is to close the eye
                 if msg == CloseTheEye then
-                    ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
+                    ( Model
+                        { historyString = historyString
+                        , currentStatus = currentStatus
+                        , saved = saved
+                        , eyeIsOpen = False
+                        , currentTimer = initiateTimerIfOff currentTimer
+                        }
+                    , Cmd.none
+                    )
 
                 else
                     ( modl, Cmd.none )
 
             else if msg == OpenTheEye then
-                ( Model { historyString = historyString, currentStatus = currentStatus, saved = saved, eyeIsOpen = True }, Cmd.none )
+                ( Model
+                    { historyString = historyString
+                    , currentStatus = currentStatus
+                    , saved = saved
+                    , eyeIsOpen = True
+                    , currentTimer = initiateTimerIfOff currentTimer
+                    }
+                , Cmd.none
+                )
 
             else
                 let
                     { newStatus, additionToHistory } =
-                        updateStatus msg currentStatus saved
+                        updateStatus currentTimer msg currentStatus saved
 
                     newHist =
                         historyString ++ additionToHistory
                 in
                 case newStatus of
-                    NothingSelected cardState ->
+                    NothingSelected board ->
                         ( Model
                             { historyString = newHist
                             , currentStatus = newStatus
-                            , saved = NothingSelected cardState -- update `saved`
+                            , saved = NothingSelected board -- update `saved`
                             , eyeIsOpen = False
+                            , currentTimer =
+                                if isStuck board then
+                                    stopTimer currentTimer
+
+                                else
+                                    initiateTimerIfOff currentTimer
                             }
                         , Cmd.none
                         )
 
                     _ ->
-                        ( Model { historyString = newHist, currentStatus = newStatus, saved = saved, eyeIsOpen = False }, Cmd.none )
+                        ( Model
+                            { historyString = newHist
+                            , currentStatus = newStatus
+                            , saved = saved
+                            , eyeIsOpen = False
+                            , currentTimer = initiateTimerIfOff currentTimer
+                            }
+                        , Cmd.none
+                        )
+
+
+getCountFromTimer : TimerStatus -> Int
+getCountFromTimer a =
+    case a of
+        NotStarted ->
+            0
+
+        CurrentlyCounting i ->
+            i
+
+        StoppedCounting i ->
+            i
 
 
 targetBlankLink : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -137,8 +236,22 @@ cardHtmlImage a =
     Html.img [ Html.Attributes.src (toExternalSvgFilePath a), Html.Attributes.height 100, Html.Attributes.style "vertical-align" "middle" ] []
 
 
-view_ : Maybe String -> Int -> Bool -> HistoryString -> List (Svg msg) -> List (Html msg) -> Html msg
-view_ maybeAudioUrl pairnum gameEnd history svgContent buttons =
+stringFromTimer : TimerStatus -> String
+stringFromTimer currentTimer =
+    Round.round 1 (0.1 * toFloat (getCountFromTimer currentTimer))
+
+
+view__ :
+    { maybeAudioUrl : Maybe String
+    , pairnum : Int
+    , gameEnd : Bool
+    , history : HistoryString
+    , currentTimer : TimerStatus
+    }
+    -> List (Svg msg)
+    -> List (Html msg)
+    -> Html msg
+view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent buttons =
     let
         audio =
             case maybeAudioUrl of
@@ -224,7 +337,15 @@ view_ maybeAudioUrl pairnum gameEnd history svgContent buttons =
                             [ Html.Attributes.style "min-height" "35px"
                             , Html.Attributes.style "text-align" "center"
                             ]
-                            [ Html.span [] [ Html.text ("現在のペア数: " ++ String.fromInt pairnum) ]
+                            [ Html.span []
+                                [ Html.text
+                                    ("現在のペア数: "
+                                        ++ String.fromInt pairnum
+                                        ++ "\u{3000}\u{3000}経過時間: "
+                                        ++ stringFromTimer currentTimer
+                                        ++ "秒"
+                                    )
+                                ]
                             ]
                         :: svg [ viewBox "-100 -100 1050 1050", width "540" ] svgContent
                         :: Html.br [] []
@@ -250,7 +371,7 @@ view_ maybeAudioUrl pairnum gameEnd history svgContent buttons =
                                         ++ crossOrigin "https://sozysozbot.github.io"
                                             [ "tak1bai2nin1cet2kaik", "playback", "index.html" ]
                                             [ Url.Builder.string "playback" history
-                                            ] 
+                                            ]
                                     )
                                 ]
                             )
@@ -433,14 +554,17 @@ getPairNumFromBoard b =
     List.filter .shown b.cards |> List.length |> (\x -> x // 2)
 
 
-view : Model -> Html OriginalMsg
-view (Model { historyString, currentStatus, eyeIsOpen }) =
+view : Model -> Html Msg
+view (Model { historyString, currentStatus, eyeIsOpen, currentTimer }) =
     case currentStatus of
         NothingSelected board ->
-            view_ Nothing
-                (getPairNumFromBoard board)
-                (isStuck board)
-                historyString
+            view__
+                { maybeAudioUrl = Nothing
+                , pairnum = getPairNumFromBoard board
+                , gameEnd = isStuck board
+                , history = historyString
+                , currentTimer = currentTimer
+                }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
                     ++ List.map (\c -> candidateYellowSvg { eyeIsOpen = eyeIsOpen } (Slide { from = c, to = board.empty }) c) (possibleSlidePosition board)
@@ -449,10 +573,13 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedByHop { from, to } board ->
-            view_ Nothing
-                (getPairNumFromBoard board)
-                False
-                historyString
+            view__
+                { maybeAudioUrl = Nothing
+                , pairnum = getPairNumFromBoard board
+                , gameEnd = False
+                , history = historyString
+                , currentTimer = currentTimer
+                }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
@@ -461,10 +588,13 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 [ eyeButton { eyeIsOpen = eyeIsOpen }, simpleCancelButton { eyeIsOpen = eyeIsOpen } ]
 
         FirstHalfCompletedBySlide { from, to } board ->
-            view_ Nothing
-                (getPairNumFromBoard board)
-                False
-                historyString
+            view__
+                { maybeAudioUrl = Nothing
+                , pairnum = getPairNumFromBoard board
+                , gameEnd = False
+                , history = historyString
+                , currentTimer = currentTimer
+                }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow from to
                     :: List.map (displayCard { eyeIsOpen = eyeIsOpen }) board.cards
@@ -477,22 +607,26 @@ view (Model { historyString, currentStatus, eyeIsOpen }) =
                 isMatching =
                     isMatchFromCoords coords board == Just True
             in
-            view_
-                (if isMatching then
-                    Just "sound/success.wav"
+            view__
+                { maybeAudioUrl =
+                    if isMatching then
+                        Just "sound/success.wav"
 
-                 else
-                    Just "sound/failure.wav"
-                )
-                (if isMatching then
-                    getPairNumFromBoard board
+                    else
+                        Just "sound/failure.wav"
+                , pairnum =
+                    if isMatching then
+                        getPairNumFromBoard board
 
-                 else
-                    getPairNumFromBoard board - 1
-                 -- two cards are mismatched, so we must subtract it
-                )
-                False
-                historyString
+                    else
+                        -- two cards are mismatched, so we must subtract it
+                        getPairNumFromBoard board - 1
+                , gameEnd =
+                    False
+                , history =
+                    historyString
+                , currentTimer = currentTimer
+                }
                 (backgroundWoodenBoard { eyeIsOpen = eyeIsOpen }
                     :: drawArrow Yellow first_from first_to
                     :: drawArrow Green second_from second_to
@@ -566,7 +700,7 @@ isMatch a b =
         False
 
 
-init : Flags -> ( Model, Cmd OriginalMsg )
+init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         initialStatus =
@@ -578,6 +712,7 @@ init flags =
         , currentStatus = initialStatus
         , saved = initialStatus
         , eyeIsOpen = False
+        , currentTimer = NotStarted
         }
     , Cmd.none
     )
@@ -695,8 +830,8 @@ applySlide oldBoard from =
             oldBoard
 
 
-updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
-updateStatus msg modl saved =
+updateStatus : TimerStatus -> Msg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
+updateStatus currentTimer msg modl saved =
     case ( modl, msg ) of
         ( SecondHalfCompleted _ _, Cancel ) ->
             -- this shall not be canceled
@@ -737,7 +872,16 @@ updateStatus msg modl saved =
             }
 
         ( SecondHalfCompleted coords oldBoard, Match ) ->
-            { additionToHistory = toHistory coords ++ " Match!\n\n", newStatus = NothingSelected oldBoard }
+            { additionToHistory =
+                toHistory coords
+                    ++ " Match!\n"
+                    ++ "pair: "
+                    ++ String.fromInt (getPairNumFromBoard oldBoard)
+                    ++ ", time: "
+                    ++ stringFromTimer currentTimer
+                    ++ "s\n"
+            , newStatus = NothingSelected oldBoard
+            }
 
         ( SecondHalfCompleted coords oldBoard, Mismatch ) ->
             let

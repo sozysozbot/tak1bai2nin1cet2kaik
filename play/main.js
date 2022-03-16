@@ -4357,6 +4357,89 @@ function _Browser_load(url)
 }
 
 
+
+function _Time_now(millisToPosix)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(millisToPosix(Date.now())));
+	});
+}
+
+var _Time_setInterval = F2(function(interval, task)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
+		return function() { clearInterval(id); };
+	});
+});
+
+function _Time_here()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(
+			A2($elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
+		));
+	});
+}
+
+
+function _Time_getZoneName()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		try
+		{
+			var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		}
+		catch (e)
+		{
+			var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
+		}
+		callback(_Scheduler_succeed(name));
+	});
+}
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
 function _Url_percentEncode(string)
 {
 	return encodeURIComponent(string);
@@ -5166,6 +5249,7 @@ var $elm$json$Json$Decode$field = _Json_decodeField;
 var $author$project$Main$Model = function (a) {
 	return {$: 'Model', a: a};
 };
+var $author$project$Main$NotStarted = {$: 'NotStarted'};
 var $author$project$Tak1Bai2Types$NothingSelected = function (a) {
 	return {$: 'NothingSelected', a: a};
 };
@@ -5393,6 +5477,7 @@ var $author$project$Main$init = function (flags) {
 		$author$project$Main$Model(
 			{
 				currentStatus: initialStatus,
+				currentTimer: $author$project$Main$NotStarted,
 				eyeIsOpen: false,
 				historyString: A2(
 					$elm$core$String$join,
@@ -5407,57 +5492,52 @@ var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$Tak1Bai2Types$AddKey = function (a) {
 	return {$: 'AddKey', a: a};
 };
+var $author$project$Tak1Bai2Types$Tick = {$: 'Tick'};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Tak1Bai2Types$Character = function (a) {
-	return {$: 'Character', a: a};
-};
-var $author$project$Tak1Bai2Types$Control = function (a) {
-	return {$: 'Control', a: a};
-};
-var $author$project$Main$toKeyValue = function (string) {
-	var _v0 = $elm$core$String$uncons(string);
-	if ((_v0.$ === 'Just') && (_v0.a.b === '')) {
-		var _v1 = _v0.a;
-		var _char = _v1.a;
-		return $author$project$Tak1Bai2Types$Character(_char);
-	} else {
-		return $author$project$Tak1Bai2Types$Control(string);
-	}
-};
-var $author$project$Main$keyDecoder = A2(
-	$elm$json$Json$Decode$map,
-	$author$project$Main$toKeyValue,
-	A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string));
-var $elm$browser$Browser$Events$Document = {$: 'Document'};
-var $elm$browser$Browser$Events$MySub = F3(
-	function (a, b, c) {
-		return {$: 'MySub', a: a, b: b, c: c};
+var $elm$time$Time$Every = F2(
+	function (a, b) {
+		return {$: 'Every', a: a, b: b};
 	});
-var $elm$browser$Browser$Events$State = F2(
-	function (subs, pids) {
-		return {pids: pids, subs: subs};
+var $elm$time$Time$State = F2(
+	function (taggers, processes) {
+		return {processes: processes, taggers: taggers};
 	});
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
-	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
-var $elm$browser$Browser$Events$nodeToKey = function (node) {
-	if (node.$ === 'Document') {
-		return 'd_';
-	} else {
-		return 'w_';
-	}
-};
-var $elm$browser$Browser$Events$addKey = function (sub) {
-	var node = sub.a;
-	var name = sub.b;
-	return _Utils_Tuple2(
-		_Utils_ap(
-			$elm$browser$Browser$Events$nodeToKey(node),
-			name),
-		sub);
-};
+var $elm$time$Time$init = $elm$core$Task$succeed(
+	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
 var $elm$core$Dict$Black = {$: 'Black'};
 var $elm$core$Dict$RBNode_elm_builtin = F5(
 	function (a, b, c, d, e) {
@@ -5518,7 +5598,6 @@ var $elm$core$Dict$balance = F5(
 			}
 		}
 	});
-var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$insertHelp = F3(
 	function (key, value, dict) {
 		if (dict.$ === 'RBEmpty_elm_builtin') {
@@ -5567,18 +5646,27 @@ var $elm$core$Dict$insert = F3(
 			return x;
 		}
 	});
-var $elm$core$Dict$fromList = function (assocs) {
-	return A3(
-		$elm$core$List$foldl,
-		F2(
-			function (_v0, dict) {
-				var key = _v0.a;
-				var value = _v0.b;
-				return A3($elm$core$Dict$insert, key, value, dict);
-			}),
-		$elm$core$Dict$empty,
-		assocs);
-};
+var $elm$time$Time$addMySub = F2(
+	function (_v0, state) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		var _v1 = A2($elm$core$Dict$get, interval, state);
+		if (_v1.$ === 'Nothing') {
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				_List_fromArray(
+					[tagger]),
+				state);
+		} else {
+			var taggers = _v1.a;
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				A2($elm$core$List$cons, tagger, taggers),
+				state);
+		}
+	});
 var $elm$core$Process$kill = _Scheduler_kill;
 var $elm$core$Dict$foldl = F3(
 	function (func, acc, dict) {
@@ -5666,11 +5754,225 @@ var $elm$core$Dict$merge = F6(
 			intermediateResult,
 			leftovers);
 	});
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$setInterval = _Time_setInterval;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$time$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		if (!intervals.b) {
+			return $elm$core$Task$succeed(processes);
+		} else {
+			var interval = intervals.a;
+			var rest = intervals.b;
+			var spawnTimer = $elm$core$Process$spawn(
+				A2(
+					$elm$time$Time$setInterval,
+					interval,
+					A2($elm$core$Platform$sendToSelf, router, interval)));
+			var spawnRest = function (id) {
+				return A3(
+					$elm$time$Time$spawnHelp,
+					router,
+					rest,
+					A3($elm$core$Dict$insert, interval, id, processes));
+			};
+			return A2($elm$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var $elm$time$Time$onEffects = F3(
+	function (router, subs, _v0) {
+		var processes = _v0.processes;
+		var rightStep = F3(
+			function (_v6, id, _v7) {
+				var spawns = _v7.a;
+				var existing = _v7.b;
+				var kills = _v7.c;
+				return _Utils_Tuple3(
+					spawns,
+					existing,
+					A2(
+						$elm$core$Task$andThen,
+						function (_v5) {
+							return kills;
+						},
+						$elm$core$Process$kill(id)));
+			});
+		var newTaggers = A3($elm$core$List$foldl, $elm$time$Time$addMySub, $elm$core$Dict$empty, subs);
+		var leftStep = F3(
+			function (interval, taggers, _v4) {
+				var spawns = _v4.a;
+				var existing = _v4.b;
+				var kills = _v4.c;
+				return _Utils_Tuple3(
+					A2($elm$core$List$cons, interval, spawns),
+					existing,
+					kills);
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _v3) {
+				var spawns = _v3.a;
+				var existing = _v3.b;
+				var kills = _v3.c;
+				return _Utils_Tuple3(
+					spawns,
+					A3($elm$core$Dict$insert, interval, id, existing),
+					kills);
+			});
+		var _v1 = A6(
+			$elm$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			processes,
+			_Utils_Tuple3(
+				_List_Nil,
+				$elm$core$Dict$empty,
+				$elm$core$Task$succeed(_Utils_Tuple0)));
+		var spawnList = _v1.a;
+		var existingDict = _v1.b;
+		var killTask = _v1.c;
+		return A2(
+			$elm$core$Task$andThen,
+			function (newProcesses) {
+				return $elm$core$Task$succeed(
+					A2($elm$time$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$time$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _v0 = A2($elm$core$Dict$get, interval, state.taggers);
+		if (_v0.$ === 'Nothing') {
+			return $elm$core$Task$succeed(state);
+		} else {
+			var taggers = _v0.a;
+			var tellTaggers = function (time) {
+				return $elm$core$Task$sequence(
+					A2(
+						$elm$core$List$map,
+						function (tagger) {
+							return A2(
+								$elm$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						taggers));
+			};
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$succeed(state);
+				},
+				A2($elm$core$Task$andThen, tellTaggers, $elm$time$Time$now));
+		}
+	});
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$time$Time$subMap = F2(
+	function (f, _v0) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		return A2(
+			$elm$time$Time$Every,
+			interval,
+			A2($elm$core$Basics$composeL, f, tagger));
+	});
+_Platform_effectManagers['Time'] = _Platform_createManager($elm$time$Time$init, $elm$time$Time$onEffects, $elm$time$Time$onSelfMsg, 0, $elm$time$Time$subMap);
+var $elm$time$Time$subscription = _Platform_leaf('Time');
+var $elm$time$Time$every = F2(
+	function (interval, tagger) {
+		return $elm$time$Time$subscription(
+			A2($elm$time$Time$Every, interval, tagger));
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Tak1Bai2Types$Character = function (a) {
+	return {$: 'Character', a: a};
+};
+var $author$project$Tak1Bai2Types$Control = function (a) {
+	return {$: 'Control', a: a};
+};
+var $author$project$Main$toKeyValue = function (string) {
+	var _v0 = $elm$core$String$uncons(string);
+	if ((_v0.$ === 'Just') && (_v0.a.b === '')) {
+		var _v1 = _v0.a;
+		var _char = _v1.a;
+		return $author$project$Tak1Bai2Types$Character(_char);
+	} else {
+		return $author$project$Tak1Bai2Types$Control(string);
+	}
+};
+var $author$project$Main$keyDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Main$toKeyValue,
+	A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string));
+var $elm$browser$Browser$Events$Document = {$: 'Document'};
+var $elm$browser$Browser$Events$MySub = F3(
+	function (a, b, c) {
+		return {$: 'MySub', a: a, b: b, c: c};
+	});
+var $elm$browser$Browser$Events$State = F2(
+	function (subs, pids) {
+		return {pids: pids, subs: subs};
+	});
+var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
+	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
+var $elm$browser$Browser$Events$nodeToKey = function (node) {
+	if (node.$ === 'Document') {
+		return 'd_';
+	} else {
+		return 'w_';
+	}
+};
+var $elm$browser$Browser$Events$addKey = function (sub) {
+	var node = sub.a;
+	var name = sub.b;
+	return _Utils_Tuple2(
+		_Utils_ap(
+			$elm$browser$Browser$Events$nodeToKey(node),
+			name),
+		sub);
+};
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
+};
 var $elm$browser$Browser$Events$Event = F2(
 	function (key, event) {
 		return {event: event, key: key};
 	});
-var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$browser$Browser$Events$spawn = F3(
 	function (router, key, _v0) {
 		var node = _v0.a;
@@ -5835,14 +6137,33 @@ var $author$project$Main$subscriptions = function (_v0) {
 		_List_fromArray(
 			[
 				$elm$browser$Browser$Events$onKeyDown(
-				A2($elm$json$Json$Decode$map, $author$project$Tak1Bai2Types$AddKey, $author$project$Main$keyDecoder))
+				A2($elm$json$Json$Decode$map, $author$project$Tak1Bai2Types$AddKey, $author$project$Main$keyDecoder)),
+				A2(
+				$elm$time$Time$every,
+				100,
+				function (_v1) {
+					return $author$project$Tak1Bai2Types$Tick;
+				})
 			]));
 };
 var $author$project$Tak1Bai2Types$Cancel = {$: 'Cancel'};
 var $author$project$Tak1Bai2Types$CloseTheEye = {$: 'CloseTheEye'};
+var $author$project$Main$CurrentlyCounting = function (a) {
+	return {$: 'CurrentlyCounting', a: a};
+};
 var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
 var $author$project$Tak1Bai2Types$OpenTheEye = {$: 'OpenTheEye'};
+var $author$project$Main$StoppedCounting = function (a) {
+	return {$: 'StoppedCounting', a: a};
+};
+var $author$project$Main$initiateTimerIfOff = function (a) {
+	if (a.$ === 'NotStarted') {
+		return $author$project$Main$CurrentlyCounting(0);
+	} else {
+		return a;
+	}
+};
 var $elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
 		if (maybeValue.$ === 'Just') {
@@ -6004,17 +6325,13 @@ var $author$project$Main$isMatchFromCoords = F2(
 			},
 			A2($author$project$Main$getCardAt, board, second_flipped));
 	});
-var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
-	function (a, b) {
-		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
-	});
-var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
-	function (a, b) {
-		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
-	});
-var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
-	function (a, b) {
-		return {$: 'SecondHalfCompleted', a: a, b: b};
+var $elm$core$Basics$not = _Basics_not;
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
 	});
 var $elm$core$List$partition = F2(
 	function (pred, list) {
@@ -6105,6 +6422,402 @@ var $author$project$Main$applySlide = F2(
 			return oldBoard;
 		}
 	});
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Main$isShownAt = F2(
+	function (board, coord) {
+		return A2(
+			$elm$core$Maybe$map,
+			function ($) {
+				return $.shown;
+			},
+			A2($author$project$Main$getCardAt, board, coord));
+	});
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$core$Basics$ge = _Utils_ge;
+var $author$project$Main$nthNeighbor = F2(
+	function (n, coord) {
+		return A2(
+			$elm$core$List$filter,
+			function (c) {
+				return (c.x >= 0) && ((c.x < 7) && ((c.y >= 0) && (c.y < 7)));
+			},
+			_List_fromArray(
+				[
+					_Utils_update(
+					coord,
+					{x: coord.x - n}),
+					_Utils_update(
+					coord,
+					{y: coord.y - n}),
+					_Utils_update(
+					coord,
+					{x: coord.x + n}),
+					_Utils_update(
+					coord,
+					{y: coord.y + n})
+				]));
+	});
+var $author$project$Main$possibleHopPosition = function (board) {
+	return A2(
+		$elm$core$List$filter,
+		function (neighbor) {
+			return !_Utils_eq(
+				A2(
+					$author$project$Main$isShownAt,
+					board,
+					A2($author$project$Tak1Bai2Types$getMidpoint, neighbor, board.empty)),
+				$elm$core$Maybe$Just(true));
+		},
+		A2($author$project$Main$nthNeighbor, 2, board.empty));
+};
+var $author$project$Main$possibleSlidePosition = function (board) {
+	return A2(
+		$elm$core$List$filter,
+		function (coord) {
+			return !_Utils_eq(
+				A2($author$project$Main$isShownAt, board, coord),
+				$elm$core$Maybe$Just(true));
+		},
+		A2($author$project$Main$nthNeighbor, 1, board.empty));
+};
+var $author$project$Main$isStuck = function (board) {
+	if ($elm$core$List$isEmpty(
+		_Utils_ap(
+			$author$project$Main$possibleHopPosition(board),
+			$author$project$Main$possibleSlidePosition(board)))) {
+		return true;
+	} else {
+		var slides = A2(
+			$elm$core$List$map,
+			$author$project$Main$applySlide(board),
+			$author$project$Main$possibleSlidePosition(board));
+		var hops = A2(
+			$elm$core$List$map,
+			$author$project$Main$applyHop(board),
+			$author$project$Main$possibleHopPosition(board));
+		return A2(
+			$elm$core$List$all,
+			function (b) {
+				return $elm$core$List$isEmpty(
+					$author$project$Main$possibleHopPosition(b));
+			},
+			_Utils_ap(hops, slides));
+	}
+};
+var $author$project$Main$stopTimer = function (a) {
+	switch (a.$) {
+		case 'NotStarted':
+			return $author$project$Main$StoppedCounting(0);
+		case 'CurrentlyCounting':
+			var i = a.a;
+			return $author$project$Main$StoppedCounting(i);
+		default:
+			var i = a.a;
+			return $author$project$Main$StoppedCounting(i);
+	}
+};
+var $author$project$Tak1Bai2Types$FirstHalfCompletedByHop = F2(
+	function (a, b) {
+		return {$: 'FirstHalfCompletedByHop', a: a, b: b};
+	});
+var $author$project$Tak1Bai2Types$FirstHalfCompletedBySlide = F2(
+	function (a, b) {
+		return {$: 'FirstHalfCompletedBySlide', a: a, b: b};
+	});
+var $author$project$Tak1Bai2Types$SecondHalfCompleted = F2(
+	function (a, b) {
+		return {$: 'SecondHalfCompleted', a: a, b: b};
+	});
+var $author$project$Main$getPairNumFromBoard = function (b) {
+	return function (x) {
+		return (x / 2) | 0;
+	}(
+		$elm$core$List$length(
+			A2(
+				$elm$core$List$filter,
+				function ($) {
+					return $.shown;
+				},
+				b.cards)));
+};
+var $author$project$Main$getCountFromTimer = function (a) {
+	switch (a.$) {
+		case 'NotStarted':
+			return 0;
+		case 'CurrentlyCounting':
+			var i = a.a;
+			return i;
+		default:
+			var i = a.a;
+			return i;
+	}
+};
+var $elm$core$String$foldr = _String_foldr;
+var $elm$core$String$toList = function (string) {
+	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
+};
+var $myrho$elm_round$Round$addSign = F2(
+	function (signed, str) {
+		var isNotZero = A2(
+			$elm$core$List$any,
+			function (c) {
+				return (!_Utils_eq(
+					c,
+					_Utils_chr('0'))) && (!_Utils_eq(
+					c,
+					_Utils_chr('.')));
+			},
+			$elm$core$String$toList(str));
+		return _Utils_ap(
+			(signed && isNotZero) ? '-' : '',
+			str);
+	});
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$String$cons = _String_cons;
+var $elm$core$Char$fromCode = _Char_fromCode;
+var $myrho$elm_round$Round$increaseNum = function (_v0) {
+	var head = _v0.a;
+	var tail = _v0.b;
+	if (_Utils_eq(
+		head,
+		_Utils_chr('9'))) {
+		var _v1 = $elm$core$String$uncons(tail);
+		if (_v1.$ === 'Nothing') {
+			return '01';
+		} else {
+			var headtail = _v1.a;
+			return A2(
+				$elm$core$String$cons,
+				_Utils_chr('0'),
+				$myrho$elm_round$Round$increaseNum(headtail));
+		}
+	} else {
+		var c = $elm$core$Char$toCode(head);
+		return ((c >= 48) && (c < 57)) ? A2(
+			$elm$core$String$cons,
+			$elm$core$Char$fromCode(c + 1),
+			tail) : '0';
+	}
+};
+var $elm$core$Basics$isInfinite = _Basics_isInfinite;
+var $elm$core$Basics$isNaN = _Basics_isNaN;
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var $elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			$elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var $elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3($elm$core$String$repeatHelp, n, chunk, '');
+	});
+var $elm$core$String$padRight = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			string,
+			A2(
+				$elm$core$String$repeat,
+				n - $elm$core$String$length(string),
+				$elm$core$String$fromChar(_char)));
+	});
+var $elm$core$String$reverse = _String_reverse;
+var $myrho$elm_round$Round$splitComma = function (str) {
+	var _v0 = A2($elm$core$String$split, '.', str);
+	if (_v0.b) {
+		if (_v0.b.b) {
+			var before = _v0.a;
+			var _v1 = _v0.b;
+			var after = _v1.a;
+			return _Utils_Tuple2(before, after);
+		} else {
+			var before = _v0.a;
+			return _Utils_Tuple2(before, '0');
+		}
+	} else {
+		return _Utils_Tuple2('0', '0');
+	}
+};
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $myrho$elm_round$Round$toDecimal = function (fl) {
+	var _v0 = A2(
+		$elm$core$String$split,
+		'e',
+		$elm$core$String$fromFloat(
+			$elm$core$Basics$abs(fl)));
+	if (_v0.b) {
+		if (_v0.b.b) {
+			var num = _v0.a;
+			var _v1 = _v0.b;
+			var exp = _v1.a;
+			var e = A2(
+				$elm$core$Maybe$withDefault,
+				0,
+				$elm$core$String$toInt(
+					A2($elm$core$String$startsWith, '+', exp) ? A2($elm$core$String$dropLeft, 1, exp) : exp));
+			var _v2 = $myrho$elm_round$Round$splitComma(num);
+			var before = _v2.a;
+			var after = _v2.b;
+			var total = _Utils_ap(before, after);
+			var zeroed = (e < 0) ? A2(
+				$elm$core$Maybe$withDefault,
+				'0',
+				A2(
+					$elm$core$Maybe$map,
+					function (_v3) {
+						var a = _v3.a;
+						var b = _v3.b;
+						return a + ('.' + b);
+					},
+					A2(
+						$elm$core$Maybe$map,
+						$elm$core$Tuple$mapFirst($elm$core$String$fromChar),
+						$elm$core$String$uncons(
+							_Utils_ap(
+								A2(
+									$elm$core$String$repeat,
+									$elm$core$Basics$abs(e),
+									'0'),
+								total))))) : A3(
+				$elm$core$String$padRight,
+				e + 1,
+				_Utils_chr('0'),
+				total);
+			return _Utils_ap(
+				(fl < 0) ? '-' : '',
+				zeroed);
+		} else {
+			var num = _v0.a;
+			return _Utils_ap(
+				(fl < 0) ? '-' : '',
+				num);
+		}
+	} else {
+		return '';
+	}
+};
+var $myrho$elm_round$Round$roundFun = F3(
+	function (functor, s, fl) {
+		if ($elm$core$Basics$isInfinite(fl) || $elm$core$Basics$isNaN(fl)) {
+			return $elm$core$String$fromFloat(fl);
+		} else {
+			var signed = fl < 0;
+			var _v0 = $myrho$elm_round$Round$splitComma(
+				$myrho$elm_round$Round$toDecimal(
+					$elm$core$Basics$abs(fl)));
+			var before = _v0.a;
+			var after = _v0.b;
+			var r = $elm$core$String$length(before) + s;
+			var normalized = _Utils_ap(
+				A2($elm$core$String$repeat, (-r) + 1, '0'),
+				A3(
+					$elm$core$String$padRight,
+					r,
+					_Utils_chr('0'),
+					_Utils_ap(before, after)));
+			var totalLen = $elm$core$String$length(normalized);
+			var roundDigitIndex = A2($elm$core$Basics$max, 1, r);
+			var increase = A2(
+				functor,
+				signed,
+				A3($elm$core$String$slice, roundDigitIndex, totalLen, normalized));
+			var remains = A3($elm$core$String$slice, 0, roundDigitIndex, normalized);
+			var num = increase ? $elm$core$String$reverse(
+				A2(
+					$elm$core$Maybe$withDefault,
+					'1',
+					A2(
+						$elm$core$Maybe$map,
+						$myrho$elm_round$Round$increaseNum,
+						$elm$core$String$uncons(
+							$elm$core$String$reverse(remains))))) : remains;
+			var numLen = $elm$core$String$length(num);
+			var numZeroed = (num === '0') ? num : ((s <= 0) ? _Utils_ap(
+				num,
+				A2(
+					$elm$core$String$repeat,
+					$elm$core$Basics$abs(s),
+					'0')) : ((_Utils_cmp(
+				s,
+				$elm$core$String$length(after)) < 0) ? (A3($elm$core$String$slice, 0, numLen - s, num) + ('.' + A3($elm$core$String$slice, numLen - s, numLen, num))) : _Utils_ap(
+				before + '.',
+				A3(
+					$elm$core$String$padRight,
+					s,
+					_Utils_chr('0'),
+					after))));
+			return A2($myrho$elm_round$Round$addSign, signed, numZeroed);
+		}
+	});
+var $myrho$elm_round$Round$round = $myrho$elm_round$Round$roundFun(
+	F2(
+		function (signed, str) {
+			var _v0 = $elm$core$String$uncons(str);
+			if (_v0.$ === 'Nothing') {
+				return false;
+			} else {
+				if ('5' === _v0.a.a.valueOf()) {
+					if (_v0.a.b === '') {
+						var _v1 = _v0.a;
+						return !signed;
+					} else {
+						var _v2 = _v0.a;
+						return true;
+					}
+				} else {
+					var _v3 = _v0.a;
+					var _int = _v3.a;
+					return function (i) {
+						return ((i > 53) && signed) || ((i >= 53) && (!signed));
+					}(
+						$elm$core$Char$toCode(_int));
+				}
+			}
+		}));
+var $author$project$Main$stringFromTimer = function (currentTimer) {
+	return A2(
+		$myrho$elm_round$Round$round,
+		1,
+		0.1 * $author$project$Main$getCountFromTimer(currentTimer));
+};
 var $author$project$Main$toHistory = function (a) {
 	var toStr = function (u) {
 		return _Utils_ap(
@@ -6113,8 +6826,8 @@ var $author$project$Main$toHistory = function (a) {
 	};
 	return toStr(a.first_from) + (';' + toStr(a.second_from));
 };
-var $author$project$Main$updateStatus = F3(
-	function (msg, modl, saved) {
+var $author$project$Main$updateStatus = F4(
+	function (currentTimer, msg, modl, saved) {
 		var _v0 = _Utils_Tuple2(modl, msg);
 		_v0$8:
 		while (true) {
@@ -6192,7 +6905,8 @@ var $author$project$Main$updateStatus = F3(
 						var oldBoard = _v6.b;
 						var _v7 = _v0.b;
 						return {
-							additionToHistory: $author$project$Main$toHistory(coords) + ' Match!\n\n',
+							additionToHistory: $author$project$Main$toHistory(coords) + (' Match!\n' + ('pair: ' + ($elm$core$String$fromInt(
+								$author$project$Main$getPairNumFromBoard(oldBoard)) + (', time: ' + ($author$project$Main$stringFromTimer(currentTimer) + 's\n'))))),
 							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
 						};
 					} else {
@@ -6254,101 +6968,139 @@ var $author$project$Main$update = F2(
 			var currentStatus = modl.a.currentStatus;
 			var saved = modl.a.saved;
 			var eyeIsOpen = modl.a.eyeIsOpen;
-			_v0$3:
+			var currentTimer = modl.a.currentTimer;
+			_v0$4:
 			while (true) {
-				if (msg.$ === 'AddKey') {
-					if (msg.a.$ === 'Control') {
-						switch (msg.a.a) {
-							case 'Escape':
-								var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
-									$temp$modl = modl;
-								msg = $temp$msg;
-								modl = $temp$modl;
-								continue update;
-							case 'Enter':
-								var enterMeansMatch = function () {
-									if (currentStatus.$ === 'SecondHalfCompleted') {
-										var coords = currentStatus.a;
-										var board = currentStatus.b;
-										return A2($author$project$Main$isMatchFromCoords, coords, board);
+				switch (msg.$) {
+					case 'Tick':
+						var newTimer = function () {
+							switch (currentTimer.$) {
+								case 'NotStarted':
+									return $author$project$Main$NotStarted;
+								case 'CurrentlyCounting':
+									var i = currentTimer.a;
+									return $author$project$Main$CurrentlyCounting(i + 1);
+								default:
+									var i = currentTimer.a;
+									return $author$project$Main$StoppedCounting(i);
+							}
+						}();
+						return _Utils_Tuple2(
+							$author$project$Main$Model(
+								{currentStatus: currentStatus, currentTimer: newTimer, eyeIsOpen: eyeIsOpen, historyString: historyString, saved: saved}),
+							$elm$core$Platform$Cmd$none);
+					case 'AddKey':
+						if (msg.a.$ === 'Control') {
+							switch (msg.a.a) {
+								case 'Escape':
+									var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
+										$temp$modl = modl;
+									msg = $temp$msg;
+									modl = $temp$modl;
+									continue update;
+								case 'Enter':
+									var enterMeansMatch = function () {
+										if (currentStatus.$ === 'SecondHalfCompleted') {
+											var coords = currentStatus.a;
+											var board = currentStatus.b;
+											return A2($author$project$Main$isMatchFromCoords, coords, board);
+										} else {
+											return $elm$core$Maybe$Nothing;
+										}
+									}();
+									if (enterMeansMatch.$ === 'Just') {
+										if (enterMeansMatch.a) {
+											var $temp$msg = $author$project$Tak1Bai2Types$Match,
+												$temp$modl = modl;
+											msg = $temp$msg;
+											modl = $temp$modl;
+											continue update;
+										} else {
+											var $temp$msg = $author$project$Tak1Bai2Types$Mismatch,
+												$temp$modl = modl;
+											msg = $temp$msg;
+											modl = $temp$modl;
+											continue update;
+										}
 									} else {
-										return $elm$core$Maybe$Nothing;
+										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
 									}
-								}();
-								if (enterMeansMatch.$ === 'Just') {
-									if (enterMeansMatch.a) {
-										var $temp$msg = $author$project$Tak1Bai2Types$Match,
-											$temp$modl = modl;
-										msg = $temp$msg;
-										modl = $temp$modl;
-										continue update;
-									} else {
-										var $temp$msg = $author$project$Tak1Bai2Types$Mismatch,
-											$temp$modl = modl;
-										msg = $temp$msg;
-										modl = $temp$modl;
-										continue update;
-									}
-								} else {
-									return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-								}
-							default:
-								break _v0$3;
-						}
-					} else {
-						if ('e' === msg.a.a.valueOf()) {
-							if (eyeIsOpen) {
-								var $temp$msg = $author$project$Tak1Bai2Types$CloseTheEye,
-									$temp$modl = modl;
-								msg = $temp$msg;
-								modl = $temp$modl;
-								continue update;
-							} else {
-								var $temp$msg = $author$project$Tak1Bai2Types$OpenTheEye,
-									$temp$modl = modl;
-								msg = $temp$msg;
-								modl = $temp$modl;
-								continue update;
+								default:
+									break _v0$4;
 							}
 						} else {
-							break _v0$3;
+							if ('e' === msg.a.a.valueOf()) {
+								if (eyeIsOpen) {
+									var $temp$msg = $author$project$Tak1Bai2Types$CloseTheEye,
+										$temp$modl = modl;
+									msg = $temp$msg;
+									modl = $temp$modl;
+									continue update;
+								} else {
+									var $temp$msg = $author$project$Tak1Bai2Types$OpenTheEye,
+										$temp$modl = modl;
+									msg = $temp$msg;
+									modl = $temp$modl;
+									continue update;
+								}
+							} else {
+								break _v0$4;
+							}
 						}
-					}
-				} else {
-					break _v0$3;
+					default:
+						break _v0$4;
 				}
 			}
 			if (eyeIsOpen) {
 				return _Utils_eq(msg, $author$project$Tak1Bai2Types$CloseTheEye) ? _Utils_Tuple2(
 					$author$project$Main$Model(
-						{currentStatus: currentStatus, eyeIsOpen: false, historyString: historyString, saved: saved}),
+						{
+							currentStatus: currentStatus,
+							currentTimer: $author$project$Main$initiateTimerIfOff(currentTimer),
+							eyeIsOpen: false,
+							historyString: historyString,
+							saved: saved
+						}),
 					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
 			} else {
 				if (_Utils_eq(msg, $author$project$Tak1Bai2Types$OpenTheEye)) {
 					return _Utils_Tuple2(
 						$author$project$Main$Model(
-							{currentStatus: currentStatus, eyeIsOpen: true, historyString: historyString, saved: saved}),
+							{
+								currentStatus: currentStatus,
+								currentTimer: $author$project$Main$initiateTimerIfOff(currentTimer),
+								eyeIsOpen: true,
+								historyString: historyString,
+								saved: saved
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var _v3 = A3($author$project$Main$updateStatus, msg, currentStatus, saved);
-					var newStatus = _v3.newStatus;
-					var additionToHistory = _v3.additionToHistory;
+					var _v4 = A4($author$project$Main$updateStatus, currentTimer, msg, currentStatus, saved);
+					var newStatus = _v4.newStatus;
+					var additionToHistory = _v4.additionToHistory;
 					var newHist = _Utils_ap(historyString, additionToHistory);
 					if (newStatus.$ === 'NothingSelected') {
-						var cardState = newStatus.a;
+						var board = newStatus.a;
 						return _Utils_Tuple2(
 							$author$project$Main$Model(
 								{
 									currentStatus: newStatus,
+									currentTimer: $author$project$Main$isStuck(board) ? $author$project$Main$stopTimer(currentTimer) : $author$project$Main$initiateTimerIfOff(currentTimer),
 									eyeIsOpen: false,
 									historyString: newHist,
-									saved: $author$project$Tak1Bai2Types$NothingSelected(cardState)
+									saved: $author$project$Tak1Bai2Types$NothingSelected(board)
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(
 							$author$project$Main$Model(
-								{currentStatus: newStatus, eyeIsOpen: false, historyString: newHist, saved: saved}),
+								{
+									currentStatus: newStatus,
+									currentTimer: $author$project$Main$initiateTimerIfOff(currentTimer),
+									eyeIsOpen: false,
+									historyString: newHist,
+									saved: saved
+								}),
 							$elm$core$Platform$Cmd$none);
 					}
 				}
@@ -6387,7 +7139,6 @@ var $author$project$Main$backgroundWoodenBoard = function (a) {
 var $elm$svg$Svg$animate = $elm$svg$Svg$trustedNode('animate');
 var $elm$svg$Svg$Attributes$attributeName = _VirtualDom_attribute('attributeName');
 var $elm$svg$Svg$Attributes$dur = _VirtualDom_attribute('dur');
-var $elm$core$String$fromFloat = _String_fromNumber;
 var $author$project$Tak1Bai2Types$fromUIColor = function (c) {
 	if (c.$ === 'Green') {
 		return '#aeff01';
@@ -6517,7 +7268,6 @@ var $author$project$Buttons$candidateYellowSvg = F3(
 	});
 var $elm$svg$Svg$image = $elm$svg$Svg$trustedNode('image');
 var $elm$core$Basics$modBy = _Basics_modBy;
-var $elm$core$Basics$not = _Basics_not;
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $author$project$Tak1Bai2Types$colorToStr = function (c) {
@@ -6757,128 +7507,6 @@ var $author$project$Buttons$eyeButton = function (a) {
 			]),
 		_List_Nil);
 };
-var $author$project$Main$getPairNumFromBoard = function (b) {
-	return function (x) {
-		return (x / 2) | 0;
-	}(
-		$elm$core$List$length(
-			A2(
-				$elm$core$List$filter,
-				function ($) {
-					return $.shown;
-				},
-				b.cards)));
-};
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var $elm$core$List$all = F2(
-	function (isOkay, list) {
-		return !A2(
-			$elm$core$List$any,
-			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
-			list);
-	});
-var $elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $author$project$Main$isShownAt = F2(
-	function (board, coord) {
-		return A2(
-			$elm$core$Maybe$map,
-			function ($) {
-				return $.shown;
-			},
-			A2($author$project$Main$getCardAt, board, coord));
-	});
-var $elm$core$Basics$neq = _Utils_notEqual;
-var $elm$core$Basics$ge = _Utils_ge;
-var $author$project$Main$nthNeighbor = F2(
-	function (n, coord) {
-		return A2(
-			$elm$core$List$filter,
-			function (c) {
-				return (c.x >= 0) && ((c.x < 7) && ((c.y >= 0) && (c.y < 7)));
-			},
-			_List_fromArray(
-				[
-					_Utils_update(
-					coord,
-					{x: coord.x - n}),
-					_Utils_update(
-					coord,
-					{y: coord.y - n}),
-					_Utils_update(
-					coord,
-					{x: coord.x + n}),
-					_Utils_update(
-					coord,
-					{y: coord.y + n})
-				]));
-	});
-var $author$project$Main$possibleHopPosition = function (board) {
-	return A2(
-		$elm$core$List$filter,
-		function (neighbor) {
-			return !_Utils_eq(
-				A2(
-					$author$project$Main$isShownAt,
-					board,
-					A2($author$project$Tak1Bai2Types$getMidpoint, neighbor, board.empty)),
-				$elm$core$Maybe$Just(true));
-		},
-		A2($author$project$Main$nthNeighbor, 2, board.empty));
-};
-var $author$project$Main$possibleSlidePosition = function (board) {
-	return A2(
-		$elm$core$List$filter,
-		function (coord) {
-			return !_Utils_eq(
-				A2($author$project$Main$isShownAt, board, coord),
-				$elm$core$Maybe$Just(true));
-		},
-		A2($author$project$Main$nthNeighbor, 1, board.empty));
-};
-var $author$project$Main$isStuck = function (board) {
-	if ($elm$core$List$isEmpty(
-		_Utils_ap(
-			$author$project$Main$possibleHopPosition(board),
-			$author$project$Main$possibleSlidePosition(board)))) {
-		return true;
-	} else {
-		var slides = A2(
-			$elm$core$List$map,
-			$author$project$Main$applySlide(board),
-			$author$project$Main$possibleSlidePosition(board));
-		var hops = A2(
-			$elm$core$List$map,
-			$author$project$Main$applyHop(board),
-			$author$project$Main$possibleHopPosition(board));
-		return A2(
-			$elm$core$List$all,
-			function (b) {
-				return $elm$core$List$isEmpty(
-					$author$project$Main$possibleHopPosition(b));
-			},
-			_Utils_ap(hops, slides));
-	}
-};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
@@ -7053,8 +7681,13 @@ var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $author$project$Main$view_ = F6(
-	function (maybeAudioUrl, pairnum, gameEnd, history, svgContent, buttons) {
+var $author$project$Main$view__ = F3(
+	function (_v0, svgContent, buttons) {
+		var maybeAudioUrl = _v0.maybeAudioUrl;
+		var pairnum = _v0.pairnum;
+		var gameEnd = _v0.gameEnd;
+		var history = _v0.history;
+		var currentTimer = _v0.currentTimer;
 		var audio = function () {
 			if (maybeAudioUrl.$ === 'Nothing') {
 				return _List_Nil;
@@ -7310,7 +7943,7 @@ var $author$project$Main$view_ = F6(
 											_List_fromArray(
 												[
 													$elm$html$Html$text(
-													'現在のペア数: ' + $elm$core$String$fromInt(pairnum))
+													'現在のペア数: ' + ($elm$core$String$fromInt(pairnum) + ('\u3000\u3000経過時間: ' + ($author$project$Main$stringFromTimer(currentTimer) + '秒'))))
 												]))
 										])),
 								A2(
@@ -7405,15 +8038,19 @@ var $author$project$Main$view = function (_v0) {
 	var historyString = _v0.a.historyString;
 	var currentStatus = _v0.a.currentStatus;
 	var eyeIsOpen = _v0.a.eyeIsOpen;
+	var currentTimer = _v0.a.currentTimer;
 	switch (currentStatus.$) {
 		case 'NothingSelected':
 			var board = currentStatus.a;
-			return A6(
-				$author$project$Main$view_,
-				$elm$core$Maybe$Nothing,
-				$author$project$Main$getPairNumFromBoard(board),
-				$author$project$Main$isStuck(board),
-				historyString,
+			return A3(
+				$author$project$Main$view__,
+				{
+					currentTimer: currentTimer,
+					gameEnd: $author$project$Main$isStuck(board),
+					history: historyString,
+					maybeAudioUrl: $elm$core$Maybe$Nothing,
+					pairnum: $author$project$Main$getPairNumFromBoard(board)
+				},
 				A2(
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard(
@@ -7456,12 +8093,15 @@ var $author$project$Main$view = function (_v0) {
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A6(
-				$author$project$Main$view_,
-				$elm$core$Maybe$Nothing,
-				$author$project$Main$getPairNumFromBoard(board),
-				false,
-				historyString,
+			return A3(
+				$author$project$Main$view__,
+				{
+					currentTimer: currentTimer,
+					gameEnd: false,
+					history: historyString,
+					maybeAudioUrl: $elm$core$Maybe$Nothing,
+					pairnum: $author$project$Main$getPairNumFromBoard(board)
+				},
 				A2(
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard(
@@ -7497,12 +8137,15 @@ var $author$project$Main$view = function (_v0) {
 			var from = currentStatus.a.from;
 			var to = currentStatus.a.to;
 			var board = currentStatus.b;
-			return A6(
-				$author$project$Main$view_,
-				$elm$core$Maybe$Nothing,
-				$author$project$Main$getPairNumFromBoard(board),
-				false,
-				historyString,
+			return A3(
+				$author$project$Main$view__,
+				{
+					currentTimer: currentTimer,
+					gameEnd: false,
+					history: historyString,
+					maybeAudioUrl: $elm$core$Maybe$Nothing,
+					pairnum: $author$project$Main$getPairNumFromBoard(board)
+				},
 				A2(
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard(
@@ -7544,12 +8187,15 @@ var $author$project$Main$view = function (_v0) {
 			var isMatching = _Utils_eq(
 				A2($author$project$Main$isMatchFromCoords, coords, board),
 				$elm$core$Maybe$Just(true));
-			return A6(
-				$author$project$Main$view_,
-				isMatching ? $elm$core$Maybe$Just('sound/success.wav') : $elm$core$Maybe$Just('sound/failure.wav'),
-				isMatching ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1),
-				false,
-				historyString,
+			return A3(
+				$author$project$Main$view__,
+				{
+					currentTimer: currentTimer,
+					gameEnd: false,
+					history: historyString,
+					maybeAudioUrl: isMatching ? $elm$core$Maybe$Just('sound/success.wav') : $elm$core$Maybe$Just('sound/failure.wav'),
+					pairnum: isMatching ? $author$project$Main$getPairNumFromBoard(board) : ($author$project$Main$getPairNumFromBoard(board) - 1)
+				},
 				A2(
 					$elm$core$List$cons,
 					$author$project$Main$backgroundWoodenBoard(

@@ -54,7 +54,7 @@ type CurrentStatus
     | SecondHalfCompleted { first_from : Coordinate, first_to : Coordinate, second_from : Coordinate, second_to : Coordinate } Board
 
 
-type OriginalMsg
+type Msg
     = None
     | Slide { from : Coordinate, to : Coordinate }
     | Hop { from : Coordinate, to : Coordinate }
@@ -64,6 +64,7 @@ type OriginalMsg
     | OpenTheEye
     | CloseTheEye
     | AddKey KeyValue
+    | Tick
 
 
 type KeyValue
