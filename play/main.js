@@ -7368,11 +7368,11 @@ var $author$project$Main$view_ = F6(
 													A2(
 													$elm$url$Url$Builder$string,
 													'text',
-													'架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u000D\n' + A3(
+													'「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik \u000D\n' + A3(
 														$elm$url$Url$Builder$crossOrigin,
-														'https://keserima.github.io',
+														'https://sozysozbot.github.io',
 														_List_fromArray(
-															['playback', 'index.html']),
+															['tak1bai2nin1cet2kaik', 'playback', 'index.html']),
 														_List_fromArray(
 															[
 																A2($elm$url$Url$Builder$string, 'playback', history)

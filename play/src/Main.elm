@@ -246,11 +246,11 @@ view_ maybeAudioUrl pairnum gameEnd history svgContent buttons =
                                 "https://twitter.com"
                                 [ "intent", "tweet" ]
                                 [ Url.Builder.string "text"
-                                    ("架空伝統ゲーム「ケセリマ」(@keserima)を遊びました！ #keserima #ケセリマ\u{000D}\n"
-                                        ++ crossOrigin "https://keserima.github.io"
-                                            [ "playback", "index.html" ]
+                                    ("「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik \u{000D}\n"
+                                        ++ crossOrigin "https://sozysozbot.github.io"
+                                            [ "tak1bai2nin1cet2kaik", "playback", "index.html" ]
                                             [ Url.Builder.string "playback" history
-                                            ]
+                                            ] 
                                     )
                                 ]
                             )
