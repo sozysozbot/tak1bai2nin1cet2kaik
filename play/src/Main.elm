@@ -367,7 +367,12 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                                 "https://twitter.com"
                                 [ "intent", "tweet" ]
                                 [ Url.Builder.string "text"
-                                    ("「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik \u{000D}\n"
+                                    ("「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik\u{000D}\n"
+                                        ++ "ペア数: "
+                                        ++ String.fromInt pairnum
+                                        ++ ", 経過時間: "
+                                        ++ stringFromTimer currentTimer
+                                        ++ "秒\u{000D}\n"
                                         ++ crossOrigin "https://sozysozbot.github.io"
                                             [ "tak1bai2nin1cet2kaik", "playback", "index.html" ]
                                             [ Url.Builder.string "playback" history
@@ -871,16 +876,21 @@ updateStatus currentTimer msg modl saved =
                     (applyHop oldBoard from)
             }
 
-        ( SecondHalfCompleted coords oldBoard, Match ) ->
+        ( SecondHalfCompleted coords board, Match ) ->
             { additionToHistory =
                 toHistory coords
-                    ++ " Match!\n"
+                    ++ (if isStuck board then
+                            " Match&Stuck!\n"
+
+                        else
+                            " Match!\n"
+                       )
                     ++ "pair: "
-                    ++ String.fromInt (getPairNumFromBoard oldBoard)
+                    ++ String.fromInt (getPairNumFromBoard board)
                     ++ ", time: "
                     ++ stringFromTimer currentTimer
                     ++ "s\n"
-            , newStatus = NothingSelected oldBoard
+            , newStatus = NothingSelected board
             }
 
         ( SecondHalfCompleted coords oldBoard, Mismatch ) ->
@@ -894,7 +904,20 @@ updateStatus currentTimer msg modl saved =
                 newBoard =
                     { oldBoard | cards = List.map (\card -> { card | shown = False }) cardsToBeFlippedBack ++ remainingCards }
             in
-            { additionToHistory = toHistory coords ++ ", ", newStatus = NothingSelected newBoard }
+            { additionToHistory =
+                if isStuck newBoard then
+                    toHistory coords
+                        ++ " Stuck!\n"
+                        ++ "pair: "
+                        ++ String.fromInt (getPairNumFromBoard newBoard)
+                        ++ ", time: "
+                        ++ stringFromTimer currentTimer
+                        ++ "s\n"
+
+                else
+                    toHistory coords ++ ", "
+            , newStatus = NothingSelected newBoard
+            }
 
         _ ->
             { additionToHistory = "", newStatus = modl }

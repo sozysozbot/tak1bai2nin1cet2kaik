@@ -6902,12 +6902,12 @@ var $author$project$Main$updateStatus = F4(
 					if (_v0.a.$ === 'SecondHalfCompleted') {
 						var _v6 = _v0.a;
 						var coords = _v6.a;
-						var oldBoard = _v6.b;
+						var board = _v6.b;
 						var _v7 = _v0.b;
 						return {
-							additionToHistory: $author$project$Main$toHistory(coords) + (' Match!\n' + ('pair: ' + ($elm$core$String$fromInt(
-								$author$project$Main$getPairNumFromBoard(oldBoard)) + (', time: ' + ($author$project$Main$stringFromTimer(currentTimer) + 's\n'))))),
-							newStatus: $author$project$Tak1Bai2Types$NothingSelected(oldBoard)
+							additionToHistory: $author$project$Main$toHistory(coords) + (($author$project$Main$isStuck(board) ? ' Match&Stuck!\n' : ' Match!\n') + ('pair: ' + ($elm$core$String$fromInt(
+								$author$project$Main$getPairNumFromBoard(board)) + (', time: ' + ($author$project$Main$stringFromTimer(currentTimer) + 's\n'))))),
+							newStatus: $author$project$Tak1Bai2Types$NothingSelected(board)
 						};
 					} else {
 						break _v0$8;
@@ -6948,7 +6948,8 @@ var $author$project$Main$updateStatus = F4(
 									remainingCards)
 							});
 						return {
-							additionToHistory: $author$project$Main$toHistory(coords) + ', ',
+							additionToHistory: $author$project$Main$isStuck(newBoard) ? ($author$project$Main$toHistory(coords) + (' Stuck!\n' + ('pair: ' + ($elm$core$String$fromInt(
+								$author$project$Main$getPairNumFromBoard(newBoard)) + (', time: ' + ($author$project$Main$stringFromTimer(currentTimer) + 's\n')))))) : ($author$project$Main$toHistory(coords) + ', '),
 							newStatus: $author$project$Tak1Bai2Types$NothingSelected(newBoard)
 						};
 					} else {
@@ -8001,7 +8002,7 @@ var $author$project$Main$view__ = F3(
 													A2(
 													$elm$url$Url$Builder$string,
 													'text',
-													'「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik \u000D\n' + A3(
+													'「衣糸紙机戦」(@cet2kaik)を遊びました！ #紙机戦 #机戦 #nincetkaik #cetkaik\u000D\n' + ('ペア数: ' + ($elm$core$String$fromInt(pairnum) + (', 経過時間: ' + ($author$project$Main$stringFromTimer(currentTimer) + ('秒\u000D\n' + A3(
 														$elm$url$Url$Builder$crossOrigin,
 														'https://sozysozbot.github.io',
 														_List_fromArray(
@@ -8009,7 +8010,7 @@ var $author$project$Main$view__ = F3(
 														_List_fromArray(
 															[
 																A2($elm$url$Url$Builder$string, 'playback', history)
-															])))
+															]))))))))
 												]))),
 										A2(
 										$elm$html$Html$Attributes$style,
