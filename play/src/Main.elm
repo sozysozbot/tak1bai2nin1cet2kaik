@@ -198,28 +198,28 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
                 update OpenTheEye modl
 
         AddKey (Character 'w') ->
-            updateByWASD { delta_x = 0, delta_y = -1 } modl
-
-        AddKey (Character 'a') ->
-            updateByWASD { delta_x = -1, delta_y = 0 } modl
-
-        AddKey (Character 's') ->
             updateByWASD { delta_x = 0, delta_y = 1 } modl
 
-        AddKey (Character 'd') ->
+        AddKey (Character 'a') ->
             updateByWASD { delta_x = 1, delta_y = 0 } modl
 
-        AddKey (Control "ArrowUp") ->
-            updateByArrowKey { delta_x = 0, delta_y = -2 } modl
+        AddKey (Character 's') ->
+            updateByWASD { delta_x = 0, delta_y = -1 } modl
 
-        AddKey (Control "ArrowDown") ->
+        AddKey (Character 'd') ->
+            updateByWASD { delta_x = -1, delta_y = 0 } modl
+
+        AddKey (Control "ArrowUp") ->
             updateByArrowKey { delta_x = 0, delta_y = 2 } modl
 
+        AddKey (Control "ArrowDown") ->
+            updateByArrowKey { delta_x = 0, delta_y = -2 } modl
+
         AddKey (Control "ArrowLeft") ->
-            updateByArrowKey { delta_x = -2, delta_y = 0 } modl
+            updateByArrowKey { delta_x = 2, delta_y = 0 } modl
 
         AddKey (Control "ArrowRight") ->
-            updateByArrowKey { delta_x = 2, delta_y = 0 } modl
+            updateByArrowKey { delta_x = -2, delta_y = 0 } modl
 
         _ ->
             if eyeIsOpen then
@@ -386,8 +386,8 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                             [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
                             , Html.li [] [ Html.text "E キーで目の開閉（カナ入力になっていると失敗することがある）" ]
                             , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
-                            , Html.li [] [ Html.text "一打目に W,A,S,D キーで[上/左/下/右]方向にあるカードをスライド" ]
-                            , Html.li [] [ Html.text "矢印キーで[上/左/下/右]方向にあるカードでの飛び越え" ]
+                            , Html.li [] [ Html.text "一打目に W,A,S,D キーでカードをスライド" ]
+                            , Html.li [] [ Html.text "矢印キーでカードでの飛び越え" ]
                             ]
                         ]
                     ]

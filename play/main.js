@@ -7016,22 +7016,22 @@ var $author$project$Main$update = F2(
 								case 'w':
 									return A2(
 										$author$project$Main$updateByWASD,
-										{delta_x: 0, delta_y: -1},
+										{delta_x: 0, delta_y: 1},
 										modl);
 								case 'a':
 									return A2(
 										$author$project$Main$updateByWASD,
-										{delta_x: -1, delta_y: 0},
+										{delta_x: 1, delta_y: 0},
 										modl);
 								case 's':
 									return A2(
 										$author$project$Main$updateByWASD,
-										{delta_x: 0, delta_y: 1},
+										{delta_x: 0, delta_y: -1},
 										modl);
 								case 'd':
 									return A2(
 										$author$project$Main$updateByWASD,
-										{delta_x: 1, delta_y: 0},
+										{delta_x: -1, delta_y: 0},
 										modl);
 								default:
 									break _v6$12;
@@ -7074,22 +7074,22 @@ var $author$project$Main$update = F2(
 								case 'ArrowUp':
 									return A2(
 										$author$project$Main$updateByArrowKey,
-										{delta_x: 0, delta_y: -2},
+										{delta_x: 0, delta_y: 2},
 										modl);
 								case 'ArrowDown':
 									return A2(
 										$author$project$Main$updateByArrowKey,
-										{delta_x: 0, delta_y: 2},
+										{delta_x: 0, delta_y: -2},
 										modl);
 								case 'ArrowLeft':
 									return A2(
 										$author$project$Main$updateByArrowKey,
-										{delta_x: -2, delta_y: 0},
+										{delta_x: 2, delta_y: 0},
 										modl);
 								case 'ArrowRight':
 									return A2(
 										$author$project$Main$updateByArrowKey,
-										{delta_x: 2, delta_y: 0},
+										{delta_x: -2, delta_y: 0},
 										modl);
 								default:
 									break _v6$12;
@@ -8038,14 +8038,14 @@ var $author$project$Main$view__ = F3(
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text('一打目に W,A,S,D キーで[上/左/下/右]方向にあるカードをスライド')
+														$elm$html$Html$text('一打目に W,A,S,D キーでカードをスライド')
 													])),
 												A2(
 												$elm$html$Html$li,
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text('矢印キーで[上/左/下/右]方向にあるカードでの飛び越え')
+														$elm$html$Html$text('矢印キーでカードでの飛び越え')
 													]))
 											]))
 									]))
