@@ -651,17 +651,32 @@ applyHop oldBoard from =
 
         ( cardsToBeFlipped, remainingCards2 ) =
             List.partition (\x -> x.coord == getMidpoint from to) remainingCards
-
-        newBoard =
-            case ( cardsToBeMoved, cardsToBeFlipped ) of
-                ( [ moved ], [ flipped ] ) ->
-                    { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
-
-                _ ->
-                    -- this path is not taken
-                    oldBoard
     in
-    newBoard
+    case ( cardsToBeMoved, cardsToBeFlipped ) of
+        ( [ moved ], [ flipped ] ) ->
+            { empty = from, cards = { moved | coord = to } :: { flipped | shown = True } :: remainingCards2 }
+
+        _ ->
+            -- this path is not taken
+            oldBoard
+
+
+applySlide : Board -> Coordinate -> Board
+applySlide oldBoard from =
+    let
+        to =
+            oldBoard.empty
+
+        ( cardsToBeMoved, remainingCards ) =
+            List.partition (\x -> x.coord == from) oldBoard.cards
+    in
+    case cardsToBeMoved of
+        [ cardToBeMoved ] ->
+            { empty = from, cards = { cardToBeMoved | coord = to, shown = True } :: remainingCards }
+
+        _ ->
+            -- this path is not taken
+            oldBoard
 
 
 updateStatus : OriginalMsg -> CurrentStatus -> CurrentStatus -> { newStatus : CurrentStatus, additionToHistory : String }
@@ -679,20 +694,7 @@ updateStatus msg modl saved =
             { additionToHistory = "", newStatus = FirstHalfCompletedByHop { from = from, to = to } (applyHop oldBoard from) }
 
         ( NothingSelected oldBoard, Slide { from, to } ) ->
-            let
-                ( cardsToBeMoved, remainingCards ) =
-                    List.partition (\x -> x.coord == from) oldBoard.cards
-
-                newBoard =
-                    case cardsToBeMoved of
-                        [ cardToBeMoved ] ->
-                            { empty = from, cards = { cardToBeMoved | coord = to, shown = True } :: remainingCards }
-
-                        _ ->
-                            -- this path is not taken
-                            oldBoard
-            in
-            { additionToHistory = "", newStatus = FirstHalfCompletedBySlide { from = from, to = to } newBoard }
+            { additionToHistory = "", newStatus = FirstHalfCompletedBySlide { from = from, to = to } (applySlide oldBoard from) }
 
         ( FirstHalfCompletedByHop first_fromto oldBoard, Hop { from, to } ) ->
             { additionToHistory = ""
@@ -747,62 +749,62 @@ toHistory a =
     toStr a.first_from ++ ";" ++ toStr a.second_from
 
 
+toCardOnBoard : Int -> CardEncodedAsInt -> CardOnBoard
+toCardOnBoard index card =
+    { coord = { x = remainderBy 7 index, y = index // 7 }
+    , cardColor =
+        if remainderBy 2 card == 0 then
+            Black
+
+        else
+            Red
+    , prof =
+        case card // 2 of
+            0 ->
+                Mun1
+
+            1 ->
+                Kauk2
+
+            2 ->
+                Gua2
+
+            3 ->
+                Kaun1
+
+            4 ->
+                Dau2
+
+            5 ->
+                Maun1
+
+            6 ->
+                Kua2
+
+            7 ->
+                Tuk2
+
+            8 ->
+                Uai1
+
+            9 ->
+                Io
+
+            10 ->
+                Tam2
+
+            _ ->
+                Nuak1
+    , shown = False
+    }
+
+
 initialBoard : List CardEncodedAsInt -> Board
 initialBoard cards =
-    let
-        foo : Int -> CardEncodedAsInt -> CardOnBoard
-        foo i card =
-            { coord = { x = remainderBy 7 i, y = i // 7 }
-            , cardColor =
-                if remainderBy 2 card == 0 then
-                    Black
-
-                else
-                    Red
-            , prof =
-                case card // 2 of
-                    0 ->
-                        Mun1
-
-                    1 ->
-                        Kauk2
-
-                    2 ->
-                        Gua2
-
-                    3 ->
-                        Kaun1
-
-                    4 ->
-                        Dau2
-
-                    5 ->
-                        Maun1
-
-                    6 ->
-                        Kua2
-
-                    7 ->
-                        Tuk2
-
-                    8 ->
-                        Uai1
-
-                    9 ->
-                        Io
-
-                    10 ->
-                        Tam2
-
-                    _ ->
-                        Nuak1
-            , shown = False
-            }
-    in
     { -- the former half has indices 0 to 23
       -- the latter half has indices 25 to 48
       cards =
-        List.indexedMap foo (List.take 24 cards)
-            ++ List.indexedMap (\i card -> foo (i + 25) card) (List.drop 24 cards)
+        List.indexedMap toCardOnBoard (List.take 24 cards)
+            ++ List.indexedMap (\i card -> toCardOnBoard (i + 25) card) (List.drop 24 cards)
     , empty = { x = 3, y = 3 }
     }
