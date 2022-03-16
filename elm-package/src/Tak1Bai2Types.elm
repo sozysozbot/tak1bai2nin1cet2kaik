@@ -65,6 +65,8 @@ type Msg
     | CloseTheEye
     | AddKey KeyValue
     | Tick
+    | AcceptWasd Bool
+    | AcceptArrowKey Bool
 
 
 type KeyValue

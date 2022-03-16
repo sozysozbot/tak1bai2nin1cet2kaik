@@ -5,6 +5,7 @@ import Browser.Events exposing (onKeyDown)
 import Buttons exposing (..)
 import Html exposing (Html)
 import Html.Attributes exposing (href)
+import Html.Events exposing (onCheck)
 import Json.Decode as Decode
 import List exposing (isEmpty)
 import Round
@@ -20,14 +21,15 @@ type alias Flags =
     { cards : List CardEncodedAsInt }
 
 
-type Model
-    = Model
-        { saved : CurrentStatus -- Reverts to here when canceled
-        , historyString : HistoryString
-        , currentStatus : CurrentStatus
-        , eyeIsOpen : Bool
-        , currentTimer : TimerStatus
-        }
+type alias Model =
+    { saved : CurrentStatus -- Reverts to here when canceled
+    , historyString : HistoryString
+    , currentStatus : CurrentStatus
+    , eyeIsOpen : Bool
+    , currentTimer : TimerStatus
+    , wasdEnabled : Bool
+    , arrowKeyEnabled : Bool
+    }
 
 
 type TimerStatus
@@ -93,57 +95,71 @@ stopTimer a =
 
 
 updateByWASD : { delta_x : Int, delta_y : Int } -> Model -> ( Model, Cmd Msg )
-updateByWASD delta ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
-    case currentStatus of
-        NothingSelected board ->
-            case
-                possibleSlidePosition board
-                    |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x)
-            of
-                [ from ] ->
-                    update (Slide { from = from, to = board.empty }) modl
+updateByWASD delta ({ currentStatus, wasdEnabled } as modl) =
+    if not wasdEnabled then
+        ( modl, Cmd.none )
 
-                _ ->
-                    ( modl, Cmd.none )
+    else
+        case currentStatus of
+            NothingSelected board ->
+                case
+                    possibleSlidePosition board
+                        |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x)
+                of
+                    [ from ] ->
+                        update (Slide { from = from, to = board.empty }) modl
 
-        _ ->
-            ( modl, Cmd.none )
+                    _ ->
+                        ( modl, Cmd.none )
+
+            _ ->
+                ( modl, Cmd.none )
 
 
 updateByArrowKey : { delta_x : Int, delta_y : Int } -> Model -> ( Model, Cmd Msg )
-updateByArrowKey delta ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
-    case currentStatus of
-        NothingSelected board ->
-            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
-                [ from ] ->
-                    update (Hop { from = from, to = board.empty }) modl
+updateByArrowKey delta ({ currentStatus, arrowKeyEnabled } as modl) =
+    if not arrowKeyEnabled then
+        ( modl, Cmd.none )
 
-                _ ->
-                    ( modl, Cmd.none )
+    else
+        case currentStatus of
+            NothingSelected board ->
+                case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                    [ from ] ->
+                        update (Hop { from = from, to = board.empty }) modl
 
-        FirstHalfCompletedByHop _ board ->
-            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
-                [ from ] ->
-                    update (Hop { from = from, to = board.empty }) modl
+                    _ ->
+                        ( modl, Cmd.none )
 
-                _ ->
-                    ( modl, Cmd.none )
+            FirstHalfCompletedByHop _ board ->
+                case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                    [ from ] ->
+                        update (Hop { from = from, to = board.empty }) modl
 
-        FirstHalfCompletedBySlide _ board ->
-            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
-                [ from ] ->
-                    update (Hop { from = from, to = board.empty }) modl
+                    _ ->
+                        ( modl, Cmd.none )
 
-                _ ->
-                    ( modl, Cmd.none )
+            FirstHalfCompletedBySlide _ board ->
+                case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                    [ from ] ->
+                        update (Hop { from = from, to = board.empty }) modl
 
-        _ ->
-            ( modl, Cmd.none )
+                    _ ->
+                        ( modl, Cmd.none )
+
+            _ ->
+                ( modl, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
+update msg ({ historyString, currentStatus, saved, eyeIsOpen, currentTimer } as modl) =
     case msg of
+        AcceptWasd wasd ->
+            ( { modl | wasdEnabled = wasd }, Cmd.none )
+
+        AcceptArrowKey arrow ->
+            ( { modl | arrowKeyEnabled = arrow }, Cmd.none )
+
         Tick ->
             let
                 newTimer =
@@ -157,15 +173,7 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
                         StoppedCounting i ->
                             StoppedCounting i
             in
-            ( Model
-                { historyString = historyString
-                , currentStatus = currentStatus
-                , saved = saved
-                , eyeIsOpen = eyeIsOpen
-                , currentTimer = newTimer
-                }
-            , Cmd.none
-            )
+            ( { modl | currentTimer = newTimer }, Cmd.none )
 
         AddKey (Control "Escape") ->
             update Cancel modl
@@ -225,29 +233,13 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
             if eyeIsOpen then
                 -- the only thing you can do is to close the eye
                 if msg == CloseTheEye then
-                    ( Model
-                        { historyString = historyString
-                        , currentStatus = currentStatus
-                        , saved = saved
-                        , eyeIsOpen = False
-                        , currentTimer = initiateTimerIfOff currentTimer
-                        }
-                    , Cmd.none
-                    )
+                    ( { modl | eyeIsOpen = False, currentTimer = initiateTimerIfOff currentTimer }, Cmd.none )
 
                 else
                     ( modl, Cmd.none )
 
             else if msg == OpenTheEye then
-                ( Model
-                    { historyString = historyString
-                    , currentStatus = currentStatus
-                    , saved = saved
-                    , eyeIsOpen = True
-                    , currentTimer = initiateTimerIfOff currentTimer
-                    }
-                , Cmd.none
-                )
+                ( { modl | eyeIsOpen = True, currentTimer = initiateTimerIfOff currentTimer }, Cmd.none )
 
             else
                 let
@@ -259,8 +251,8 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
                 in
                 case newStatus of
                     NothingSelected board ->
-                        ( Model
-                            { historyString = newHist
+                        ( { modl
+                            | historyString = newHist
                             , currentStatus = newStatus
                             , saved = NothingSelected board -- update `saved`
                             , eyeIsOpen = False
@@ -270,18 +262,17 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
 
                                 else
                                     initiateTimerIfOff currentTimer
-                            }
+                          }
                         , Cmd.none
                         )
 
                     _ ->
-                        ( Model
-                            { historyString = newHist
+                        ( { modl
+                            | historyString = newHist
                             , currentStatus = newStatus
-                            , saved = saved
                             , eyeIsOpen = False
                             , currentTimer = initiateTimerIfOff currentTimer
-                            }
+                          }
                         , Cmd.none
                         )
 
@@ -321,9 +312,9 @@ view__ :
     , history : HistoryString
     , currentTimer : TimerStatus
     }
-    -> List (Svg msg)
-    -> List (Html msg)
-    -> Html msg
+    -> List (Svg Msg)
+    -> List (Html Msg)
+    -> Html Msg
 view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent buttons =
     let
         audio =
@@ -386,8 +377,26 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                             [ Html.li [] [ Html.text "Esc キーでキャンセル" ]
                             , Html.li [] [ Html.text "E キーで目の開閉（カナ入力になっていると失敗することがある）" ]
                             , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
-                            , Html.li [] [ Html.text "一打目に W,A,S,D キーでカードをスライド" ]
-                            , Html.li [] [ Html.text "矢印キーでカードでの飛び越え" ]
+                            , Html.li []
+                                [ Html.input
+                                    [ Html.Attributes.type_ "checkbox"
+                                    , Html.Attributes.id "wasd"
+                                    , Html.Attributes.name "wasd"
+                                    , onCheck AcceptWasd
+                                    ]
+                                    []
+                                , Html.label [ Html.Attributes.for "wasd" ] [ Html.text "一打目に W,A,S,D キーでカードをスライド" ]
+                                ]
+                            , Html.li []
+                                [ Html.input
+                                    [ Html.Attributes.type_ "checkbox"
+                                    , Html.Attributes.id "arrowkey"
+                                    , Html.Attributes.name "arrowkey"
+                                    , onCheck AcceptArrowKey
+                                    ]
+                                    []
+                                , Html.label [ Html.Attributes.for "arrowkey" ] [ Html.text "矢印キーでカードでの飛び越え" ]
+                                ]
                             ]
                         ]
                     ]
@@ -466,7 +475,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                         ]
                         [ Html.text
                             (if gameEnd then
-                                "棋譜をツイートしましょう！！"
+                                "棋譜をツイート！！"
 
                              else
                                 "ここまでの棋譜をツイートする"
@@ -635,7 +644,7 @@ getPairNumFromBoard b =
 
 
 view : Model -> Html Msg
-view (Model { historyString, currentStatus, eyeIsOpen, currentTimer }) =
+view { historyString, currentStatus, eyeIsOpen, currentTimer } =
     case currentStatus of
         NothingSelected board ->
             view__
@@ -786,14 +795,15 @@ init flags =
         initialStatus =
             NothingSelected (initialBoard flags.cards)
     in
-    ( Model
-        { historyString =
+    ( { historyString =
             String.join "," (List.map String.fromInt flags.cards) ++ "\n\n"
-        , currentStatus = initialStatus
-        , saved = initialStatus
-        , eyeIsOpen = False
-        , currentTimer = NotStarted
-        }
+      , currentStatus = initialStatus
+      , saved = initialStatus
+      , eyeIsOpen = False
+      , currentTimer = NotStarted
+      , wasdEnabled = False -- Fixme: url
+      , arrowKeyEnabled = False -- Fixme: take this from URL
+      }
     , Cmd.none
     )
 
