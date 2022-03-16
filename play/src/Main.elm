@@ -64,7 +64,7 @@ toKeyValue string =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ onKeyDown (Decode.map AddKey keyDecoder)
+        [ onKeyDown (Decode.map AddKey keyDecoder) -- Thanks https://github.com/lenards/elm-example-key-decoding
         , Time.every 100 (\_ -> Tick)
         ]
 
@@ -90,6 +90,55 @@ stopTimer a =
 
         StoppedCounting i ->
             StoppedCounting i
+
+
+updateByWASD : { delta_x : Int, delta_y : Int } -> Model -> ( Model, Cmd Msg )
+updateByWASD delta ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
+    case currentStatus of
+        NothingSelected board ->
+            case
+                possibleSlidePosition board
+                    |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x)
+            of
+                [ from ] ->
+                    update (Slide { from = from, to = board.empty }) modl
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        _ ->
+            ( modl, Cmd.none )
+
+
+updateByArrowKey : { delta_x : Int, delta_y : Int } -> Model -> ( Model, Cmd Msg )
+updateByArrowKey delta ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTimer }) as modl) =
+    case currentStatus of
+        NothingSelected board ->
+            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                [ from ] ->
+                    update (Hop { from = from, to = board.empty }) modl
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        FirstHalfCompletedByHop _ board ->
+            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                [ from ] ->
+                    update (Hop { from = from, to = board.empty }) modl
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        FirstHalfCompletedBySlide _ board ->
+            case possibleHopPosition board |> List.filter (\c -> c.y == board.empty.y + delta.delta_y && c.x == board.empty.x + delta.delta_x) of
+                [ from ] ->
+                    update (Hop { from = from, to = board.empty }) modl
+
+                _ ->
+                    ( modl, Cmd.none )
+
+        _ ->
+            ( modl, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -149,56 +198,28 @@ update msg ((Model { historyString, currentStatus, saved, eyeIsOpen, currentTime
                 update OpenTheEye modl
 
         AddKey (Character 'w') ->
-            case currentStatus of
-                NothingSelected board ->
-                    case possibleSlidePosition board |> List.filter (\c -> c.y == board.empty.y - 1 && c.x == board.empty.x) of
-                        [ from ] ->
-                            update (Slide { from = from, to = board.empty }) modl
-
-                        _ ->
-                            ( modl, Cmd.none )
-
-                _ ->
-                    ( modl, Cmd.none )
+            updateByWASD { delta_x = 0, delta_y = -1 } modl
 
         AddKey (Character 'a') ->
-            case currentStatus of
-                NothingSelected board ->
-                    case possibleSlidePosition board |> List.filter (\c -> c.x == board.empty.x - 1 && c.y == board.empty.y) of
-                        [ from ] ->
-                            update (Slide { from = from, to = board.empty }) modl
-
-                        _ ->
-                            ( modl, Cmd.none )
-
-                _ ->
-                    ( modl, Cmd.none )
+            updateByWASD { delta_x = -1, delta_y = 0 } modl
 
         AddKey (Character 's') ->
-            case currentStatus of
-                NothingSelected board ->
-                    case possibleSlidePosition board |> List.filter (\c -> c.y == board.empty.y + 1 && c.x == board.empty.x) of
-                        [ from ] ->
-                            update (Slide { from = from, to = board.empty }) modl
-
-                        _ ->
-                            ( modl, Cmd.none )
-
-                _ ->
-                    ( modl, Cmd.none )
+            updateByWASD { delta_x = 0, delta_y = 1 } modl
 
         AddKey (Character 'd') ->
-            case currentStatus of
-                NothingSelected board ->
-                    case possibleSlidePosition board |> List.filter (\c -> c.x == board.empty.x + 1 && c.y == board.empty.y) of
-                        [ from ] ->
-                            update (Slide { from = from, to = board.empty }) modl
+            updateByWASD { delta_x = 1, delta_y = 0 } modl
 
-                        _ ->
-                            ( modl, Cmd.none )
+        AddKey (Control "ArrowUp") ->
+            updateByArrowKey { delta_x = 0, delta_y = -2 } modl
 
-                _ ->
-                    ( modl, Cmd.none )
+        AddKey (Control "ArrowDown") ->
+            updateByArrowKey { delta_x = 0, delta_y = 2 } modl
+
+        AddKey (Control "ArrowLeft") ->
+            updateByArrowKey { delta_x = -2, delta_y = 0 } modl
+
+        AddKey (Control "ArrowRight") ->
+            updateByArrowKey { delta_x = 2, delta_y = 0 } modl
 
         _ ->
             if eyeIsOpen then
@@ -366,6 +387,7 @@ view__ { maybeAudioUrl, pairnum, gameEnd, history, currentTimer } svgContent but
                             , Html.li [] [ Html.text "E キーで目の開閉（カナ入力になっていると失敗することがある）" ]
                             , Html.li [] [ Html.text "Enter キーで「マッチ」または「ミスマッチ」" ]
                             , Html.li [] [ Html.text "一打目に W,A,S,D キーで[上/左/下/右]方向にあるカードをスライド" ]
+                            , Html.li [] [ Html.text "矢印キーで[上/左/下/右]方向にあるカードでの飛び越え" ]
                             ]
                         ]
                     ]

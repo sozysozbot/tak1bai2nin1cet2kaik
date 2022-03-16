@@ -6151,6 +6151,9 @@ var $author$project$Tak1Bai2Types$CloseTheEye = {$: 'CloseTheEye'};
 var $author$project$Main$CurrentlyCounting = function (a) {
 	return {$: 'CurrentlyCounting', a: a};
 };
+var $author$project$Tak1Bai2Types$Hop = function (a) {
+	return {$: 'Hop', a: a};
+};
 var $author$project$Tak1Bai2Types$Match = {$: 'Match'};
 var $author$project$Tak1Bai2Types$Mismatch = {$: 'Mismatch'};
 var $author$project$Tak1Bai2Types$OpenTheEye = {$: 'OpenTheEye'};
@@ -6973,7 +6976,7 @@ var $author$project$Main$update = F2(
 			var saved = modl.a.saved;
 			var eyeIsOpen = modl.a.eyeIsOpen;
 			var currentTimer = modl.a.currentTimer;
-			_v0$8:
+			_v6$12:
 			while (true) {
 				switch (msg.$) {
 					case 'Tick':
@@ -6994,7 +6997,46 @@ var $author$project$Main$update = F2(
 								{currentStatus: currentStatus, currentTimer: newTimer, eyeIsOpen: eyeIsOpen, historyString: historyString, saved: saved}),
 							$elm$core$Platform$Cmd$none);
 					case 'AddKey':
-						if (msg.a.$ === 'Control') {
+						if (msg.a.$ === 'Character') {
+							switch (msg.a.a.valueOf()) {
+								case 'e':
+									if (eyeIsOpen) {
+										var $temp$msg = $author$project$Tak1Bai2Types$CloseTheEye,
+											$temp$modl = modl;
+										msg = $temp$msg;
+										modl = $temp$modl;
+										continue update;
+									} else {
+										var $temp$msg = $author$project$Tak1Bai2Types$OpenTheEye,
+											$temp$modl = modl;
+										msg = $temp$msg;
+										modl = $temp$modl;
+										continue update;
+									}
+								case 'w':
+									return A2(
+										$author$project$Main$updateByWASD,
+										{delta_x: 0, delta_y: -1},
+										modl);
+								case 'a':
+									return A2(
+										$author$project$Main$updateByWASD,
+										{delta_x: -1, delta_y: 0},
+										modl);
+								case 's':
+									return A2(
+										$author$project$Main$updateByWASD,
+										{delta_x: 0, delta_y: 1},
+										modl);
+								case 'd':
+									return A2(
+										$author$project$Main$updateByWASD,
+										{delta_x: 1, delta_y: 0},
+										modl);
+								default:
+									break _v6$12;
+							}
+						} else {
 							switch (msg.a.a) {
 								case 'Escape':
 									var $temp$msg = $author$project$Tak1Bai2Types$Cancel,
@@ -7029,123 +7071,32 @@ var $author$project$Main$update = F2(
 									} else {
 										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
 									}
+								case 'ArrowUp':
+									return A2(
+										$author$project$Main$updateByArrowKey,
+										{delta_x: 0, delta_y: -2},
+										modl);
+								case 'ArrowDown':
+									return A2(
+										$author$project$Main$updateByArrowKey,
+										{delta_x: 0, delta_y: 2},
+										modl);
+								case 'ArrowLeft':
+									return A2(
+										$author$project$Main$updateByArrowKey,
+										{delta_x: -2, delta_y: 0},
+										modl);
+								case 'ArrowRight':
+									return A2(
+										$author$project$Main$updateByArrowKey,
+										{delta_x: 2, delta_y: 0},
+										modl);
 								default:
-									break _v0$8;
-							}
-						} else {
-							switch (msg.a.a.valueOf()) {
-								case 'e':
-									if (eyeIsOpen) {
-										var $temp$msg = $author$project$Tak1Bai2Types$CloseTheEye,
-											$temp$modl = modl;
-										msg = $temp$msg;
-										modl = $temp$modl;
-										continue update;
-									} else {
-										var $temp$msg = $author$project$Tak1Bai2Types$OpenTheEye,
-											$temp$modl = modl;
-										msg = $temp$msg;
-										modl = $temp$modl;
-										continue update;
-									}
-								case 'w':
-									if (currentStatus.$ === 'NothingSelected') {
-										var board = currentStatus.a;
-										var _v5 = A2(
-											$elm$core$List$filter,
-											function (c) {
-												return _Utils_eq(c.y, board.empty.y - 1) && _Utils_eq(c.x, board.empty.x);
-											},
-											$author$project$Main$possibleSlidePosition(board));
-										if (_v5.b && (!_v5.b.b)) {
-											var from = _v5.a;
-											var $temp$msg = $author$project$Tak1Bai2Types$Slide(
-												{from: from, to: board.empty}),
-												$temp$modl = modl;
-											msg = $temp$msg;
-											modl = $temp$modl;
-											continue update;
-										} else {
-											return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-										}
-									} else {
-										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-									}
-								case 'a':
-									if (currentStatus.$ === 'NothingSelected') {
-										var board = currentStatus.a;
-										var _v7 = A2(
-											$elm$core$List$filter,
-											function (c) {
-												return _Utils_eq(c.x, board.empty.x - 1) && _Utils_eq(c.y, board.empty.y);
-											},
-											$author$project$Main$possibleSlidePosition(board));
-										if (_v7.b && (!_v7.b.b)) {
-											var from = _v7.a;
-											var $temp$msg = $author$project$Tak1Bai2Types$Slide(
-												{from: from, to: board.empty}),
-												$temp$modl = modl;
-											msg = $temp$msg;
-											modl = $temp$modl;
-											continue update;
-										} else {
-											return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-										}
-									} else {
-										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-									}
-								case 's':
-									if (currentStatus.$ === 'NothingSelected') {
-										var board = currentStatus.a;
-										var _v9 = A2(
-											$elm$core$List$filter,
-											function (c) {
-												return _Utils_eq(c.y, board.empty.y + 1) && _Utils_eq(c.x, board.empty.x);
-											},
-											$author$project$Main$possibleSlidePosition(board));
-										if (_v9.b && (!_v9.b.b)) {
-											var from = _v9.a;
-											var $temp$msg = $author$project$Tak1Bai2Types$Slide(
-												{from: from, to: board.empty}),
-												$temp$modl = modl;
-											msg = $temp$msg;
-											modl = $temp$modl;
-											continue update;
-										} else {
-											return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-										}
-									} else {
-										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-									}
-								case 'd':
-									if (currentStatus.$ === 'NothingSelected') {
-										var board = currentStatus.a;
-										var _v11 = A2(
-											$elm$core$List$filter,
-											function (c) {
-												return _Utils_eq(c.x, board.empty.x + 1) && _Utils_eq(c.y, board.empty.y);
-											},
-											$author$project$Main$possibleSlidePosition(board));
-										if (_v11.b && (!_v11.b.b)) {
-											var from = _v11.a;
-											var $temp$msg = $author$project$Tak1Bai2Types$Slide(
-												{from: from, to: board.empty}),
-												$temp$modl = modl;
-											msg = $temp$msg;
-											modl = $temp$modl;
-											continue update;
-										} else {
-											return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-										}
-									} else {
-										return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
-									}
-								default:
-									break _v0$8;
+									break _v6$12;
 							}
 						}
 					default:
-						break _v0$8;
+						break _v6$12;
 				}
 			}
 			if (eyeIsOpen) {
@@ -7172,9 +7123,9 @@ var $author$project$Main$update = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var _v12 = A4($author$project$Main$updateStatus, currentTimer, msg, currentStatus, saved);
-					var newStatus = _v12.newStatus;
-					var additionToHistory = _v12.additionToHistory;
+					var _v10 = A4($author$project$Main$updateStatus, currentTimer, msg, currentStatus, saved);
+					var newStatus = _v10.newStatus;
+					var additionToHistory = _v10.additionToHistory;
 					var newHist = _Utils_ap(historyString, additionToHistory);
 					if (newStatus.$ === 'NothingSelected') {
 						var board = newStatus.a;
@@ -7204,10 +7155,102 @@ var $author$project$Main$update = F2(
 			}
 		}
 	});
+var $author$project$Main$updateByArrowKey = F2(
+	function (delta, modl) {
+		var historyString = modl.a.historyString;
+		var currentStatus = modl.a.currentStatus;
+		var saved = modl.a.saved;
+		var eyeIsOpen = modl.a.eyeIsOpen;
+		var currentTimer = modl.a.currentTimer;
+		switch (currentStatus.$) {
+			case 'NothingSelected':
+				var board = currentStatus.a;
+				var _v3 = A2(
+					$elm$core$List$filter,
+					function (c) {
+						return _Utils_eq(c.y, board.empty.y + delta.delta_y) && _Utils_eq(c.x, board.empty.x + delta.delta_x);
+					},
+					$author$project$Main$possibleHopPosition(board));
+				if (_v3.b && (!_v3.b.b)) {
+					var from = _v3.a;
+					return A2(
+						$author$project$Main$update,
+						$author$project$Tak1Bai2Types$Hop(
+							{from: from, to: board.empty}),
+						modl);
+				} else {
+					return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+				}
+			case 'FirstHalfCompletedByHop':
+				var board = currentStatus.b;
+				var _v4 = A2(
+					$elm$core$List$filter,
+					function (c) {
+						return _Utils_eq(c.y, board.empty.y + delta.delta_y) && _Utils_eq(c.x, board.empty.x + delta.delta_x);
+					},
+					$author$project$Main$possibleHopPosition(board));
+				if (_v4.b && (!_v4.b.b)) {
+					var from = _v4.a;
+					return A2(
+						$author$project$Main$update,
+						$author$project$Tak1Bai2Types$Hop(
+							{from: from, to: board.empty}),
+						modl);
+				} else {
+					return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+				}
+			case 'FirstHalfCompletedBySlide':
+				var board = currentStatus.b;
+				var _v5 = A2(
+					$elm$core$List$filter,
+					function (c) {
+						return _Utils_eq(c.y, board.empty.y + delta.delta_y) && _Utils_eq(c.x, board.empty.x + delta.delta_x);
+					},
+					$author$project$Main$possibleHopPosition(board));
+				if (_v5.b && (!_v5.b.b)) {
+					var from = _v5.a;
+					return A2(
+						$author$project$Main$update,
+						$author$project$Tak1Bai2Types$Hop(
+							{from: from, to: board.empty}),
+						modl);
+				} else {
+					return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Main$updateByWASD = F2(
+	function (delta, modl) {
+		var historyString = modl.a.historyString;
+		var currentStatus = modl.a.currentStatus;
+		var saved = modl.a.saved;
+		var eyeIsOpen = modl.a.eyeIsOpen;
+		var currentTimer = modl.a.currentTimer;
+		if (currentStatus.$ === 'NothingSelected') {
+			var board = currentStatus.a;
+			var _v1 = A2(
+				$elm$core$List$filter,
+				function (c) {
+					return _Utils_eq(c.y, board.empty.y + delta.delta_y) && _Utils_eq(c.x, board.empty.x + delta.delta_x);
+				},
+				$author$project$Main$possibleSlidePosition(board));
+			if (_v1.b && (!_v1.b.b)) {
+				var from = _v1.a;
+				return A2(
+					$author$project$Main$update,
+					$author$project$Tak1Bai2Types$Slide(
+						{from: from, to: board.empty}),
+					modl);
+			} else {
+				return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+			}
+		} else {
+			return _Utils_Tuple2(modl, $elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Tak1Bai2Types$Green = {$: 'Green'};
-var $author$project$Tak1Bai2Types$Hop = function (a) {
-	return {$: 'Hop', a: a};
-};
 var $author$project$Tak1Bai2Types$Yellow = {$: 'Yellow'};
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -7996,6 +8039,13 @@ var $author$project$Main$view__ = F3(
 												_List_fromArray(
 													[
 														$elm$html$Html$text('一打目に W,A,S,D キーで[上/左/下/右]方向にあるカードをスライド')
+													])),
+												A2(
+												$elm$html$Html$li,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('矢印キーで[上/左/下/右]方向にあるカードでの飛び越え')
 													]))
 											]))
 									]))
